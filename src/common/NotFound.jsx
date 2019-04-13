@@ -12,7 +12,7 @@ const NotFound = () => {
         headingText="Sorry, something went wrong."
         paragraphText="We can't seem to find the page you are looking for."
       >
-        <Link to="/">Return to the data publication home page.</Link>
+        <Link to="/">Return to the data browser home page.</Link>
       </Header>
     </div>
   )

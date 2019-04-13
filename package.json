@@ -27,7 +27,7 @@
     "react-scripts": "2.1.8",
     "react-select": "2.0.0"
   },
-  "homepage": "/data-publication",
+  "homepage": "/data-browser",
   "browserslist": [
     "Chrome >= 60",
     "Safari >= 10.1",

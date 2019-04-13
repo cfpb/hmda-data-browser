@@ -1,6 +1,6 @@
 # HMDA Data Browser
 
-Work-in-progress front-end for 
+Work-in-progress front-end for browsing HMDA data
 
 ## Dependencies
 
@@ -36,7 +36,7 @@ You will see the build errors and lint warnings in the console.
 To see the application running in a container you can run:
 
 ```
-docker run -p 80:80 hmda/hmda-pub-ui
+docker run -p 80:80 hmda/hmda-data-browser
 ```
 
 Open http://192.168.99.100/ (or your Docker Machine IP) to view the application.
