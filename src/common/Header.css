@@ -1,0 +1,24 @@
+.header h1,
+.header h2,
+.header h3,
+.header h4 {
+  margin-bottom: 0;
+}
+.header h4 {
+  margin-top: 3em;
+}
+
+.header .font-lead,
+.header p {
+  color: #5b616b;
+  margin-top: 0;
+}
+
+.header .text-small {
+  font-size: 1.6rem;
+  max-width: 77rem;
+}
+
+.header.disabled h4 {
+  color: #5b616b;
+}

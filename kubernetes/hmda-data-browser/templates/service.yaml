@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hmda-data-browser.fullname" . }}
+  labels:
+    app: {{ include "hmda-data-browser.name" . }}
+    chart: {{ include "hmda-data-browser.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ include "hmda-data-browser.name" . }}
+    release: {{ .Release.Name }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: 
+    service: {{ include "hmda-data-browser.fullname" . }}-ambassador
+  name: {{ include "hmda-data-browser.fullname" . }}-ambassador
+  annotations:
+    getambassador.io/config: |
+      apiVersion: ambassador/v0
+      kind: Mapping
+      name: data_browser_mapping
+      prefix: /data-browser/
+      rewrite: /data-browser/
+      service: {{ include "hmda-data-browser.fullname" . }}:{{ .Values.service.port }}
+spec:
+  type: {{ .Values.ambassador.service.type }}
+  ports:
+  - name: {{ include "hmda-data-browser.fullname" . }}-ambassador
+    port: {{ .Values.ambassador.port }}
+    targetPort: {{ .Values.service.port }}
+  selector:
+service: {{ include "hmda-data-browser.fullname" . }}-ambassador
