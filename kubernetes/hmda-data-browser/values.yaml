@@ -7,7 +7,7 @@ commitId: ''
 
 image:
   repository: hmda/hmda-data-browser
-  tag: v2.7.0
+  tag: v2.0.1
   pullPolicy: IfNotPresent
 
 nameOverride: ''
