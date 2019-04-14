@@ -96,3 +96,7 @@ hr {
 .button-link:hover {
   color: #4c2c92;
 }
+
+.header {
+  border-bottom: none;
+}

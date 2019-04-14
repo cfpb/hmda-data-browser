@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import ImageCard from './Card.jsx'
+import ImageCard from './ImageCard.jsx'
 import Header from './common/Header.jsx'
 import spreadsheet from './images/spreadsheet.png'
 import selector from './images/selector.png'
@@ -24,16 +24,38 @@ class Home extends Component {
         <div className="card-container">
           <ImageCard
             image={spreadsheet}
-            caption="Entire datasets"
-          />
+            caption="Entire datasets (coming soon)"
+            path="/all-data"
+          >
+            <ul>
+              <li>Lorem ipsum dolor sit amet</li>
+              <li>Mauris nec dolor id elit</li>
+              <li>Aliquam facilisis lorem eget</li>
+            </ul>
+          </ImageCard>
           <ImageCard
             image={selector}
             caption="Subsets of data"
-          />
+            path="subsets"
+            enabled
+          >
+            <ul>
+              <li>Lorem ipsum dolor sit amet</li>
+              <li>Mauris nec dolor id elit</li>
+              <li>Aliquam facilisis lorem eget</li>
+            </ul>
+          </ImageCard>
           <ImageCard
             image={map}
-            caption="Maps & Graphs"
-          />
+            caption="Maps & Graphs (coming soon)"
+            path="maps-graphs"
+          >
+            <ul>
+              <li>Lorem ipsum dolor sit amet</li>
+              <li>Mauris nec dolor id elit</li>
+              <li>Aliquam facilisis lorem eget</li>
+            </ul>
+          </ImageCard>
         </div>
       </div>
     )

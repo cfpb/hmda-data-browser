@@ -1,18 +1,28 @@
 .ImageCard {
-  border: 2px solid white;
   overflow: hidden;
+  opacity: 0.5;
+  pointer-events: none;
 }
 
-.ImageCard:hover {
+.ImageCard.enabled {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ImageWrapper {
+  border: 2px solid white;
+}
+
+.ImageCard.enabled .ImageWrapper:hover {
   border-color: #0071bc;
   cursor: pointer;
 }
 
-.ImageCard:hover .imagechild {
+.ImageWrapper:hover .imagechild {
   transform: scale(1.1);
 }
 
-.ImageCard:hover > h4 {
+.ImageCard.enabled:hover h4 {
   color: #0071bc;
 }
 

@@ -5,7 +5,7 @@ import Header from './Header'
 import Home from './Home'
 import NotFound from './common/NotFound'
 import Footer from './Footer'
-//import Subsets from './Subsets'
+import Subsets from './Subsets'
 
 import './app.css'
 
@@ -17,10 +17,12 @@ const App = () => {
         <Route exact path="/" component={Home} />
     {/*
         <Route path="/all-data/:year?" component={Subsets} />
+        */}
         <Route
           path="/subsets/:year?"
           component={Subsets}
         />
+    {/*
         <Route
           path="/maps-graphs/:year?"
           component={MapsGraphs}

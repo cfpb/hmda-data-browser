@@ -25,9 +25,6 @@
   margin: 0 auto 3rem;
   max-width: 1040px;
 }
-.home .header {
-  border-bottom: none;
-}
 .home .card-container {
   align-items: stretch;
   display: flex;
