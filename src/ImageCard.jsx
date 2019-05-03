@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import './ImageCard.css'
 
 const ImageCard = props => {
+  console.log(props)
   let cardClass='ImageCard card'
   if(props.enabled) cardClass += ' enabled'
 
@@ -10,7 +11,7 @@ const ImageCard = props => {
     <div className={cardClass}>
       <Link
         disabled={!props.enabled}
-        to={props.path}>
+        to={props.path+"/"+props.year}>
         <div className="ImageWrapper">
           <img src={props.image} alt={props.caption} className="imagechild"/>
         </div>

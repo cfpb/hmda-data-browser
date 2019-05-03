@@ -5,7 +5,7 @@ import Header from './Header'
 import Home from './Home'
 import NotFound from './common/NotFound'
 import Footer from './Footer'
-import Subsets from './Subsets'
+import Subsets from './subsets/Subsets'
 
 import './app.css'
 

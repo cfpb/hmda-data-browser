@@ -35,6 +35,7 @@ class Home extends Component {
           </ImageCard>
           <ImageCard
             image={selector}
+            year="2018"
             caption="Subsets of data"
             path="subsets"
             enabled

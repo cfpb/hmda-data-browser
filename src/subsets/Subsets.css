@@ -1,0 +1,47 @@
+.Subsets {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 3rem;
+}
+
+.Subsets table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: 0.95em;
+  width: 100%;
+}
+.Subsets table td {
+   padding: 1rem 1.5rem;
+}
+.Subsets table th  {
+  font-size: 1.2em;
+  padding: .75rem 1.5rem;
+  text-align: left;
+}
+
+
+ .Subsets   td.subsetFooterNext{
+   float: right;
+ }
+
+ .Subsets  button:hover,
+ .Subsets button:visited:hover {
+   background-color: #205493;
+ }
+ .Subsets button:active,
+ .Subsets button:visited:active {
+   background-color: #112e51;
+ }
+ .Subsets button:disabled,
+ .Subsets button:visited:disabled {
+   background-color: #d6d7d9;
+   pointer-events: none;
+ }
+ .Subsets button:disabled:hover,
+ .Subsets button:disabled:active,
+ .Subsets button:disabled:focus,
+ .Subsets button:visited:disabled:hover,
+ .Subsets button:visited:disabled:focus,
+ .Subsets button:visited:disabled:active {
+   background-color: #d6d7d9;
+ }
