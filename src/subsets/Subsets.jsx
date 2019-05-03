@@ -166,9 +166,9 @@ class Subsets extends Component {
               <th width="50%">Select a State: </th>
               <th width="50%">Choose an available MSA/MD:</th>
             </tr>
-            <tr className="border_bottom"  >
-              <th width="50%">
-                {" "}
+            <tr>
+              <td className="DropDown" width="50%">
+
                 <Select
                   onChange={this.handleStateUpdate}
                   placeholder="Select a state..."
@@ -178,25 +178,29 @@ class Subsets extends Component {
                   simpleValue
                   options={stateOptions}
                 />
-              </th>
-              <th width="50%"> {this.loadMsaSelect(subsetYear)}</th>
+              </td>
+              <td className="DropDown" width="50%"> {this.loadMsaSelect(subsetYear)}</td>
             </tr>
             <tr>
               <th width="50%">Variable 1:</th>
               <th width="50%">Variable 2:</th>
             </tr>
-            <tr>
-             <th width="50%"> {this.loadVarSelect('1','FIRST')}</th>
-             <th width="50%"> {this.loadVarSelect('2','SECOND')}</th>
+            <tr >
+             <td  className="DropDown" width="50%"> {this.loadVarSelect('1','FIRST')}</td>
+             <td className="DropDown" width="50%"> {this.loadVarSelect('2','SECOND')}</td>
             </tr>
           </thead>
         <tfoot>
- <tr ><td className="subsetFooterBack"><button>BACK</button></td>
- <td className="subsetFooterNext"><button>NEXT</button></td></tr>
+
 </tfoot>
         </table>
-        <div />
+
+        <div className="Buttons">
+        <button>BACK</button>
+        <button>NEXT</button>
+        </div>
       </div>
+
     );
   }
 }

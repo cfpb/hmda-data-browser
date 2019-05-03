@@ -10,38 +10,37 @@
   font-size: 0.95em;
   width: 100%;
 }
-.Subsets table td {
-   padding: 1rem 1.5rem;
-}
+
 .Subsets table th  {
   font-size: 1.2em;
-  padding: .75rem 1.5rem;
   text-align: left;
+  padding: .5rem .5rem;
+
 }
 
 
- .Subsets   td.subsetFooterNext{
-   float: right;
- }
+.Subsets table td  {
+  padding: 2.5rem .5rem;
+}
 
- .Subsets  button:hover,
- .Subsets button:visited:hover {
+ .Buttons  button:hover,
+ .Buttons button:visited:hover {
    background-color: #205493;
  }
- .Subsets button:active,
- .Subsets button:visited:active {
+ .Buttons button:active,
+ .Buttons button:visited:active {
    background-color: #112e51;
  }
- .Subsets button:disabled,
- .Subsets button:visited:disabled {
+ .Buttons button:disabled,
+ .Buttons button:visited:disabled {
    background-color: #d6d7d9;
    pointer-events: none;
  }
- .Subsets button:disabled:hover,
- .Subsets button:disabled:active,
- .Subsets button:disabled:focus,
- .Subsets button:visited:disabled:hover,
- .Subsets button:visited:disabled:focus,
- .Subsets button:visited:disabled:active {
+ .Buttons button:disabled:hover,
+ .Buttons button:disabled:active,
+ .Buttons button:disabled:focus,
+ .Buttons button:visited:disabled:hover,
+ .Buttons button:visited:disabled:focus,
+ .Buttons button:visited:disabled:active {
    background-color: #d6d7d9;
  }
