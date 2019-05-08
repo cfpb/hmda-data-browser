@@ -30,6 +30,40 @@ const raceOptions = RACES.map(race => {
   return { value: race.id, label: race.name };
 });
 
+const getCheckBoxRows = (options,selection) => {
+  let toRender = [];
+  let checkboxesToRender = [];
+
+  options.forEach((option, index) => {
+    checkboxesToRender.push(option);
+
+    if (selection &&(checkboxesToRender.length === 3 || index === options.length - 1)) {
+      toRender.push(
+        <tr key={index}>
+          {checkboxesToRender.map((checkboxToRender, index) => {
+            return (
+              <td
+                style={{ textAlign: "left" }}
+                key={checkboxToRender.label + index}
+              >
+                <input
+                  type="checkbox"
+                  name={index + checkboxToRender.label}
+                  value={checkboxesToRender.label}
+                />
+                {checkboxToRender.label}
+              </td>
+            );
+          })}
+        </tr>
+      );
+
+      checkboxesToRender = [];
+    }
+  });
+  return toRender;
+};
+
 class Subsets extends Component {
   constructor(props) {
     super(props);
@@ -62,7 +96,6 @@ class Subsets extends Component {
     });
   }
 
-
   loadMsaSelect(subsetYear) {
     let msaMds = stateToMsas[subsetYear][this.state.selectState.value];
     let msaMdsOptions = msaMds
@@ -86,29 +119,32 @@ class Subsets extends Component {
     );
   }
 
-  loadVarSelect(varOption,varListName) {
-    console.log(varOption)
-    console.log(varListName)
-
-    console.log(variables)
-
-   let varList = variables[varOption][varListName];
-   let varOptions = varList
-     ? varList.map(variableOption => {
-         return { value: variableOption.id, label: variableOption.name };
-       })
-     : [{ id: "", value: "" }];
+  loadVarSelect(varOption, varListName) {
+    let varList = variables[varOption][varListName];
+    let varOptions = varList
+      ? varList.map(variableOption => {
+          return { value: variableOption.id, label: variableOption.name };
+        })
+      : [{ id: "", value: "" }];
     return (
       <Select
         isDisabled={this.state.selectState.value ? false : true}
-        onChange={varOption==='1'?this.handleActionTakenUpdate:this.handleRaceUpdate}
-        placeholder={"Select variable"+varOption+"..."}
+        onChange={
+          varOption === "1"
+            ? this.handleActionTakenUpdate
+            : this.handleRaceUpdate
+        }
+        placeholder={"Select variable" + varOption + "..."}
         searchable={true}
         autoFocus
         openOnFocus
         simpleValue
         options={varOptions}
-        value={varOption==='1'?this.state.selectActionTaken:this.state.selectRace}
+        value={
+          varOption === "1"
+            ? this.state.selectActionTaken
+            : this.state.selectRace
+        }
       />
     );
   }
@@ -142,33 +178,27 @@ class Subsets extends Component {
   render() {
     const { match, location } = this.props;
     const subsetYear = location.pathname.split("/")[2];
-// console.log(this.state.selectMsaMds)
-// console.log(this.state.selectRace)
-// console.log(this.state.selectActionTaken)
-// console.log(this.state.selectState)
 
     return (
       <div className="Subsets">
         <div className="intro">
           <Header type={1} headingText="Subsets of HMDA data">
             <p className="lead">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu
-              varius orci. Nunc id augue justo. Fusce aliquam imperdiet lacus eu
-              condimentum. Praesent et maximus ipsum. Fusce quis orci et lorem
-              maximus maximus. Pellentesque habitant morbi tristique senectus et
-              netus et malesuada fames ac turpis egestas.
+              Customize your analysis of HMDA data. Create subsets of data here,
+              using pre-selected filters that allow you to compare queries. For
+              questions/suggestions, contact hmdafeedback@cfpb.gov.
             </p>
           </Header>
         </div>
         <table>
-          <thead>
+          <thead />
+          <tbody>
             <tr>
               <th width="50%">Select a State: </th>
               <th width="50%">Choose an available MSA/MD:</th>
             </tr>
             <tr>
-              <td className="DropDown" width="50%">
-
+              <td width="50%">
                 <Select
                   onChange={this.handleStateUpdate}
                   placeholder="Select a state..."
@@ -179,28 +209,40 @@ class Subsets extends Component {
                   options={stateOptions}
                 />
               </td>
-              <td className="DropDown" width="50%"> {this.loadMsaSelect(subsetYear)}</td>
+              <td className="DropDown" width="50%">
+                {" "}
+                {this.loadMsaSelect(subsetYear)}
+              </td>
             </tr>
             <tr>
               <th width="50%">Variable 1:</th>
               <th width="50%">Variable 2:</th>
             </tr>
-            <tr >
-             <td  className="DropDown" width="50%"> {this.loadVarSelect('1','FIRST')}</td>
-             <td className="DropDown" width="50%"> {this.loadVarSelect('2','SECOND')}</td>
+            <tr>
+              <td className="DropDown" width="50%">
+                {" "}
+                {this.loadVarSelect("1", "FIRST")}
+              </td>
+              <td className="DropDown" width="50%">
+                {" "}
+                {this.loadVarSelect("2", "SECOND")}
+              </td>
             </tr>
-          </thead>
-        <tfoot>
+            <tr />
 
-</tfoot>
+            <tr>
+            <td  className="actionsTakenBoxes" width="50%">{getCheckBoxRows(actionsTakenOptions,this.state.selectActionTaken)}</td>
+            <td  width="50%">{getCheckBoxRows(raceOptions,this.state.selectRace)}</td>
+            </tr>
+          </tbody>
+          <tfoot />
         </table>
 
         <div className="Buttons">
-        <button>BACK</button>
-        <button>NEXT</button>
+          <button className="backButton">BACK</button>
+          <button className="nextButton">NEXT</button>
         </div>
       </div>
-
     );
   }
 }

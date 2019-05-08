@@ -13,9 +13,7 @@ class Home extends Component {
       <div className="home">
         <div className="intro">
           <Header type={1} headingText="HMDA Data Browser">
-            <p className="lead">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu varius orci. Nunc id augue justo. Fusce aliquam imperdiet lacus eu condimentum. Praesent et maximus ipsum. Fusce quis orci et lorem maximus maximus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
-            </p>
+            <p className="lead">The HMDA Data Browser allows institutions to filter and analyze HMDA data, download whole data sets, and visualize data through charts, graphs, and maps.</p>
           </Header>
         </div>
 
@@ -28,9 +26,7 @@ class Home extends Component {
             path="/all-data"
           >
             <ul>
-              <li>Lorem ipsum dolor sit amet</li>
-              <li>Mauris nec dolor id elit</li>
-              <li>Aliquam facilisis lorem eget</li>
+              <li>Run a data set query and download the entire raw dataset.</li>
             </ul>
           </ImageCard>
           <ImageCard
@@ -41,9 +37,7 @@ class Home extends Component {
             enabled
           >
             <ul>
-              <li>Lorem ipsum dolor sit amet</li>
-              <li>Mauris nec dolor id elit</li>
-              <li>Aliquam facilisis lorem eget</li>
+              <li>Customize your analysis of HMDA data. Create subsets of data here, using pre-selected filters that allow you to compare queries.</li>
             </ul>
           </ImageCard>
           <ImageCard
@@ -52,9 +46,7 @@ class Home extends Component {
             path="maps-graphs"
           >
             <ul>
-              <li>Lorem ipsum dolor sit amet</li>
-              <li>Mauris nec dolor id elit</li>
-              <li>Aliquam facilisis lorem eget</li>
+              <li>Visualize HMDA data through charts, graphs, and maps.</li>
             </ul>
           </ImageCard>
         </div>
