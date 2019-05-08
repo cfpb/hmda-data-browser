@@ -30,6 +30,13 @@
   vertical-align: top;
 }
 
+.Subsets .checkBoxRow {
+  font-size: .8em;
+  vertical-align: top;
+  padding: .5rem ;
+  width: 50%;
+}
+
  .Buttons  button:hover,
  .Buttons button:visited:hover {
    background-color: #205493;

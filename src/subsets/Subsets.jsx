@@ -28,14 +28,17 @@ const getCheckBoxRows = (options,selection) => {
   options.forEach((option, index) => {
     checkboxesToRender.push(option);
 
-    if (selection &&(checkboxesToRender.length === 3 || index === options.length - 1)) {
+    if (selection &&(checkboxesToRender.length === 2 || index === options.length - 1)) {
       toRender.push(
+        <table key={index}>
+        <tbody key={index}>
         <tr key={index}>
           {checkboxesToRender.map((checkboxToRender, index) => {
             return (
               <td
                 style={{ textAlign: "left" }}
                 key={checkboxToRender.label + index}
+                className ="checkBoxRow"
               >
                 <input
                   type="checkbox"
@@ -47,6 +50,8 @@ const getCheckBoxRows = (options,selection) => {
             );
           })}
         </tr>
+        </tbody>
+        </table>
       );
 
       checkboxesToRender = [];
@@ -220,7 +225,6 @@ class Subsets extends Component {
               </td>
             </tr>
             <tr />
-
             <tr>
             <td  className="actionsTakenBoxes" width="50%">{getCheckBoxRows(actionsTakenOptions,this.state.selectActionTaken)}</td>
             <td  width="50%">{getCheckBoxRows(raceOptions,this.state.selectRace)}</td>
