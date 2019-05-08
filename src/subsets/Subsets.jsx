@@ -2,21 +2,12 @@ import React, { Component } from "react";
 import Select from "react-select";
 import Header from "../common/Header.jsx";
 import STATES from "../constants/states.js";
-import LoadingIcon from "../common/LoadingIcon.jsx";
 import stateToMsas from "../constants/stateToMsas.js";
 import ACTIONSTAKEN from "../constants/actionsTaken.js";
 import RACES from "../constants/races.js";
 import variables from "../constants/variables.js";
 
 import "./Subsets.css";
-
-const detailsCache = {
-  2018: {
-    states: {},
-    races: {},
-    actionsTaken: {}
-  }
-};
 
 const stateOptions = STATES.map(state => {
   return { value: state.id, label: state.name };
@@ -176,8 +167,8 @@ class Subsets extends Component {
   }
 
   render() {
-    const { match, location } = this.props;
-    const subsetYear = location.pathname.split("/")[2];
+    const {location}  = this.props;
+    const subsetYear = location?location.pathname.split("/")[2]:"NA";
 
     return (
       <div className="Subsets">

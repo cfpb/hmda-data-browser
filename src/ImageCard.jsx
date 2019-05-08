@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import './ImageCard.css'
 
 const ImageCard = props => {
-  console.log(props)
   let cardClass='ImageCard card'
   if(props.enabled) cardClass += ' enabled'
 
