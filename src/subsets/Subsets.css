@@ -37,6 +37,11 @@
   width: 50%;
 }
 
+.Subsets .checkboxInput {
+  display: block;
+  float: left;
+  margin-left: 10px;}
+
  .Buttons  button:hover,
  .Buttons button:visited:hover {
    background-color: #205493;

@@ -24,10 +24,7 @@ class Home extends Component {
             image={spreadsheet}
             caption="Entire datasets (coming soon)"
             path="/all-data"
-          >
-            <ul>
-              <li>Run a data set query and download the entire raw dataset.</li>
-            </ul>
+          >Run a data set query and download the entire raw dataset.
           </ImageCard>
           <ImageCard
             image={selector}
@@ -36,18 +33,15 @@ class Home extends Component {
             path="subsets"
             enabled
           >
-            <ul>
-              <li>Customize your analysis of HMDA data. Create subsets of data here, using pre-selected filters that allow you to compare queries.</li>
-            </ul>
+        Customize your analysis of HMDA data. Create subsets of data here, using pre-selected filters that allow you to compare queries.
           </ImageCard>
           <ImageCard
             image={map}
             caption="Maps & Graphs (coming soon)"
             path="maps-graphs"
           >
-            <ul>
-              <li>Visualize HMDA data through charts, graphs, and maps.</li>
-            </ul>
+          Visualize HMDA data through charts, graphs, and maps.
+
           </ImageCard>
         </div>
       </div>

@@ -21,45 +21,6 @@ const raceOptions = RACES.map(race => {
   return { value: race.id, label: race.name };
 });
 
-const getCheckBoxRows = (options,selection) => {
-  let toRender = [];
-  let checkboxesToRender = [];
-
-  options.forEach((option, index) => {
-    checkboxesToRender.push(option);
-
-    if (selection &&(checkboxesToRender.length === 2 || index === options.length - 1)) {
-      toRender.push(
-        <table key={index}>
-        <tbody key={index}>
-        <tr key={index}>
-          {checkboxesToRender.map((checkboxToRender, index) => {
-            return (
-              <td
-                style={{ textAlign: "left" }}
-                key={checkboxToRender.label + index}
-                className ="checkBoxRow"
-              >
-                <input
-                  type="checkbox"
-                  name={index + checkboxToRender.label}
-                  value={checkboxesToRender.label}
-                />
-                {checkboxToRender.label}
-              </td>
-            );
-          })}
-        </tr>
-        </tbody>
-        </table>
-      );
-
-      checkboxesToRender = [];
-    }
-  });
-  return toRender;
-};
-
 class Subsets extends Component {
   constructor(props) {
     super(props);
@@ -70,12 +31,69 @@ class Subsets extends Component {
     this.handleActionTakenUpdate = this.handleActionTakenUpdate.bind(this);
     this.handleRaceUpdate = this.handleRaceUpdate.bind(this);
     this.loadVarSelect = this.loadVarSelect.bind(this);
+    this.toggleCheckbox = this.toggleCheckbox.bind(this);
+    this.getCheckBoxRows = this.getCheckBoxRows.bind(this);
+
+
     this.state = {
       selectState: "",
       selectMsaMds: "",
       selectActionTaken: "",
-      selectRace: ""
+      selectRace: "",
+      checkBoxesUpdate:[]
     };
+  }
+
+   getCheckBoxRows(options,selection) {
+     if (selection.length>-1){
+       return "";
+     }
+
+    let toRender = [];
+    let checkboxesToRender = [];
+
+    options.forEach((option, index) => {
+      checkboxesToRender.push(option);
+      if (checkboxesToRender.length === 2 || index === options.length - 1) {
+        toRender.push(
+          <table key={index}>
+          <tbody key={index}>
+          <tr key={index}>
+            {checkboxesToRender.map((checkboxToRender, index) => {
+              return (
+                <td
+                  style={{ textAlign: "left" }}
+                  key={checkboxToRender.label + index}
+                  className ="checkBoxRow"
+                >
+                  <input
+                    type="checkbox"
+                    name={index + checkboxToRender.label}
+                    value={checkboxToRender.label}
+                    className="checkboxInput"
+                    onClick={((e) => this.toggleCheckbox(e, checkboxToRender))}
+                  />
+                  {checkboxToRender.label}
+                </td>
+              );
+            })}
+          </tr>
+          </tbody>
+          </table>
+        );
+
+        checkboxesToRender = [];
+      }
+    });
+
+    return toRender;
+  }
+
+  toggleCheckbox(e,selectedOption) {
+    //console.log(selectedOption)
+    // return this.setState({
+    //   selectedCheckBoxes: selectedCheckBoxes
+    // });
   }
 
   handleStateUpdate(val) {
@@ -96,7 +114,7 @@ class Subsets extends Component {
     let msaMds = stateToMsas[subsetYear][this.state.selectState.value];
     let msaMdsOptions = msaMds
       ? msaMds.map(msaMd => {
-          return { value: msaMd.id, label: msaMd.name };
+          return { value: msaMd.id, label:  msaMd.id+" - "+msaMd.name };
         })
       : [{ id: "", value: "" }];
 
@@ -161,13 +179,13 @@ class Subsets extends Component {
 
   handleActionTakenUpdate(selectedOption) {
     return this.setState({
-      selectActionTaken: selectedOption
+      selectActionTaken: selectedOption.length?"":selectedOption
     });
   }
 
   handleRaceUpdate(selectedOption) {
     return this.setState({
-      selectRace: selectedOption
+      selectRace: selectedOption.length?"":selectedOption
     });
   }
 
@@ -190,7 +208,7 @@ class Subsets extends Component {
           <thead />
           <tbody>
             <tr>
-              <th width="50%">Select a State: </th>
+              <th width="50%">Select a State (or Nationwide): </th>
               <th width="50%">Choose an available MSA/MD:</th>
             </tr>
             <tr>
@@ -226,8 +244,8 @@ class Subsets extends Component {
             </tr>
             <tr />
             <tr>
-            <td  className="actionsTakenBoxes" width="50%">{getCheckBoxRows(actionsTakenOptions,this.state.selectActionTaken)}</td>
-            <td  width="50%">{getCheckBoxRows(raceOptions,this.state.selectRace)}</td>
+            <td  className="actionsTakenBoxes" width="50%">{this.getCheckBoxRows(actionsTakenOptions,this.state.selectActionTaken)}</td>
+            <td  width="50%">{this.getCheckBoxRows(raceOptions,this.state.selectRace)}</td>
             </tr>
           </tbody>
           <tfoot />
