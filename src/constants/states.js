@@ -1,5 +1,5 @@
 export default [
-  { id: 'NW', name: 'Nationwide' },
+  { id: 'nw', name: 'Nationwide' },
   { id: 'AL', name: 'Alabama' },
   { id: 'AK', name: 'Alaska' },
   { id: 'AZ', name: 'Arizona' },
