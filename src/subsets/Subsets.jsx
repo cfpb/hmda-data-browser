@@ -24,7 +24,8 @@ class Subsets extends Component {
     this.msaMdsOptions = this.loadStateAndMsaData()
 
     this.state = {
-      selectMsaMds: ''
+      state: '',
+      msaMd: ''
     }
   }
 
@@ -61,8 +62,22 @@ class Subsets extends Component {
   }
 
   onMsaMdsChange(selectedOption) {
+    const label = selectedOption.label
+    let state, msaMd
+
+    if(label.match('STATEWIDE'))
+      state = label.split(' - ')[0]
+    else if(label.match('ENTIRE MSAMD'))
+      msaMd = selectedOption.value.replace('multi', '')
+    else {
+      const split = label.split(' - ')
+      state = split[2]
+      msaMd = split[0]
+    }
+
     return this.setState({
-      selectMsaMds: selectedOption
+      state,
+      msaMd
     });
   }
 
@@ -89,6 +104,8 @@ class Subsets extends Component {
             options={this.msaMdsOptions}
             value={this.state.selectMsaMds}
           />
+        <div><h4 style={{display: 'inline-block'}}>State:&nbsp;</h4>{this.state.state ? this.state.state : <i>(none)</i>}</div>
+        <div><h4 style={{display: 'inline-block'}}>MSA/MD:&nbsp;</h4>{this.state.msaMd ? this.state.msaMd : <i>(none)</i>}</div>
       </div>
     );
   }
