@@ -17,6 +17,19 @@ const raceOptions = RACES.map(race => {
   return { value: race.id, label: race.name };
 });
 
+const styleFn = {
+  option: (provided, state) => {
+   if (state.data.value.length === 2) {
+     return {
+       ...provided,
+       fontWeight: 'bold',
+       textDecoration: 'underline'
+     }
+   }
+   return provided
+  }
+}
+
 class Subsets extends Component {
   constructor(props) {
     super(props);
@@ -95,6 +108,7 @@ class Subsets extends Component {
         </div>
           <h4>Choose a state or MSA/MD:</h4>
           <Select
+            styles={styleFn}
             onChange={this.onMsaMdsChange}
             placeholder="Select MSA/MD..."
             searchable={true}
