@@ -75,8 +75,10 @@ class Subsets extends Component {
   }
 
   onMsaMdsChange(selectedOption) {
-    const label = selectedOption.label
     let state, msaMd
+    const label = selectedOption.label
+
+    if(!label) return
 
     if(label.match('STATEWIDE'))
       state = label.split(' - ')[0]
