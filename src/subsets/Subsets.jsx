@@ -5,7 +5,7 @@ import STATES from "../constants/states.js";
 import stateToMsas from "../constants/stateToMsas.js";
 import ACTIONSTAKEN from "../constants/actionsTaken.js";
 import RACES from "../constants/races.js";
-import variables from "../constants/variables.js";
+import VARIABLES from "../constants/variables.js";
 
 import "./Subsets.css";
 
@@ -13,186 +13,108 @@ const stateOptions = STATES.map(state => {
   return { value: state.id, label: state.name };
 });
 
-const actionsTakenOptions = ACTIONSTAKEN.map(actionTaken => {
-  return { value: actionTaken.id, label: actionTaken.name };
-});
-
-const raceOptions = RACES.map(race => {
-  return { value: race.id, label: race.name };
+const variableOptions = VARIABLES.map(variable => {
+  return { value: variable.id, label: variable.label };
 });
 
 class Subsets extends Component {
   constructor(props) {
     super(props);
-    this.handleStateUpdate = this.handleStateUpdate.bind(this);
-    this.handleMsaMdsUpdate = this.handleMsaMdsUpdate.bind(this);
-    this.onMsaMdsChange = this.onMsaMdsChange.bind(this);
-    this.onStateChange = this.onStateChange.bind(this);
-    this.handleActionTakenUpdate = this.handleActionTakenUpdate.bind(this);
-    this.handleRaceUpdate = this.handleRaceUpdate.bind(this);
-    this.loadVarSelect = this.loadVarSelect.bind(this);
-    this.toggleCheckbox = this.toggleCheckbox.bind(this);
-    this.getCheckBoxRows = this.getCheckBoxRows.bind(this);
-
-
-    this.state = {
-      selectState: "",
-      selectMsaMds: "",
-      selectActionTaken: "",
-      selectRace: "",
-      checkBoxesUpdate:[]
-    };
+    this.handleSelect = this.handleSelect.bind(this);
   }
 
-   getCheckBoxRows(options,selection) {
-     if (selection.length>-1){
-       return "";
-     }
+  handleSelect(e) {
+    this.setState({ ...e });
+  }
 
+  generateVariables() {
+    if (!VARIABLES) {
+      return "";
+    }
     let toRender = [];
-    let checkboxesToRender = [];
+    let variablesToRender = [];
+    let variableCounter = 1;
+    let checkboxList = [];
+    VARIABLES.forEach((variable, index) => {
+      variablesToRender.push({ variable });
 
-    options.forEach((option, index) => {
-      checkboxesToRender.push(option);
-      if (checkboxesToRender.length === 2 || index === options.length - 1) {
+      if (variablesToRender.length === 1 || index === VARIABLES.length - 1) {
+        if (this.state && this.state["selectVar" + variableCounter]) {
+        }
+
         toRender.push(
-          <table key={index}>
-          <tbody key={index}>
-          <tr key={index}>
-            {checkboxesToRender.map((checkboxToRender, index) => {
+          <div key={index} className="blockHeader">
+            {variablesToRender.map((variableToRender, index) => {
               return (
-                <td
-                  style={{ textAlign: "left" }}
-                  key={checkboxToRender.label + index}
-                  className ="checkBoxRow"
-                >
-                  <input
-                    type="checkbox"
-                    name={index + checkboxToRender.label}
-                    value={checkboxToRender.label}
-                    className="checkboxInput"
-                    onClick={((e) => this.toggleCheckbox(e, checkboxToRender))}
-                  />
-                  {checkboxToRender.label}
-                </td>
+                <p key={index + "checkbox"}>Variable {variableCounter}: </p>
               );
             })}
-          </tr>
-          </tbody>
-          </table>
+            <div className="blockVarDropDown">
+              {this.loadVarSelect(variableCounter++)}
+            </div>
+          </div>
         );
-
-        checkboxesToRender = [];
       }
+      variablesToRender = [];
     });
-
     return toRender;
   }
 
-  toggleCheckbox(e,selectedOption) {
-    //console.log(selectedOption)
-    // return this.setState({
-    //   selectedCheckBoxes: selectedCheckBoxes
-    // });
-  }
-
-  handleStateUpdate(val) {
-    this.onStateChange(val);
-    this.props.history.push({
-      pathname: `${this.props.match.url}/${val.value}`
-    });
-  }
-
-  handleMsaMdsUpdate(val) {
-    this.onMsaMdsChange(val);
-    this.props.history.push({
-      pathname: `${this.props.history.location.pathname}/${val.value}`
-    });
-  }
-
   loadMsaSelect(subsetYear) {
-    let msaMds = stateToMsas[subsetYear][this.state.selectState.value];
+    let msaMds =
+      stateToMsas[subsetYear][
+        this.state && this.state.selectedState
+          ? this.state.selectedState.value
+          : ""
+      ];
     let msaMdsOptions = msaMds
       ? msaMds.map(msaMd => {
-          return { value: msaMd.id, label:  msaMd.id+" - "+msaMd.name };
+          return { value: msaMd.id, label: msaMd.id + " - " + msaMd.name };
         })
       : [{ id: "", value: "" }];
 
     return (
       <Select
-        isDisabled={this.state.selectState.value ? false : true}
-        onChange={this.handleMsaMdsUpdate}
+        isDisabled={false}
+        onChange={e => this.handleSelect({ selectedMSA: e })}
         placeholder="Select MSA/MD..."
         searchable={true}
         autoFocus
         openOnFocus
         simpleValue
         options={msaMdsOptions}
-        value={this.state.selectMsaMds}
+        name="stateSelect"
+        value={this.state ? this.state.selectMsaMds : ""}
       />
     );
   }
 
-  loadVarSelect(varOption, varListName) {
-    let varList = variables[varOption][varListName];
-    let varOptions = varList
-      ? varList.map(variableOption => {
-          return { value: variableOption.id, label: variableOption.name };
-        })
-      : [{ id: "", value: "" }];
+  loadVarSelect(varCounter) {
     return (
       <Select
-        isDisabled={this.state.selectState.value ? false : true}
-        onChange={
-          varOption === "1"
-            ? this.handleActionTakenUpdate
-            : this.handleRaceUpdate
-        }
-        placeholder={"Select variable" + varOption + "..."}
+        key={"selectVar" + varCounter}
+        isDisabled={false}
+        onChange={e => this.handleSelect({ ["selectVar" + varCounter]: e })}
+        placeholder={"Select a variable..."}
         searchable={true}
         autoFocus
         openOnFocus
         simpleValue
-        options={varOptions}
-        value={
-          varOption === "1"
-            ? this.state.selectActionTaken
-            : this.state.selectRace
-        }
+        options={this.filterSelectedOptions(variableOptions, [
+          "selectVar" + varCounter
+        ])}
       />
     );
   }
 
-  onStateChange(selectedOption) {
-    return this.setState({
-      selectState: selectedOption,
-      selectMsaMds: "",
-      selectActionTaken: "",
-      selectRace: ""
-    });
-  }
-  onMsaMdsChange(selectedOption) {
-    return this.setState({
-      selectMsaMds: selectedOption
-    });
-  }
-
-  handleActionTakenUpdate(selectedOption) {
-    return this.setState({
-      selectActionTaken: selectedOption.length?"":selectedOption
-    });
-  }
-
-  handleRaceUpdate(selectedOption) {
-    return this.setState({
-      selectRace: selectedOption.length?"":selectedOption
-    });
+  filterSelectedOptions(variableOptions, selectName) {
+ 
+    return variableOptions;
   }
 
   render() {
-    const {location}  = this.props;
-    const subsetYear = location?location.pathname.split("/")[2]:"NA";
-
+    const { location } = this.props;
+    const subsetYear = location ? location.pathname.split("/")[2] : "NA";
     return (
       <div className="Subsets">
         <div className="intro">
@@ -204,53 +126,28 @@ class Subsets extends Component {
             </p>
           </Header>
         </div>
-        <table>
-          <thead />
-          <tbody>
-            <tr>
-              <th width="50%">Select a State (or Nationwide): </th>
-              <th width="50%">Choose an available MSA/MD:</th>
-            </tr>
-            <tr>
-              <td width="50%">
-                <Select
-                  onChange={this.handleStateUpdate}
-                  placeholder="Select a state..."
-                  searchable={true}
-                  autoFocus
-                  openOnFocus
-                  simpleValue
-                  options={stateOptions}
-                />
-              </td>
-              <td className="DropDown" width="50%">
-                {" "}
-                {this.loadMsaSelect(subsetYear)}
-              </td>
-            </tr>
-            <tr>
-              <th width="50%">Variable 1:</th>
-              <th width="50%">Variable 2:</th>
-            </tr>
-            <tr>
-              <td className="DropDown" width="50%">
-                {" "}
-                {this.loadVarSelect("1", "FIRST")}
-              </td>
-              <td className="DropDown" width="50%">
-                {" "}
-                {this.loadVarSelect("2", "SECOND")}
-              </td>
-            </tr>
-            <tr />
-            <tr>
-            <td  className="actionsTakenBoxes" width="50%">{this.getCheckBoxRows(actionsTakenOptions,this.state.selectActionTaken)}</td>
-            <td  width="50%">{this.getCheckBoxRows(raceOptions,this.state.selectRace)}</td>
-            </tr>
-          </tbody>
-          <tfoot />
-        </table>
-
+        <div className="blockHeaderContainer">
+          <div className="blockHeader">
+            <p>Select a State (or Nationwide): </p>
+          </div>
+          <div className="blockHeader">
+            <p>Choose an available MSA/MD:</p>
+          </div>
+        </div>
+        <div className="blockDropDown">
+          {" "}
+          <Select
+            onChange={e => this.handleSelect({ selectedState: e })}
+            placeholder="Select a state..."
+            searchable={true}
+            autoFocus
+            openOnFocus
+            simpleValue
+            options={stateOptions}
+          />{" "}
+        </div>
+        <div className="blockDropDown"> {this.loadMsaSelect(subsetYear)}</div>
+        <div className="blockHeaderContainer">{this.generateVariables()}</div>
         <div className="Buttons">
           <button className="backButton">BACK</button>
           <button className="nextButton">NEXT</button>
@@ -259,5 +156,4 @@ class Subsets extends Component {
     );
   }
 }
-
 export default Subsets;
