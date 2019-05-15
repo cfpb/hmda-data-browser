@@ -1,21 +1,17 @@
-import React, { Component } from 'react';
-import Select from 'react-select';
-import Header from '../common/Header.jsx';
-import STATEOBJ from '../constants/stateObj.js';
-import stateToMsas from '../constants/stateToMsas.js';
-import ACTIONSTAKEN from '../constants/actionsTaken.js';
-import RACES from '../constants/races.js';
-import variables from '../constants/variables.js';
+import React, { Component } from 'react'
+import Select from 'react-select'
+import Header from '../common/Header.jsx'
+import STATEOBJ from '../constants/stateObj.js'
+import stateToMsas from '../constants/stateToMsas.js'
+import ACTIONSTAKEN from '../constants/actionsTaken.js'
+import RACES from '../constants/races.js'
+import VARIABLES from '../constants/variables.js'
 
-import './Subsets.css';
+import './Subsets.css'
 
-const actionsTakenOptions = ACTIONSTAKEN.map(actionTaken => {
-  return { value: actionTaken.id, label: actionTaken.name };
-});
-
-const raceOptions = RACES.map(race => {
-  return { value: race.id, label: race.name };
-});
+const variableOptions = VARIABLES.map(variable => {
+  return { value: variable.id, label: variable.label }
+})
 
 const styleFn = {
   option: (provided, state) => {
@@ -32,8 +28,8 @@ const styleFn = {
 
 class Subsets extends Component {
   constructor(props) {
-    super(props);
-    this.onMsaMdsChange = this.onMsaMdsChange.bind(this);
+    super(props)
+    this.onMsaMdsChange = this.onMsaMdsChange.bind(this)
     this.msaMdsOptions = this.loadStateAndMsaData()
 
     this.state = {
@@ -93,10 +89,34 @@ class Subsets extends Component {
     return this.setState({
       state,
       msaMd
-    });
+    })
+  }
+
+  loadVarSelect(varCounter) {
+    return (
+      <Select
+        key={'selectVar' + varCounter}
+        isDisabled={false}
+        onChange={e => this.handleSelect({ ['selectVar' + varCounter]: e })}
+        placeholder={'Select a variable...'}
+        searchable={true}
+        autoFocus
+        openOnFocus
+        simpleValue
+        options={this.filterSelectedOptions(variableOptions, [
+          'selectVar' + varCounter
+        ])}
+      />
+    )
+  }
+
+  filterSelectedOptions(variableOptions, selectName) {
+    return variableOptions
   }
 
   render() {
+    const { location } = this.props
+    const subsetYear = location ? location.pathname.split('/')[2] : 'NA'
     return (
       <div className="Subsets">
         <div className="intro">
@@ -123,8 +143,7 @@ class Subsets extends Component {
         <div><h4 style={{display: 'inline-block'}}>State:&nbsp;</h4>{this.state.state ? this.state.state : <i>(none)</i>}</div>
         <div><h4 style={{display: 'inline-block'}}>MSA/MD:&nbsp;</h4>{this.state.msaMd ? this.state.msaMd : <i>(none)</i>}</div>
       </div>
-    );
+    )
   }
 }
-
-export default Subsets;
+export default Subsets
