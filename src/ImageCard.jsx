@@ -10,7 +10,7 @@ const ImageCard = props => {
     <div className={cardClass}>
       <Link
         disabled={!props.enabled}
-        to={props.path}>
+        to={props.path+"/"+props.year}>
         <div className="ImageWrapper">
           <img src={props.image} alt={props.caption} className="imagechild"/>
         </div>

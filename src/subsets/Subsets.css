@@ -1,0 +1,81 @@
+.Subsets {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 3rem;
+}
+
+.blockHeader {
+  display: inline-block;
+  width: 45%;
+  padding: 0 1rem;
+}
+
+.blockDropDown {
+  display: inline-block;
+  width: 45%;
+  padding: 0 1rem 1rem;
+
+}
+
+.blockVarDropDown {
+  display: inline-block;
+  width: 100%;
+  padding: 0 0 1rem;
+
+}
+
+.blockVarCheckBox {
+  padding: 0 0 1rem;
+
+}
+
+.Subsets .actionsTakenBoxes {
+  font-size: 0.9em;
+  vertical-align: top;
+}
+
+.Subsets .checkBoxRow {
+  font-size: 0.8em;
+  vertical-align: top;
+  padding: 0.5rem;
+  width: 50%;
+}
+
+.Subsets .checkboxInput {
+  display: block;
+  float: left;
+  margin-left: 10px;
+}
+
+.Buttons button:hover,
+.Buttons button:visited:hover {
+  background-color: #205493;
+}
+.Buttons button:active,
+.Buttons button:visited:active {
+  background-color: #112e51;
+}
+.Buttons button:disabled,
+.Buttons button:visited:disabled {
+  background-color: #d6d7d9;
+  pointer-events: none;
+}
+.Buttons button:disabled:hover,
+.Buttons button:disabled:active,
+.Buttons button:disabled:focus,
+.Buttons button:visited:disabled:hover,
+.Buttons button:visited:disabled:focus,
+.Buttons button:visited:disabled:active {
+  background-color: #d6d7d9;
+}
+
+.Buttons button {
+  font-size: 0.95em;
+  width: 8rem;
+  height: 3rem;
+
+}
+
+.Buttons .nextButton {
+  float: right;
+}
