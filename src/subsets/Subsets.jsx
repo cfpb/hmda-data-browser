@@ -35,7 +35,7 @@ class Subsets extends Component {
     this.state = {
       state: '',
       msaMd: '',
-      variables: []
+      variables: {}
     }
   }
 
@@ -92,11 +92,16 @@ class Subsets extends Component {
     })
   }
 
-  onVariableChange(selectedOptions) {
+  onVariableChange(selectedVariables) {
+    const selected = {}
+    selectedVariables.forEach(variable => {
+      const curr = this.state.variables[variable.value]
+      if(curr) selected[variable.value] = curr
+      else selected[variable.value] = {}
+    })
+
     this.setState({
-      variables: selectedOptions.map(option => {
-        return {id: option.value, selectedOptions: []}
-      })
+      variables: selected
     })
   }
 
@@ -104,16 +109,43 @@ class Subsets extends Component {
     return VARIABLES[variable].options.map((v) => {
       return (
         <div className="CheckboxWrapper" key={v.id}>
-          <input id={variable + v.id} type="checkbox"></input>
+          <input onChange={e => {
+            this.setState({
+              variables: {
+                ...this.state.variables,
+                [variable]: {
+                  ...this.state.variables[variable],
+                  [v.id]: e.target.checked
+                }
+              }
+            })
+          }} id={variable + v.id} type="checkbox"></input>
           <label htmlFor={variable + v.id}>{v.name}</label>
         </div>
       )
     })
   }
 
+  someChecksExist(){
+    const vars = this.state.variables
+    const keys = Object.keys(vars)
+    for(let i=0; i < keys.length; i++){
+      const checkVars = vars[keys[i]]
+      const checkKeys = Object.keys(checkVars)
+      for(let j=0; j < checkKeys.length; j++){
+        if(checkVars[checkKeys[j]]) return true
+      }
+    }
+    return false
+  }
+
   render() {
     const { location } = this.props
     const subsetYear = location ? location.pathname.split('/')[2] : 'NA'
+    const { state, msaMd, variables } = this.state
+    const variablesArr = Object.keys(variables)
+    const checksExist = this.someChecksExist()
+
     return (
       <div className="Subsets">
         <div className="intro">
@@ -149,21 +181,21 @@ class Subsets extends Component {
             options={this.variableOptions}
           />
         </div>
-        {this.state.state || this.state.msaMd ?
+        {state || msaMd ?
           <div className="QuerySummary">
-            {this.state.state && this.state.msaMd ?
-              <span>Querying for data in<b> MSA/MD {this.state.msaMd} </b>in<b> {this.state.state}</b></span>
-            : this.state.state ?
-              <span>Querying for data in<b> {this.state.state}</b></span>
+            {state && msaMd ?
+              <span>Querying for data in<b> MSA/MD {msaMd} </b>in<b> {state}</b></span>
+            : state ?
+              <span>Querying for data in<b> {state}</b></span>
             :
-              <span>Querying for data in<b> MSA/MD {this.state.msaMd}</b></span>
+              <span>Querying for data in<b> MSA/MD {msaMd}</b></span>
             }
             <div className="CheckboxContainer">
-              {this.state.variables.length > 0
+              {variablesArr.length > 0
                 ?
                   <div className="border">
-                    <h3>{VARIABLES[this.state.variables[0]].label}</h3>
-                    {this.renderCheckboxes(this.state.variables[0])}
+                    <h3>{VARIABLES[variablesArr[0]].label}</h3>
+                    {this.renderCheckboxes(variablesArr[0])}
                   </div>
                 :
                   <div className="PlaceholderBorder border">
@@ -172,11 +204,11 @@ class Subsets extends Component {
               }
             </div>
             <div className="CheckboxContainer">
-              {this.state.variables.length > 1
+              {variablesArr.length > 1
                 ?
                   <div className="border">
-                    <h3>{VARIABLES[this.state.variables[1]].label}</h3>
-                    {this.renderCheckboxes(this.state.variables[1])}
+                    <h3>{VARIABLES[variablesArr[1]].label}</h3>
+                    {this.renderCheckboxes(variablesArr[1])}
                   </div>
                 :
                   <div className="PlaceholderBorder border">
@@ -184,7 +216,7 @@ class Subsets extends Component {
                   </div>
               }
             </div>
-          <button disabled={1} className={ 1 ? 'QueryButton disabled' : 'QueryButton'}>Get Subset</button>
+          <button disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset</button>
           </div>
         : null
       }
