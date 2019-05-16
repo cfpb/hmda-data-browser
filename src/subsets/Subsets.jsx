@@ -3,14 +3,12 @@ import Select from 'react-select'
 import Header from '../common/Header.jsx'
 import STATEOBJ from '../constants/stateObj.js'
 import stateToMsas from '../constants/stateToMsas.js'
-import ACTIONSTAKEN from '../constants/actionsTaken.js'
-import RACES from '../constants/races.js'
 import VARIABLES from '../constants/variables.js'
 
 import './Subsets.css'
 
-const variableOptions = VARIABLES.map(variable => {
-  return { value: variable.id, label: variable.label }
+const variableOptions = Object.keys(VARIABLES).map(variable => {
+  return { value: variable, label: VARIABLES[variable].label }
 })
 
 const styleFn = {
@@ -29,29 +27,30 @@ const styleFn = {
 class Subsets extends Component {
   constructor(props) {
     super(props)
-    this.onMsaMdsChange = this.onMsaMdsChange.bind(this)
-    this.msaMdsOptions = this.loadStateAndMsaData()
+    this.onGeographyChange = this.onGeographyChange.bind(this)
+    this.onVariableChange = this.onVariableChange.bind(this)
+    this.geographyOptions = this.createGeographyOptions()
+    this.variableOptions = variableOptions
 
     this.state = {
       state: '',
-      msaMd: ''
+      msaMd: '',
+      variables: []
     }
   }
 
-
-
-  loadStateAndMsaData() {
+  createGeographyOptions() {
     const subsetYear = this.props.location.pathname.split('/')[2]
 
     const statesWithMsas = stateToMsas[subsetYear]
-    let msaMdsOptions = []
+    let geographyOptions = []
 
     Object.keys(statesWithMsas).forEach(state => {
       //state code
       if(state.length === 2) {
-        msaMdsOptions.push({value: state, label: `${STATEOBJ[state]} - STATEWIDE`})
+        geographyOptions.push({value: state, label: `${STATEOBJ[state]} - STATEWIDE`})
         statesWithMsas[state].forEach(msaMd => {
-          msaMdsOptions.push({
+          geographyOptions.push({
             value: msaMd.id,
             label:  `${msaMd.id} - ${msaMd.name} - ${STATEOBJ[state]}`
           })
@@ -59,26 +58,27 @@ class Subsets extends Component {
       } else {
         //multistate
         statesWithMsas[state].forEach(msaMd => {
-          msaMdsOptions.push({
+          geographyOptions.push({
             value: msaMd.id,
-            label:  `${msaMd.id.replace('multi','')} - ${msaMd.name}`
+            label:  `${msaMd.id.replace('multi','')} - ${msaMd.name} - ENTIRE MSA/MD`
           })
         })
       }
     })
 
-    return msaMdsOptions
+    return geographyOptions
   }
 
-  onMsaMdsChange(selectedOption) {
+  onGeographyChange(selectedOption) {
     let state, msaMd
-    const label = selectedOption.label
+    let { value, label } = selectedOption
+    value = value + ''
 
     if(!label) return
 
     if(label.match('STATEWIDE'))
       state = label.split(' - ')[0]
-    else if(label.match('ENTIRE MSAMD'))
+    else if(value.match('multi'))
       msaMd = selectedOption.value.replace('multi', '')
     else {
       const split = label.split(' - ')
@@ -92,26 +92,23 @@ class Subsets extends Component {
     })
   }
 
-  loadVarSelect(varCounter) {
-    return (
-      <Select
-        key={'selectVar' + varCounter}
-        isDisabled={false}
-        onChange={e => this.handleSelect({ ['selectVar' + varCounter]: e })}
-        placeholder={'Select a variable...'}
-        searchable={true}
-        autoFocus
-        openOnFocus
-        simpleValue
-        options={this.filterSelectedOptions(variableOptions, [
-          'selectVar' + varCounter
-        ])}
-      />
-    )
+  onVariableChange(selectedOptions) {
+    this.setState({
+      variables: selectedOptions.map(option => {
+        return {id: option.value, selectedOptions: []}
+      })
+    })
   }
 
-  filterSelectedOptions(variableOptions, selectName) {
-    return variableOptions
+  renderCheckboxes(variable) {
+    return VARIABLES[variable].options.map((v) => {
+      return (
+        <div className="CheckboxWrapper" key={v.id}>
+          <input id={variable + v.id} type="checkbox"></input>
+          <label htmlFor={variable + v.id}>{v.name}</label>
+        </div>
+      )
+    })
   }
 
   render() {
@@ -128,20 +125,69 @@ class Subsets extends Component {
             </p>
           </Header>
         </div>
+        <div className="Selects">
           <h4>Choose a state or MSA/MD:</h4>
           <Select
             styles={styleFn}
-            onChange={this.onMsaMdsChange}
+            onChange={this.onGeographyChange}
             placeholder="Select MSA/MD..."
             searchable={true}
             autoFocus
             openOnFocus
             simpleValue
-            options={this.msaMdsOptions}
-            value={this.state.selectMsaMds}
+            options={this.geographyOptions}
           />
-        <div><h4 style={{display: 'inline-block'}}>State:&nbsp;</h4>{this.state.state ? this.state.state : <i>(none)</i>}</div>
-        <div><h4 style={{display: 'inline-block'}}>MSA/MD:&nbsp;</h4>{this.state.msaMd ? this.state.msaMd : <i>(none)</i>}</div>
+          <h4>Choose up to two variables:</h4>
+          <Select
+            onChange={this.onVariableChange}
+            placeholder="Select a variable"
+            isMulti={true}
+            searchable={true}
+            autoFocus
+            openOnFocus
+            simpleValue
+            options={this.variableOptions}
+          />
+        </div>
+        {this.state.state || this.state.msaMd ?
+          <div className="QuerySummary">
+            {this.state.state && this.state.msaMd ?
+              <span>Querying for data in<b> MSA/MD {this.state.msaMd} </b>in<b> {this.state.state}</b></span>
+            : this.state.state ?
+              <span>Querying for data in<b> {this.state.state}</b></span>
+            :
+              <span>Querying for data in<b> MSA/MD {this.state.msaMd}</b></span>
+            }
+            <div className="CheckboxContainer">
+              {this.state.variables.length > 0
+                ?
+                  <div className="border">
+                    <h3>{VARIABLES[this.state.variables[0]].label}</h3>
+                    {this.renderCheckboxes(this.state.variables[0])}
+                  </div>
+                :
+                  <div className="PlaceholderBorder border">
+                    <span>Variable 1 Options</span>
+                  </div>
+              }
+            </div>
+            <div className="CheckboxContainer">
+              {this.state.variables.length > 1
+                ?
+                  <div className="border">
+                    <h3>{VARIABLES[this.state.variables[1]].label}</h3>
+                    {this.renderCheckboxes(this.state.variables[1])}
+                  </div>
+                :
+                  <div className="PlaceholderBorder border">
+                    <span>Variable 2 Options</span>
+                  </div>
+              }
+            </div>
+          <button disabled={1} className={ 1 ? 'QueryButton disabled' : 'QueryButton'}>Get Subset</button>
+          </div>
+        : null
+      }
       </div>
     )
   }
