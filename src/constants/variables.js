@@ -1,4 +1,4 @@
-const actionTaken = {
+const actions_taken = {
   label: 'Action Taken',
   options: [
     { id: '1', name: 'Loan Originated' },
@@ -13,7 +13,7 @@ const actionTaken = {
 }
 
 
-const races = [
+const raceList = [
   'American Indian or Alaska Native',
   'Asian',
   'Black Or African American',
@@ -25,9 +25,9 @@ const races = [
   'Race Not Available'
 ]
 
-const race = {
+const races = {
   label: 'Race',
-  options: races.map(race => {
+  options: raceList.map(race => {
     return {
       id: encodeURIComponent(race),
       name: race
@@ -36,6 +36,6 @@ const race = {
 }
 
 export default {
-  actionTaken,
-  race
+  actions_taken,
+  races
 }

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Select from 'react-select'
 import Header from '../common/Header.jsx'
+import { getSubset } from '../api.js'
 import STATEOBJ from '../constants/stateObj.js'
 import stateToMsas from '../constants/stateToMsas.js'
 import VARIABLES from '../constants/variables.js'
@@ -29,6 +30,7 @@ class Subsets extends Component {
     super(props)
     this.onGeographyChange = this.onGeographyChange.bind(this)
     this.onVariableChange = this.onVariableChange.bind(this)
+    this.requestSubset = this.requestSubset.bind(this)
     this.geographyOptions = this.createGeographyOptions()
     this.variableOptions = variableOptions
 
@@ -37,6 +39,11 @@ class Subsets extends Component {
       msaMd: '',
       variables: {}
     }
+  }
+
+  requestSubset() {
+    getSubset(this.state)
+      .then(res => { console.log(res) })
   }
 
   createGeographyOptions() {
@@ -110,7 +117,7 @@ class Subsets extends Component {
       return (
         <div className="CheckboxWrapper" key={v.id}>
           <input onChange={e => {
-            this.setState({
+            const newState = {
               variables: {
                 ...this.state.variables,
                 [variable]: {
@@ -118,7 +125,11 @@ class Subsets extends Component {
                   [v.id]: e.target.checked
                 }
               }
-            })
+            }
+
+            if(!newState.variables[variable][v.id]) delete newState.variables[variable][v.id]
+
+            this.setState(newState)
           }} id={variable + v.id} type="checkbox"></input>
           <label htmlFor={variable + v.id}>{v.name}</label>
         </div>
@@ -140,8 +151,6 @@ class Subsets extends Component {
   }
 
   render() {
-    const { location } = this.props
-    const subsetYear = location ? location.pathname.split('/')[2] : 'NA'
     const { state, msaMd, variables } = this.state
     const variablesArr = Object.keys(variables)
     const checksExist = this.someChecksExist()
@@ -216,7 +225,7 @@ class Subsets extends Component {
                   </div>
               }
             </div>
-          <button disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset</button>
+          <button onClick={this.requestSubset} disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset</button>
           </div>
         : null
       }
