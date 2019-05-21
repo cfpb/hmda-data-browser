@@ -50,7 +50,7 @@ class Subsets extends Component {
     const subsetYear = this.props.location.pathname.split('/')[2]
 
     const statesWithMsas = stateToMsas[subsetYear]
-    let geographyOptions = []
+    let geographyOptions = [{value: 'nationwide', label: 'NATIONWIDE'}]
 
     Object.keys(statesWithMsas).forEach(state => {
       //state code
@@ -59,7 +59,8 @@ class Subsets extends Component {
         statesWithMsas[state].forEach(msaMd => {
           geographyOptions.push({
             value: msaMd.id,
-            label:  `${msaMd.id} - ${msaMd.name} - ${STATEOBJ[state]}`
+            label:  `${msaMd.id} - ${msaMd.name} - ${STATEOBJ[state]}`,
+            state: state
           })
         })
       } else {
@@ -83,13 +84,16 @@ class Subsets extends Component {
 
     if(!label) return
 
-    if(label.match('STATEWIDE'))
-      state = label.split(' - ')[0]
+    if(value === 'nationwide') {
+      state = 'nationwide'
+    }
+    else if(label.match('STATEWIDE'))
+      state = value
     else if(value.match('multi'))
-      msaMd = selectedOption.value.replace('multi', '')
+      msaMd = value.replace('multi', '')
     else {
       const split = label.split(' - ')
-      state = split[2]
+      state = selectedOption.state
       msaMd = split[0]
     }
 
@@ -167,7 +171,7 @@ class Subsets extends Component {
           </Header>
         </div>
         <div className="Selects">
-          <h4>Choose a state or MSA/MD:</h4>
+          <h4>Choose a state, MSA/MD, or nationwide:</h4>
           <Select
             styles={styleFn}
             onChange={this.onGeographyChange}
@@ -184,7 +188,6 @@ class Subsets extends Component {
             placeholder="Select a variable"
             isMulti={true}
             searchable={true}
-            autoFocus
             openOnFocus
             simpleValue
             options={this.variableOptions}

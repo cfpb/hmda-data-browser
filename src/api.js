@@ -1,7 +1,9 @@
 function makeSubsetUrl(obj) {
   let url = 'https://hmda4.demo.cfpb.gov/v2/data-browser-api/view'
-
-  if (obj.state) url += '/state/' + obj.state
+  if (obj.state){
+    if(obj.state === 'nationwide') url += '/nationwide'
+    else url += '/state/' + obj.state
+  }
   if (obj.msaMd) url += '/msamd/' + obj.msaMd
 
   //csv logic
