@@ -4,78 +4,87 @@
   padding: 0 3rem;
 }
 
-.blockHeader {
-  display: inline-block;
-  width: 45%;
-  padding: 0 1rem;
+.Subsets .Selects {
+  padding-bottom: 40px;
+  border-bottom: 1px solid #d1d1d1;
+}
+.Subsets .QuerySummary {
+  align-items: stretch;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  font-size: 20px;
 }
 
-.blockDropDown {
-  display: inline-block;
-  width: 45%;
-  padding: 0 1rem 1rem;
-
-}
-
-.blockVarDropDown {
+.QuerySummary > span {
   display: inline-block;
   width: 100%;
-  padding: 0 0 1rem;
-
+  margin: 30px 0;
 }
 
-.blockVarCheckBox {
-  padding: 0 0 1rem;
-
+.QuerySummary b {
+  font-size: 24px;
 }
 
-.Subsets .actionsTakenBoxes {
-  font-size: 0.9em;
-  vertical-align: top;
-}
-
-.Subsets .checkBoxRow {
-  font-size: 0.8em;
-  vertical-align: top;
-  padding: 0.5rem;
+.CheckboxContainer{
   width: 50%;
+  height: 300px;
+  padding: 0.5em;
 }
 
-.Subsets .checkboxInput {
-  display: block;
-  float: left;
-  margin-left: 10px;
+.CheckboxContainer .border {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  font-size: 16px;
 }
 
-.Buttons button:hover,
-.Buttons button:visited:hover {
+.CheckboxContainer .PlaceholderBorder {
+  border: 3px dashed #b1b1b1;
+  font-style: italic;
+  color: #666;
+  align-items: center;
+  justify-content: center;
+}
+
+.CheckboxContainer h3 {
+  margin: 0 0 0.5em 0;
+}
+
+.CheckboxWrapper {
+  width: 100%;
+  padding: 0.25em 0;
+}
+
+.CheckboxWrapper > label {
+  padding-left: 2px;
+}
+
+.CheckboxWrapper > input, .CheckboxWrapper > label {
+  cursor: pointer;
+}
+
+.QueryButton {
+  background-color: #0071bc;
+  color: #fff;
+  border: 0;
+  cursor: pointer;
+  margin: 1em 0.5em 0 0;
+  padding: 1em;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.QueryButton:hover {
   background-color: #205493;
 }
-.Buttons button:active,
-.Buttons button:visited:active {
+
+.QueryButton:active {
   background-color: #112e51;
 }
-.Buttons button:disabled,
-.Buttons button:visited:disabled {
-  background-color: #d6d7d9;
-  pointer-events: none;
-}
-.Buttons button:disabled:hover,
-.Buttons button:disabled:active,
-.Buttons button:disabled:focus,
-.Buttons button:visited:disabled:hover,
-.Buttons button:visited:disabled:focus,
-.Buttons button:visited:disabled:active {
-  background-color: #d6d7d9;
-}
 
-.Buttons button {
-  font-size: 0.95em;
-  width: 8rem;
-  height: 3rem;
-
-}
-
-.Buttons .nextButton {
-  float: right;
+.QueryButton.disabled {
+  background-color: #888;
+  cursor: not-allowed;
 }

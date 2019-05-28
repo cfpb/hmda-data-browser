@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import './ImageCard.css'
 
@@ -10,7 +10,7 @@ const ImageCard = props => {
     <div className={cardClass}>
       <Link
         disabled={!props.enabled}
-        to={props.path+"/"+props.year}>
+        to={props.path+'/'+props.year}>
         <div className="ImageWrapper">
           <img src={props.image} alt={props.caption} className="imagechild"/>
         </div>
