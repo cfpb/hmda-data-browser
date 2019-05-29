@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import Select from 'react-select'
 import Header from '../common/Header.jsx'
+import CheckboxContainer from './CheckboxContainer.jsx'
 import { getSubsetDetails } from '../api.js'
 import {
   createGeographyOptions,
   createVariableOptions,
   geographyStyleFn
 } from './selectUtils.js'
-import VARIABLES from '../constants/variables.js'
 
 import './Subsets.css'
 
@@ -16,6 +16,7 @@ class Subsets extends Component {
     super(props)
     this.onGeographyChange = this.onGeographyChange.bind(this)
     this.onVariableChange = this.onVariableChange.bind(this)
+    this.makeCheckboxChange = this.makeCheckboxChange.bind(this)
     this.requestSubset = this.requestSubset.bind(this)
     this.geographyOptions = createGeographyOptions(this.props)
     this.variableOptions = createVariableOptions()
@@ -72,29 +73,22 @@ class Subsets extends Component {
     })
   }
 
-  renderCheckboxes(variable) {
-    return VARIABLES[variable].options.map((v) => {
-      return (
-        <div className="CheckboxWrapper" key={v.id}>
-          <input onChange={e => {
-            const newState = {
-              variables: {
-                ...this.state.variables,
-                [variable]: {
-                  ...this.state.variables[variable],
-                  [v.id]: e.target.checked
-                }
-              }
-            }
+  makeCheckboxChange(variable, subvar) {
+    return e => {
+      const newState = {
+        variables: {
+          ...this.state.variables,
+          [variable]: {
+            ...this.state.variables[variable],
+            [subvar.id]: e.target.checked
+          }
+        }
+      }
 
-            if(!newState.variables[variable][v.id]) delete newState.variables[variable][v.id]
+      if(!newState.variables[variable][subvar.id]) delete newState.variables[variable][subvar.id]
 
-            this.setState(newState)
-          }} id={variable + v.id} type="checkbox"></input>
-          <label htmlFor={variable + v.id}>{v.name}</label>
-        </div>
-      )
-    })
+      this.setState(newState)
+    }
   }
 
   someChecksExist(){
@@ -158,32 +152,8 @@ class Subsets extends Component {
             :
               <span>Querying for data in<b> MSA/MD {msaMd}</b></span>
             }
-            <div className="CheckboxContainer">
-              {variablesArr.length > 0
-                ?
-                  <div className="border">
-                    <h3>{VARIABLES[variablesArr[0]].label}</h3>
-                    {this.renderCheckboxes(variablesArr[0])}
-                  </div>
-                :
-                  <div className="PlaceholderBorder border">
-                    <span>Variable 1 Options</span>
-                  </div>
-              }
-            </div>
-            <div className="CheckboxContainer">
-              {variablesArr.length > 1
-                ?
-                  <div className="border">
-                    <h3>{VARIABLES[variablesArr[1]].label}</h3>
-                    {this.renderCheckboxes(variablesArr[1])}
-                  </div>
-                :
-                  <div className="PlaceholderBorder border">
-                    <span>Variable 2 Options</span>
-                  </div>
-              }
-            </div>
+            <CheckboxContainer vars={variablesArr} position={1} callbackFactory={this.makeCheckboxChange}/>
+            <CheckboxContainer vars={variablesArr} position={2} callbackFactory={this.makeCheckboxChange}/>
           <button onClick={this.requestSubset} disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset Details</button>
           </div>
         : null
