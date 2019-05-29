@@ -1,29 +1,15 @@
 import React, { Component } from 'react'
 import Select from 'react-select'
 import Header from '../common/Header.jsx'
-import { getSubset } from '../api.js'
-import STATEOBJ from '../constants/stateObj.js'
-import stateToMsas from '../constants/stateToMsas.js'
+import { getSubsetDetails } from '../api.js'
+import {
+  createGeographyOptions,
+  createVariableOptions,
+  geographyStyleFn
+} from './selectUtils.js'
 import VARIABLES from '../constants/variables.js'
 
 import './Subsets.css'
-
-const variableOptions = Object.keys(VARIABLES).map(variable => {
-  return { value: variable, label: VARIABLES[variable].label }
-})
-
-const styleFn = {
-  option: (provided, state) => {
-   if (state.data.value.length === 2) {
-     return {
-       ...provided,
-       fontWeight: 'bold',
-       textDecoration: 'underline'
-     }
-   }
-   return provided
-  }
-}
 
 class Subsets extends Component {
   constructor(props) {
@@ -31,50 +17,20 @@ class Subsets extends Component {
     this.onGeographyChange = this.onGeographyChange.bind(this)
     this.onVariableChange = this.onVariableChange.bind(this)
     this.requestSubset = this.requestSubset.bind(this)
-    this.geographyOptions = this.createGeographyOptions()
-    this.variableOptions = variableOptions
+    this.geographyOptions = createGeographyOptions(this.props)
+    this.variableOptions = createVariableOptions()
 
     this.state = {
       state: '',
       msaMd: '',
-      variables: {}
+      variables: {},
+      aggregations: {}
     }
   }
 
   requestSubset() {
-    getSubset(this.state)
+    getSubsetDetails(this.state)
       .then(res => { console.log(res) })
-  }
-
-  createGeographyOptions() {
-    const subsetYear = this.props.location.pathname.split('/')[2]
-
-    const statesWithMsas = stateToMsas[subsetYear]
-    let geographyOptions = [{value: 'nationwide', label: 'NATIONWIDE'}]
-
-    Object.keys(statesWithMsas).forEach(state => {
-      //state code
-      if(state.length === 2) {
-        geographyOptions.push({value: state, label: `${STATEOBJ[state]} - STATEWIDE`})
-        statesWithMsas[state].forEach(msaMd => {
-          geographyOptions.push({
-            value: msaMd.id,
-            label:  `${msaMd.id} - ${msaMd.name} - ${STATEOBJ[state]}`,
-            state: state
-          })
-        })
-      } else {
-        //multistate
-        statesWithMsas[state].forEach(msaMd => {
-          geographyOptions.push({
-            value: msaMd.id,
-            label:  `${msaMd.id.replace('multi','')} - ${msaMd.name} - ENTIRE MSA/MD`
-          })
-        })
-      }
-    })
-
-    return geographyOptions
   }
 
   onGeographyChange(selectedOption) {
@@ -173,7 +129,7 @@ class Subsets extends Component {
         <div className="Selects">
           <h4>Choose a state, MSA/MD, or nationwide:</h4>
           <Select
-            styles={styleFn}
+            styles={geographyStyleFn}
             onChange={this.onGeographyChange}
             placeholder="Select MSA/MD..."
             searchable={true}
@@ -228,7 +184,7 @@ class Subsets extends Component {
                   </div>
               }
             </div>
-          <button onClick={this.requestSubset} disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset</button>
+          <button onClick={this.requestSubset} disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset Details</button>
           </div>
         : null
       }
