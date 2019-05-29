@@ -35,7 +35,17 @@ const races = {
   })
 }
 
+const sexes = {
+  label: 'Sex',
+  options: [
+    {id: 'Male', name: 'Male'},
+    {id: 'Female', name: 'Female'},
+    {id: 'Joint', name: 'Joint'}
+  ]
+}
+
 export default {
   actions_taken,
-  races
+  races,
+  sexes
 }
