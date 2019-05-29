@@ -146,7 +146,7 @@ class Subsets extends Component {
             searchable={true}
             openOnFocus
             simpleValue
-            options={this.variableOptions}
+            options={variablesArr.length >= 2 ? [] : this.variableOptions}
           />
         </div>
         {state || msaMd ?
