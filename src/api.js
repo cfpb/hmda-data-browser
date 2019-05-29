@@ -1,5 +1,5 @@
 function makeSubsetUrl(obj) {
-  let url = 'https://hmda4.demo.cfpb.gov/v2/data-browser-api/view'
+  let url = '/v2/data-browser-api/view'
   if (obj.state){
     if(obj.state === 'nationwide') url += '/nationwide'
     else url += '/state/' + obj.state
@@ -29,6 +29,37 @@ function makeSubsetUrl(obj) {
   return url
 }
 
-export function getSubset(obj){
-  return Promise.resolve(makeSubsetUrl(obj))
+function runFetch(url, options = { method: 'GET' }) {
+
+  let headers = { Accept: 'application/json' }
+
+  if (options.params && options.params.format === 'csv') {
+    headers = {
+      'Content-Type': 'text/csv',
+      Accept: 'text/csv'
+    }
+  }
+
+  var fetchOptions = {
+    method: options.method || 'GET',
+    body: options.body,
+    headers: headers
+  }
+
+  return fetch(url, fetchOptions)
+    .then(response => {
+      return new Promise(resolve => {
+        if (options.params && options.params.format === 'csv') {
+          return resolve(response.text())
+        }
+        resolve(response.json())
+      })
+    })
+    .catch(err => {
+      console.error(err)
+    })
+}
+
+export function getSubsetDetails(obj){
+  return runFetch(makeSubsetUrl(obj))
 }
