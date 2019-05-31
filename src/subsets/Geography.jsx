@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Select from 'react-select'
 import Header from '../common/Header.jsx'
+import Error from './Error.jsx'
 import { getCSV } from '../api.js'
 import {
   createGeographyOptions,
@@ -18,12 +19,16 @@ class Geography extends Component {
 
     this.state = {
       state: '',
-      msaMd: ''
+      msaMd: '',
+      error: null
     }
   }
 
   requestGeographyCSV() {
     getCSV(this.state)
+      .catch(error => {
+        this.setState({error})
+      })
   }
 
 
@@ -55,7 +60,7 @@ class Geography extends Component {
   }
 
   render() {
-    const { state, msaMd } = this.state
+    const { state, msaMd, error } = this.state
 
     const isDisabled = !state && !msaMd
 
@@ -83,7 +88,8 @@ class Geography extends Component {
             options={this.geographyOptions}
           />
         </div>
-        <button onClick={this.requestGeographyCSV} disabled={isDisabled} className={ isDisabled ? 'QueryButton disabled' : 'QueryButton'}>Download Data</button>
+        {error ? null : <button onClick={this.requestGeographyCSV} disabled={isDisabled} className={ isDisabled ? 'QueryButton disabled' : 'QueryButton'}>Download Data</button>}
+        {error ? <Error error={error}/> : null}
       </div>
     )
   }

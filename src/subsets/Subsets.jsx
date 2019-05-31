@@ -36,7 +36,6 @@ class Subsets extends Component {
   requestSubset() {
     getSubsetDetails(this.state)
       .then(details => {
-        console.log(details)
         this.setState({details})
       })
       .catch(error => {
