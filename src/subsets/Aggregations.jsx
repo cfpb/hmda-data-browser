@@ -8,19 +8,19 @@ function buildRows(aggregations, v1, p1, v2, p2) {
 
   for(let i=0; i<p1.length; i++){
     const row = []
-    row.push(<th>{VARIABLES[v1].mapping[p1[i]]}</th>)
+    row.push(<th key="header">{VARIABLES[v1].mapping[p1[i]]}</th>)
     if(p2) {
       for(let j=0; j<p2.length; j++){
         const currAgg = extractAgg(agg, v1, p1[i], v2, p2[j])
-        row.push(<td>{currAgg.count}</td>)
-        row.push(<td>{currAgg.sum}</td>)
+        row.push(<td key={`count${i}${j}`}>{currAgg.count}</td>)
+        row.push(<td key={`sum${i}${j}`}>{currAgg.sum}</td>)
       }
     }else{
       const currAgg = extractAgg(agg, v1, p1[i])
-      row.push(<td>{currAgg.count}</td>)
-      row.push(<td>{currAgg.sum}</td>)
+      row.push(<td key={`count${i}`}>{currAgg.count}</td>)
+      row.push(<td key={`sum${i}`}>{currAgg.sum}</td>)
     }
-    rows.push(<tr>{row}</tr>)
+    rows.push(<tr key={i}>{row}</tr>)
   }
   return <>{rows}</>
 
