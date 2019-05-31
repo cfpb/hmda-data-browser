@@ -51,15 +51,13 @@ function runFetch(url, isCSV) {
 
   return fetch(url, fetchOptions)
     .then(response => {
+      if(response.status > 399) throw response
       return new Promise(resolve => {
         if (isCSV) {
           return resolve(response.text())
         }
         resolve(response.json())
       })
-    })
-    .catch(err => {
-      console.error(err)
     })
 }
 
