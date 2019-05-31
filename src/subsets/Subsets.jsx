@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import Select from 'react-select'
 import Header from '../common/Header.jsx'
 import CheckboxContainer from './CheckboxContainer.jsx'
-import { getSubsetDetails } from '../api.js'
+import Aggregations from './Aggregations.jsx'
+import { getSubsetDetails, getSubsetCSV } from '../api.js'
 import {
   createGeographyOptions,
   createVariableOptions,
@@ -18,6 +19,7 @@ class Subsets extends Component {
     this.onVariableChange = this.onVariableChange.bind(this)
     this.makeCheckboxChange = this.makeCheckboxChange.bind(this)
     this.requestSubset = this.requestSubset.bind(this)
+    this.requestSubsetCSV = this.requestSubsetCSV.bind(this)
     this.geographyOptions = createGeographyOptions(this.props)
     this.variableOptions = createVariableOptions()
 
@@ -25,14 +27,22 @@ class Subsets extends Component {
       state: '',
       msaMd: '',
       variables: {},
-      aggregations: {}
+      details: {}
     }
   }
 
   requestSubset() {
     getSubsetDetails(this.state)
-      .then(res => { console.log(res) })
+      .then(details => {
+        console.log(details)
+        this.setState({details})
+      })
   }
+
+  requestSubsetCSV() {
+    getSubsetCSV(this.state)
+  }
+
 
   onGeographyChange(selectedOption) {
     let state, msaMd
@@ -56,7 +66,8 @@ class Subsets extends Component {
 
     return this.setState({
       state,
-      msaMd
+      msaMd,
+      details: {}
     })
   }
 
@@ -69,7 +80,8 @@ class Subsets extends Component {
     })
 
     this.setState({
-      variables: selected
+      variables: selected,
+      details: {}
     })
   }
 
@@ -105,7 +117,7 @@ class Subsets extends Component {
   }
 
   render() {
-    const { state, msaMd, variables } = this.state
+    const { state, msaMd, variables, details } = this.state
     const variablesArr = Object.keys(variables)
     const checksExist = this.someChecksExist()
 
@@ -144,18 +156,22 @@ class Subsets extends Component {
           />
         </div>
         {state || msaMd ?
-          <div className="QuerySummary">
-            {state && msaMd ?
-              <span>Querying for data in<b> MSA/MD {msaMd} </b>in<b> {state}</b></span>
-            : state ?
-              <span>Querying for data in<b> {state}</b></span>
-            :
-              <span>Querying for data in<b> MSA/MD {msaMd}</b></span>
-            }
-            <CheckboxContainer vars={variablesArr} position={1} callbackFactory={this.makeCheckboxChange}/>
-            <CheckboxContainer vars={variablesArr} position={2} callbackFactory={this.makeCheckboxChange}/>
-          <button onClick={this.requestSubset} disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset Details</button>
-          </div>
+          <>
+            <div className="QuerySummary">
+              {state && msaMd ?
+                <span>Querying for data in<b> MSA/MD {msaMd} </b>in<b> {state}</b></span>
+              : state ?
+                <span>Querying for data in<b> {state}</b></span>
+              :
+                <span>Querying for data in<b> MSA/MD {msaMd}</b></span>
+              }
+              <CheckboxContainer vars={variablesArr} position={1} callbackFactory={this.makeCheckboxChange}/>
+              <CheckboxContainer vars={variablesArr} position={2} callbackFactory={this.makeCheckboxChange}/>
+            <button onClick={this.requestSubset} disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset Details</button>
+            </div>
+          {details.aggregations ? <Aggregations details={details} variablesArr={variablesArr}/> : null}
+          {details.aggregations ? <button onClick={this.requestSubsetCSV} className="QueryButton CSVButton">Download Data</button> : null}
+          </>
         : null
       }
       </div>

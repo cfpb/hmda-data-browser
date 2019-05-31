@@ -1,4 +1,4 @@
-function makeSubsetUrl(obj) {
+function makeSubsetUrl(obj, isCSV) {
   let url = '/v2/data-browser-api/view'
   if (obj.state){
     if(obj.state === 'nationwide') url += '/nationwide'
@@ -6,7 +6,7 @@ function makeSubsetUrl(obj) {
   }
   if (obj.msaMd) url += '/msamd/' + obj.msaMd
 
-  //csv logic
+  if(isCSV) url += '/csv'
 
   url += '?'
 
@@ -62,4 +62,8 @@ function runFetch(url, options = { method: 'GET' }) {
 
 export function getSubsetDetails(obj){
   return runFetch(makeSubsetUrl(obj))
+}
+
+export function getSubsetCSV(obj){
+  return runFetch(makeSubsetUrl(obj, true))
 }
