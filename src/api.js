@@ -1,6 +1,6 @@
 import fileSaver from 'file-saver'
 
-function makeSubsetUrl(obj, isCSV) {
+function makeUrl(obj, isCSV) {
   let url = '/v2/data-browser-api/view'
   if (obj.state){
     if(obj.state === 'nationwide') url += '/nationwide'
@@ -13,20 +13,22 @@ function makeSubsetUrl(obj, isCSV) {
   url += '?'
 
   const vars = obj.variables
-  const keys = Object.keys(vars)
-  let isFirstParam = true
-  keys.forEach(key => {
-    const varKeys = Object.keys(vars[key])
-    if(varKeys.length){
-      if(isFirstParam) isFirstParam = false
-      else url += '&'
-      url += key + '='
-      varKeys.forEach((k, i) => {
-        if(i) url += ','
-        url += k
-      })
-    }
-  })
+  if(vars) {
+    const keys = Object.keys(vars)
+    let isFirstParam = true
+    keys.forEach(key => {
+      const varKeys = Object.keys(vars[key])
+      if(varKeys.length){
+        if(isFirstParam) isFirstParam = false
+        else url += '&'
+        url += key + '='
+        varKeys.forEach((k, i) => {
+          if(i) url += ','
+          url += k
+        })
+      }
+    })
+  }
 
   return url
 }
@@ -80,18 +82,14 @@ function makeCSVName(obj) {
 }
 
 export function getSubsetDetails(obj){
-  return runFetch(makeSubsetUrl(obj))
+  return runFetch(makeUrl(obj))
 }
 
-export function getSubsetCSV(obj){
-  return runFetch(makeSubsetUrl(obj, true), true).then(csv => {
+export function getCSV(obj){
+  return runFetch(makeUrl(obj, true), true).then(csv => {
           return fileSaver.saveAs(
             new Blob([csv], { type: 'text/csv;charset=utf-16' }),
             makeCSVName(obj)
     )
   })
-}
-
-export function getGeographyCSV(obj){
-  return runFetch(makeSubsetUrl(obj, true), true)
 }

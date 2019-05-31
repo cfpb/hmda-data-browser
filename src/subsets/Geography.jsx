@@ -1,12 +1,9 @@
 import React, { Component } from 'react'
 import Select from 'react-select'
 import Header from '../common/Header.jsx'
-import CheckboxContainer from './CheckboxContainer.jsx'
-import Aggregations from './Aggregations.jsx'
-import { getGeographyCSV } from '../api.js'
+import { getCSV } from '../api.js'
 import {
   createGeographyOptions,
-  createVariableOptions,
   geographyStyleFn
 } from './selectUtils.js'
 
@@ -26,7 +23,7 @@ class Geography extends Component {
   }
 
   requestGeographyCSV() {
-    getGeographyCSV(this.state)
+    getCSV(this.state)
   }
 
 
@@ -86,7 +83,7 @@ class Geography extends Component {
             options={this.geographyOptions}
           />
         </div>
-        <button onClick={this.requestSubset} disabled={isDisabled} className={ isDisabled ? 'QueryButton disabled' : 'QueryButton'}>Download Data</button>
+        <button onClick={this.requestGeographyCSV} disabled={isDisabled} className={ isDisabled ? 'QueryButton disabled' : 'QueryButton'}>Download Data</button>
       </div>
     )
   }

@@ -3,7 +3,7 @@ import Select from 'react-select'
 import Header from '../common/Header.jsx'
 import CheckboxContainer from './CheckboxContainer.jsx'
 import Aggregations from './Aggregations.jsx'
-import { getSubsetDetails, getSubsetCSV } from '../api.js'
+import { getSubsetDetails, getCSV } from '../api.js'
 import {
   createGeographyOptions,
   createVariableOptions,
@@ -40,7 +40,7 @@ class Subsets extends Component {
   }
 
   requestSubsetCSV() {
-    getSubsetCSV(this.state)
+    getCSV(this.state)
   }
 
 
