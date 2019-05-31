@@ -1,24 +1,24 @@
 const actions_taken = {
   label: 'Action Taken',
   options: [
-    { id: '1', name: 'Loan Originated' },
-    { id: '2', name: 'Application approved but not accepted' },
-    { id: '3', name: 'Application denied' },
-    { id: '4', name: 'Application withdrawn by applicant' },
-    { id: '5', name: 'File closed for incompleteness' },
-    { id: '6', name: 'Purchased loan' },
-    { id: '7', name: 'Preapproval request denied' },
-    { id: '8', name: 'Preapproval request approved but not accepted' }
+    { id: '1', name: '1 - Loan Originated' },
+    { id: '2', name: '2 - Application approved but not accepted' },
+    { id: '3', name: '3 - Application denied' },
+    { id: '4', name: '4 - Application withdrawn by applicant' },
+    { id: '5', name: '5 - File closed for incompleteness' },
+    { id: '6', name: '6 - Purchased loan' },
+    { id: '7', name: '7 - Preapproval request denied' },
+    { id: '8', name: '8 - Preapproval request approved but not accepted' }
   ],
   mapping: {
-    1: 'Loan Originated',
-    2: 'Application approved but not accepted',
-    3: 'Application denied',
-    4: 'Application withdrawn by applicant',
-    5: 'File closed for incompleteness',
-    6: 'Purchased loan',
-    7: 'Preapproval request denied',
-    8: 'Preapproval request approved but not accepted'
+    1: '1 - Loan Originated',
+    2: '2 - Application approved but not accepted',
+    3: '3 - Application denied',
+    4: '4 - Application withdrawn by applicant',
+    5: '5 - File closed for incompleteness',
+    6: '6 - Purchased loan',
+    7: '7 - Preapproval request denied',
+    8: '8 - Preapproval request approved but not accepted'
   }
 }
 
