@@ -1,3 +1,5 @@
+import fileSaver from 'file-saver'
+
 function makeSubsetUrl(obj, isCSV) {
   let url = '/v2/data-browser-api/view'
   if (obj.state){
@@ -29,11 +31,11 @@ function makeSubsetUrl(obj, isCSV) {
   return url
 }
 
-function runFetch(url, options = { method: 'GET' }) {
+function runFetch(url, isCSV) {
 
   let headers = { Accept: 'application/json' }
 
-  if (options.params && options.params.format === 'csv') {
+  if (isCSV) {
     headers = {
       'Content-Type': 'text/csv',
       Accept: 'text/csv'
@@ -41,15 +43,14 @@ function runFetch(url, options = { method: 'GET' }) {
   }
 
   var fetchOptions = {
-    method: options.method || 'GET',
-    body: options.body,
+    method: 'GET',
     headers: headers
   }
 
   return fetch(url, fetchOptions)
     .then(response => {
       return new Promise(resolve => {
-        if (options.params && options.params.format === 'csv') {
+        if (isCSV) {
           return resolve(response.text())
         }
         resolve(response.json())
@@ -60,14 +61,37 @@ function runFetch(url, options = { method: 'GET' }) {
     })
 }
 
+function makeCSVName(obj) {
+  let name = ''
+  if(obj.state) name += obj.state + '-'
+  if(obj.msaMd) name += obj.msaMd + '-'
+
+  if(obj.variables){
+    Object.keys(obj.variables).forEach(key => {
+      name += key + '-'
+    })
+  }
+
+  name = name.slice(0, -1)
+
+  name += '.csv'
+
+  return name
+}
+
 export function getSubsetDetails(obj){
   return runFetch(makeSubsetUrl(obj))
 }
 
 export function getSubsetCSV(obj){
-  return runFetch(makeSubsetUrl(obj, true))
+  return runFetch(makeSubsetUrl(obj, true), true).then(csv => {
+          return fileSaver.saveAs(
+            new Blob([csv], { type: 'text/csv;charset=utf-16' }),
+            makeCSVName(obj)
+    )
+  })
 }
 
 export function getGeographyCSV(obj){
-  return runFetch(makeSubsetUrl(obj, true))
+  return runFetch(makeSubsetUrl(obj, true), true)
 }
