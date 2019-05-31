@@ -22,9 +22,11 @@ class Home extends Component {
         <div className="card-container">
           <ImageCard
             image={spreadsheet}
-            caption="Entire datasets (coming soon)"
-            path="/all-data"
-          >Run a data set query and download the entire raw dataset.
+            year="2018"
+            caption="Entire Datasets by Geography"
+            path="all-data"
+            enabled
+          >Download entire raw datasets by state, MSA/MD, or nationwide.
           </ImageCard>
           <ImageCard
             image={selector}

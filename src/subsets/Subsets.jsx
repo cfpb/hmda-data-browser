@@ -137,7 +137,7 @@ class Subsets extends Component {
           <Select
             styles={geographyStyleFn}
             onChange={this.onGeographyChange}
-            placeholder="Select MSA/MD..."
+            placeholder="Select a state or MSA/MD"
             searchable={true}
             autoFocus
             openOnFocus

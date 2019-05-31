@@ -67,3 +67,7 @@ export function getSubsetDetails(obj){
 export function getSubsetCSV(obj){
   return runFetch(makeSubsetUrl(obj, true))
 }
+
+export function getGeographyCSV(obj){
+  return runFetch(makeSubsetUrl(obj, true))
+}
