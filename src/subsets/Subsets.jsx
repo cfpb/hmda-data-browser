@@ -1,81 +1,48 @@
 import React, { Component } from 'react'
 import Select from 'react-select'
 import Header from '../common/Header.jsx'
-import { getSubset } from '../api.js'
-import STATEOBJ from '../constants/stateObj.js'
-import stateToMsas from '../constants/stateToMsas.js'
-import VARIABLES from '../constants/variables.js'
+import CheckboxContainer from './CheckboxContainer.jsx'
+import Aggregations from './Aggregations.jsx'
+import { getSubsetDetails, getSubsetCSV } from '../api.js'
+import {
+  createGeographyOptions,
+  createVariableOptions,
+  geographyStyleFn
+} from './selectUtils.js'
 
 import './Subsets.css'
-
-const variableOptions = Object.keys(VARIABLES).map(variable => {
-  return { value: variable, label: VARIABLES[variable].label }
-})
-
-const styleFn = {
-  option: (provided, state) => {
-   if (state.data.value.length === 2) {
-     return {
-       ...provided,
-       fontWeight: 'bold',
-       textDecoration: 'underline'
-     }
-   }
-   return provided
-  }
-}
 
 class Subsets extends Component {
   constructor(props) {
     super(props)
     this.onGeographyChange = this.onGeographyChange.bind(this)
     this.onVariableChange = this.onVariableChange.bind(this)
+    this.makeCheckboxChange = this.makeCheckboxChange.bind(this)
     this.requestSubset = this.requestSubset.bind(this)
-    this.geographyOptions = this.createGeographyOptions()
-    this.variableOptions = variableOptions
+    this.requestSubsetCSV = this.requestSubsetCSV.bind(this)
+    this.geographyOptions = createGeographyOptions(this.props)
+    this.variableOptions = createVariableOptions()
 
     this.state = {
       state: '',
       msaMd: '',
-      variables: {}
+      variables: {},
+      details: {}
     }
   }
 
   requestSubset() {
-    getSubset(this.state)
-      .then(res => { console.log(res) })
+    getSubsetDetails(this.state)
+      .then(details => {
+        console.log(details)
+        this.setState({details})
+      })
   }
 
-  createGeographyOptions() {
-    const subsetYear = this.props.location.pathname.split('/')[2]
-
-    const statesWithMsas = stateToMsas[subsetYear]
-    let geographyOptions = [{value: 'nationwide', label: 'NATIONWIDE'}]
-
-    Object.keys(statesWithMsas).forEach(state => {
-      //state code
-      if(state.length === 2) {
-        geographyOptions.push({value: state, label: `${STATEOBJ[state]} - STATEWIDE`})
-        statesWithMsas[state].forEach(msaMd => {
-          geographyOptions.push({
-            value: msaMd.id,
-            label:  `${msaMd.id} - ${msaMd.name} - ${STATEOBJ[state]}`,
-            state: state
-          })
-        })
-      } else {
-        //multistate
-        statesWithMsas[state].forEach(msaMd => {
-          geographyOptions.push({
-            value: msaMd.id,
-            label:  `${msaMd.id.replace('multi','')} - ${msaMd.name} - ENTIRE MSA/MD`
-          })
-        })
-      }
-    })
-
-    return geographyOptions
+  requestSubsetCSV() {
+    getSubsetCSV(this.state)
   }
+
 
   onGeographyChange(selectedOption) {
     let state, msaMd
@@ -99,7 +66,8 @@ class Subsets extends Component {
 
     return this.setState({
       state,
-      msaMd
+      msaMd,
+      details: {}
     })
   }
 
@@ -112,33 +80,27 @@ class Subsets extends Component {
     })
 
     this.setState({
-      variables: selected
+      variables: selected,
+      details: {}
     })
   }
 
-  renderCheckboxes(variable) {
-    return VARIABLES[variable].options.map((v) => {
-      return (
-        <div className="CheckboxWrapper" key={v.id}>
-          <input onChange={e => {
-            const newState = {
-              variables: {
-                ...this.state.variables,
-                [variable]: {
-                  ...this.state.variables[variable],
-                  [v.id]: e.target.checked
-                }
-              }
-            }
+  makeCheckboxChange(variable, subvar) {
+    return e => {
+      const newState = {
+        variables: {
+          ...this.state.variables,
+          [variable]: {
+            ...this.state.variables[variable],
+            [subvar.id]: e.target.checked
+          }
+        }
+      }
 
-            if(!newState.variables[variable][v.id]) delete newState.variables[variable][v.id]
+      if(!newState.variables[variable][subvar.id]) delete newState.variables[variable][subvar.id]
 
-            this.setState(newState)
-          }} id={variable + v.id} type="checkbox"></input>
-          <label htmlFor={variable + v.id}>{v.name}</label>
-        </div>
-      )
-    })
+      this.setState(newState)
+    }
   }
 
   someChecksExist(){
@@ -155,7 +117,7 @@ class Subsets extends Component {
   }
 
   render() {
-    const { state, msaMd, variables } = this.state
+    const { state, msaMd, variables, details } = this.state
     const variablesArr = Object.keys(variables)
     const checksExist = this.someChecksExist()
 
@@ -173,9 +135,9 @@ class Subsets extends Component {
         <div className="Selects">
           <h4>Choose a state, MSA/MD, or nationwide:</h4>
           <Select
-            styles={styleFn}
+            styles={geographyStyleFn}
             onChange={this.onGeographyChange}
-            placeholder="Select MSA/MD..."
+            placeholder="Select a state or MSA/MD"
             searchable={true}
             autoFocus
             openOnFocus
@@ -190,46 +152,26 @@ class Subsets extends Component {
             searchable={true}
             openOnFocus
             simpleValue
-            options={this.variableOptions}
+            options={variablesArr.length >= 2 ? [] : this.variableOptions}
           />
         </div>
         {state || msaMd ?
-          <div className="QuerySummary">
-            {state && msaMd ?
-              <span>Querying for data in<b> MSA/MD {msaMd} </b>in<b> {state}</b></span>
-            : state ?
-              <span>Querying for data in<b> {state}</b></span>
-            :
-              <span>Querying for data in<b> MSA/MD {msaMd}</b></span>
-            }
-            <div className="CheckboxContainer">
-              {variablesArr.length > 0
-                ?
-                  <div className="border">
-                    <h3>{VARIABLES[variablesArr[0]].label}</h3>
-                    {this.renderCheckboxes(variablesArr[0])}
-                  </div>
-                :
-                  <div className="PlaceholderBorder border">
-                    <span>Variable 1 Options</span>
-                  </div>
+          <>
+            <div className="QuerySummary">
+              {state && msaMd ?
+                <span>Querying for data in<b> MSA/MD {msaMd} </b>in<b> {state}</b></span>
+              : state ?
+                <span>Querying for data in<b> {state}</b></span>
+              :
+                <span>Querying for data in<b> MSA/MD {msaMd}</b></span>
               }
+              <CheckboxContainer vars={variablesArr} position={1} callbackFactory={this.makeCheckboxChange}/>
+              <CheckboxContainer vars={variablesArr} position={2} callbackFactory={this.makeCheckboxChange}/>
+            <button onClick={this.requestSubset} disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset Details</button>
             </div>
-            <div className="CheckboxContainer">
-              {variablesArr.length > 1
-                ?
-                  <div className="border">
-                    <h3>{VARIABLES[variablesArr[1]].label}</h3>
-                    {this.renderCheckboxes(variablesArr[1])}
-                  </div>
-                :
-                  <div className="PlaceholderBorder border">
-                    <span>Variable 2 Options</span>
-                  </div>
-              }
-            </div>
-          <button onClick={this.requestSubset} disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset</button>
-          </div>
+          {details.aggregations ? <Aggregations details={details} variablesArr={variablesArr}/> : null}
+          {details.aggregations ? <button onClick={this.requestSubsetCSV} className="QueryButton CSVButton">Download Data</button> : null}
+          </>
         : null
       }
       </div>
