@@ -1,6 +1,5 @@
 import React from 'react'
 import STATEOBJ from '../constants/stateObj.js'
-import stateToMsas from '../constants/stateObj.js'
 import VARIABLES from '../constants/variables.js'
 
 function buildRows(aggregations, v1, p1, v2, p2) {
