@@ -3,6 +3,7 @@ import Select from 'react-select'
 import Header from '../common/Header.jsx'
 import CheckboxContainer from './CheckboxContainer.jsx'
 import Aggregations from './Aggregations.jsx'
+import Error from './Error.jsx'
 import { getSubsetDetails, getCSV } from '../api.js'
 import {
   createGeographyOptions,
@@ -27,7 +28,8 @@ class Subsets extends Component {
       state: '',
       msaMd: '',
       variables: {},
-      details: {}
+      details: {},
+      error: null
     }
   }
 
@@ -37,12 +39,17 @@ class Subsets extends Component {
         console.log(details)
         this.setState({details})
       })
+      .catch(error => {
+        this.setState({error})
+      })
   }
 
   requestSubsetCSV() {
     getCSV(this.state)
+      .catch(error => {
+        this.setState({error})
+      })
   }
-
 
   onGeographyChange(selectedOption) {
     let state, msaMd
@@ -117,7 +124,7 @@ class Subsets extends Component {
   }
 
   render() {
-    const { state, msaMd, variables, details } = this.state
+    const { state, msaMd, variables, details, error } = this.state
     const variablesArr = Object.keys(variables)
     const checksExist = this.someChecksExist()
 
@@ -169,8 +176,9 @@ class Subsets extends Component {
               <CheckboxContainer vars={variablesArr} position={2} callbackFactory={this.makeCheckboxChange}/>
             <button onClick={this.requestSubset} disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset Details</button>
             </div>
-          {details.aggregations ? <Aggregations details={details} variablesArr={variablesArr}/> : null}
-          {details.aggregations ? <button onClick={this.requestSubsetCSV} className="QueryButton CSVButton">Download Data</button> : null}
+          {error ? <Error error={error}/> : null}
+          {details.aggregations && !error ? <Aggregations details={details} variablesArr={variablesArr}/> : null}
+          {details.aggregations && !error ? <button onClick={this.requestSubsetCSV} className="QueryButton CSVButton">Download Data</button> : null}
           </>
         : null
       }
