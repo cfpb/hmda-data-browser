@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import ImageCard from './ImageCard.jsx'
 import Header from './common/Header.jsx'
-import spreadsheet from './images/spreadsheet.png'
 import selector from './images/selector.png'
+import subsets from './images/subsets.png'
 import map from './images/map.png'
 
 import './Home.css'
@@ -21,7 +21,7 @@ class Home extends Component {
 
         <div className="card-container">
           <ImageCard
-            image={spreadsheet}
+            image={selector}
             year="2018"
             caption="Entire Datasets by Geography"
             path="all-data"
@@ -29,7 +29,7 @@ class Home extends Component {
           >Download entire raw datasets by state, MSA/MD, or nationwide.
           </ImageCard>
           <ImageCard
-            image={selector}
+            image={subsets}
             year="2018"
             caption="Subsets of data"
             path="subsets"
