@@ -112,12 +112,12 @@ class Subsets extends Component {
   someChecksExist(){
     const vars = this.state.variables
     const keys = Object.keys(vars)
-    for(let i=0; i < keys.length; i++){
-      const checkVars = vars[keys[i]]
-      const checkKeys = Object.keys(checkVars)
-      for(let j=0; j < checkKeys.length; j++){
-        if(checkVars[checkKeys[j]]) return true
-      }
+    if(!keys[0]) return false
+
+    const checkVars = vars[keys[0]]
+    const checkKeys = Object.keys(checkVars)
+    for(let j=0; j < checkKeys.length; j++){
+      if(checkVars[checkKeys[j]]) return true
     }
     return false
   }
