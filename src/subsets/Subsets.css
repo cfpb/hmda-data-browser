@@ -148,7 +148,21 @@
 
 .CSVButton {
   float: right;
+}
+
+.CSVButtonContainer {
   margin-top: 1.5em;
+}
+
+.CSVButtonContainer > p {
+  float: right;
+  margin-right: 1em;
+  font-size: 1.1em;
+  line-height: 2.25em;
+}
+
+.CSVButtonContainer h4 {
+  display: inline;
 }
 
 .Error {
