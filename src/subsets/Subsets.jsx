@@ -123,20 +123,24 @@ class Subsets extends Component {
     return false
   }
 
-  makeTotal(details){
-    const total = details.aggregations.reduce((acc, curr) => {
+  makeTotal(details) {
+    return details.aggregations.reduce((acc, curr) => {
       return acc + curr.count
     }, 0)
+  }
+
+  renderTotal(total){
     return <p>Data contains <h4>{total}</h4> row{total === 1 ? '' : 's'}</p>
   }
 
   showAggregations(details, variablesArr){
+    const total = this.makeTotal(details)
     return (
       <>
         <Aggregations details={details} variablesArr={variablesArr}/>
         <div className="CSVButtonContainer">
-          <button onClick={this.requestSubsetCSV} className="QueryButton CSVButton">Download Data</button>
-          {this.makeTotal(details)}
+          <button onClick={this.requestSubsetCSV} disabled={!total} className={total ? 'QueryButton CSVButton' : 'QueryButton CSVButton disabled'}>Download Data</button>
+          {this.renderTotal(total)}
         </div>
       </>
     )
