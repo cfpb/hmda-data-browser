@@ -154,11 +154,11 @@
   margin-top: 1.5em;
 }
 
-.CSVButtonContainer > p {
+.AggregationTotal {
   float: right;
   margin-right: 1em;
   font-size: 1.1em;
-  line-height: 2.25em;
+  line-height: 4.4em;
 }
 
 .CSVButtonContainer h4 {

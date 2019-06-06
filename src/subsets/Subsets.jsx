@@ -130,7 +130,7 @@ class Subsets extends Component {
   }
 
   renderTotal(total){
-    return <p>Data contains <h4>{total}</h4> row{total === 1 ? '' : 's'}</p>
+    return <div className="AggregationTotal">Data contains <h4>{total}</h4> row{total === 1 ? '' : 's'}</div>
   }
 
   showAggregations(details, variablesArr){
