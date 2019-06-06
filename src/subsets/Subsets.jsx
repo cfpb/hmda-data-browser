@@ -21,6 +21,7 @@ class Subsets extends Component {
     this.makeCheckboxChange = this.makeCheckboxChange.bind(this)
     this.requestSubset = this.requestSubset.bind(this)
     this.requestSubsetCSV = this.requestSubsetCSV.bind(this)
+    this.showAggregations = this.showAggregations.bind(this)
     this.geographyOptions = createGeographyOptions(this.props)
     this.variableOptions = createVariableOptions()
 
@@ -122,6 +123,29 @@ class Subsets extends Component {
     return false
   }
 
+  makeTotal(details) {
+    return details.aggregations.reduce((acc, curr) => {
+      return acc + curr.count
+    }, 0)
+  }
+
+  renderTotal(total){
+    return <p>Data contains <h4>{total}</h4> row{total === 1 ? '' : 's'}</p>
+  }
+
+  showAggregations(details, variablesArr){
+    const total = this.makeTotal(details)
+    return (
+      <>
+        <Aggregations details={details} variablesArr={variablesArr}/>
+        <div className="CSVButtonContainer">
+          <button onClick={this.requestSubsetCSV} disabled={!total} className={total ? 'QueryButton CSVButton' : 'QueryButton CSVButton disabled'}>Download Data</button>
+          {this.renderTotal(total)}
+        </div>
+      </>
+    )
+  }
+
   render() {
     const { state, msaMd, variables, details, error } = this.state
     const variablesArr = Object.keys(variables)
@@ -175,9 +199,8 @@ class Subsets extends Component {
               <CheckboxContainer vars={variablesArr} position={2} callbackFactory={this.makeCheckboxChange}/>
             <button onClick={this.requestSubset} disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset Details</button>
             </div>
-          {error ? <Error error={error}/> : null}
-          {details.aggregations && !error ? <Aggregations details={details} variablesArr={variablesArr}/> : null}
-          {details.aggregations && !error ? <button onClick={this.requestSubsetCSV} className="QueryButton CSVButton">Download Data</button> : null}
+            {error ? <Error error={error}/> : null}
+            {details.aggregations && !error ? this.showAggregations(details, variablesArr) : null}
           </>
         : null
       }
