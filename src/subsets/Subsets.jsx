@@ -148,7 +148,7 @@ class Subsets extends Component {
 
   render() {
     const { state, msaMd, variables, details, error } = this.state
-    const variablesArr = Object.keys(variables)
+    const variablesArr = Object.keys(variables).sort()
     const checksExist = this.someChecksExist()
 
     return (
