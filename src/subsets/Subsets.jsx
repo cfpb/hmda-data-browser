@@ -29,6 +29,7 @@ class Subsets extends Component {
       state: '',
       msaMd: '',
       variables: {},
+      variableOrder: [],
       details: {},
       error: null
     }
@@ -78,7 +79,8 @@ class Subsets extends Component {
     })
   }
 
-  onVariableChange(selectedVariables) {
+  onVariableChange(selectedVariables, change) {
+    const variableOrder = selectedVariables.map(v => v.value)
     const selected = {}
     selectedVariables.forEach(variable => {
       const curr = this.state.variables[variable.value]
@@ -88,6 +90,7 @@ class Subsets extends Component {
 
     this.setState({
       variables: selected,
+      variableOrder,
       details: {}
     })
   }
@@ -133,11 +136,11 @@ class Subsets extends Component {
     return <div className="AggregationTotal">Data contains <h4>{total}</h4> row{total === 1 ? '' : 's'}</div>
   }
 
-  showAggregations(details, variablesArr){
+  showAggregations(details, variableOrder){
     const total = this.makeTotal(details)
     return (
       <>
-        <Aggregations details={details} variablesArr={variablesArr}/>
+        <Aggregations details={details} variableOrder={variableOrder}/>
         <div className="CSVButtonContainer">
           <button onClick={this.requestSubsetCSV} disabled={!total} className={total ? 'QueryButton CSVButton' : 'QueryButton CSVButton disabled'}>Download Data</button>
           {this.renderTotal(total)}
@@ -147,10 +150,8 @@ class Subsets extends Component {
   }
 
   render() {
-    const { state, msaMd, variables, details, error } = this.state
-    const variablesArr = Object.keys(variables).sort()
+    const { state, msaMd, variables, variableOrder, details, error } = this.state
     const checksExist = this.someChecksExist()
-
     return (
       <div className="Subsets">
         <div className="intro">
@@ -182,7 +183,7 @@ class Subsets extends Component {
             searchable={true}
             openOnFocus
             simpleValue
-            options={variablesArr.length >= 2 ? [] : this.variableOptions}
+            options={variableOrder.length >= 2 ? [] : this.variableOptions}
           />
         </div>
         {state || msaMd ?
@@ -195,12 +196,12 @@ class Subsets extends Component {
               :
                 <span>Querying for data in<b> MSA/MD {msaMd}</b></span>
               }
-              <CheckboxContainer vars={variablesArr} position={1} callbackFactory={this.makeCheckboxChange}/>
-              <CheckboxContainer vars={variablesArr} position={2} callbackFactory={this.makeCheckboxChange}/>
+              <CheckboxContainer vars={variableOrder} position={1} callbackFactory={this.makeCheckboxChange}/>
+              <CheckboxContainer vars={variableOrder} position={2} callbackFactory={this.makeCheckboxChange}/>
             <button onClick={this.requestSubset} disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset Details</button>
             </div>
             {error ? <Error error={error}/> : null}
-            {details.aggregations && !error ? this.showAggregations(details, variablesArr) : null}
+            {details.aggregations && !error ? this.showAggregations(details, variableOrder) : null}
           </>
         : null
       }

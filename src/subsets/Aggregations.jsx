@@ -49,10 +49,10 @@ function makeHeader(params, v1, v2) {
   return <ul>{list}</ul>
 }
 
-const Aggregations = ({details, variablesArr}) => {
+const Aggregations = ({details, variableOrder}) => {
   const {aggregations, parameters } = details
-  const v1 = variablesArr[0]
-  const v2 = variablesArr[1]
+  const v1 = variableOrder[0]
+  const v2 = variableOrder[1]
 
   if(!aggregations) return null
 
