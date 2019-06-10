@@ -1,11 +1,11 @@
 import React from 'react'
 import VARIABLES from '../constants/variables.js'
 
-function renderCheckboxes(variable, makeCb) {
+function renderCheckboxes(variable, vars, makeCb) {
   return VARIABLES[variable].options.map((v) => {
     return (
       <div className="CheckboxWrapper" key={v.id}>
-        <input onChange={makeCb(variable, v)} id={variable + v.id} type="checkbox"></input>
+        <input checked={!!vars[variable][v.id]} onChange={makeCb(variable, v)} id={variable + v.id} type="checkbox"></input>
         <label htmlFor={variable + v.id}>{v.name}</label>
       </div>
     )
@@ -13,15 +13,15 @@ function renderCheckboxes(variable, makeCb) {
 }
 
 const CheckboxContainer = props => {
-  const { vars, position, callbackFactory } = props
-  const index = position - 1
+  const { vars, selectedVar, position, callbackFactory } = props
+
   return (
     <div className="CheckboxContainer">
-      {vars.length > index
+      {selectedVar
         ?
           <div className="border">
-            <h3>{VARIABLES[vars[index]].label}</h3>
-            {renderCheckboxes(vars[index], callbackFactory)}
+            <h3>{VARIABLES[selectedVar].label}</h3>
+            {renderCheckboxes(selectedVar, vars, callbackFactory)}
           </div>
         :
           <div className="PlaceholderBorder border">

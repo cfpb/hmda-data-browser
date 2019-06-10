@@ -196,8 +196,8 @@ class Subsets extends Component {
               :
                 <span>Querying for data in<b> MSA/MD {msaMd}</b></span>
               }
-              <CheckboxContainer vars={variableOrder} position={1} callbackFactory={this.makeCheckboxChange}/>
-              <CheckboxContainer vars={variableOrder} position={2} callbackFactory={this.makeCheckboxChange}/>
+              <CheckboxContainer vars={variables} selectedVar={variableOrder[0]} position={1} callbackFactory={this.makeCheckboxChange}/>
+              <CheckboxContainer vars={variables} selectedVar={variableOrder[1]} position={2} callbackFactory={this.makeCheckboxChange}/>
             <button onClick={this.requestSubset} disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset Details</button>
             </div>
             {error ? <Error error={error}/> : null}
