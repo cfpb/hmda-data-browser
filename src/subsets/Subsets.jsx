@@ -56,20 +56,15 @@ class Subsets extends Component {
   onGeographyChange(selectedGeographies) {
     let states = []
     let msamds = []
+    let isNationwide = false
 
     selectedGeographies.forEach(geography => {
       let { value, label } = geography
       value = value + ''
 
       if(!label) return
-      if(value === 'nationwide'){
-        return this.setState({
-          nationwide: true,
-          states: [],
-          msamds: [],
-          details: {}
-        })
-      }
+
+      if(value === 'nationwide') isNationwide = true
 
       if(label.match('STATEWIDE'))
         states.push(value)
@@ -81,6 +76,15 @@ class Subsets extends Component {
         msamds.push(split[0])
       }
     })
+
+    if(isNationwide){
+      return this.setState({
+        nationwide: true,
+        states: [],
+        msamds: [],
+        details: {}
+      })
+    }
 
     states = [...new Set(states)]
     msamds = [...new Set(msamds)]
@@ -189,6 +193,7 @@ class Subsets extends Component {
             autoFocus
             openOnFocus
             simpleValue
+            value={nationwide ? {value: 'nationwide', label: 'NATIONWIDE'} : undefined}
             options={nationwide ? [] : this.geographyOptions}
           />
           <h4>Choose up to two variables:</h4>
@@ -202,7 +207,7 @@ class Subsets extends Component {
             options={variableOrder.length >= 2 ? [] : this.variableOptions}
           />
         </div>
-        {states.length || msamds.length ?
+        {nationwide || states.length || msamds.length ?
           <>
             <div className="QuerySummary">
               <CheckboxContainer vars={variables} selectedVar={variableOrder[0]} position={1} callbackFactory={this.makeCheckboxChange}/>
