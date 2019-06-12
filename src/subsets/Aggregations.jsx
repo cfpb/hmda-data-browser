@@ -28,20 +28,20 @@ function buildRows(aggregations, v1, p1, v2, p2) {
 
 function extractAgg(agg, v1, sv1, v2, sv2){
   for(let i=0; i<agg.length; i++){
-    if(agg[i][v1][0] === sv1 && (!v2 || agg[i][v2][0] === sv2)){
+    if(agg[i][v1] === sv1 && (!v2 || agg[i][v2] === sv2)){
       return agg.splice(i, 1)[0]
     }
   }
 }
 
-function makeHeader(params, v1, v2) {
+function makeHeader(params, v1, p1, v2, p2) {
   const list = []
-  if(params.state) list.push(<li key="0"><h4>State:</h4><ul className="sublist"><li>{STATEOBJ[params.state]}</li></ul></li>)
-  if(params.msamd) list.push(<li key="1"><h4>MSA/MD:</h4><ul className="sublist"><li>{params.msamd}</li></ul></li>)
-  list.push(<li key="2"><h4>{VARIABLES[v1].label}:</h4><ul className="sublist">{params[v1].map((v, i) => {
+  if(params.state) list.push(<li key="0"><h4>State:</h4><ul className="sublist"><li>{params.state.split(',').map(v => STATEOBJ[v]).join(', ')}</li></ul></li>)
+  if(params.msamd) list.push(<li key="1"><h4>MSA/MD:</h4><ul className="sublist"><li>{params.msamd.split(',').join(', ')}</li></ul></li>)
+  list.push(<li key="2"><h4>{VARIABLES[v1].label}:</h4><ul className="sublist">{p1.map((v, i) => {
     return <li key={i}>{VARIABLES[v1].mapping[v]}</li>
   })}</ul></li>)
-  if(v2 && params[v2]) list.push(<li key="3"><h4>{VARIABLES[v2].label}:</h4><ul className="sublist">{params[v2].map((v, i) => {
+  if(v2 && params[v2]) list.push(<li key="3"><h4>{VARIABLES[v2].label}:</h4><ul className="sublist">{p2.map((v, i) => {
     return <li key={i}>{VARIABLES[v2].mapping[v]}</li>
   })
   }</ul></li>)
@@ -53,20 +53,22 @@ const Aggregations = ({details, variableOrder}) => {
   const {aggregations, parameters } = details
   const v1 = variableOrder[0]
   const v2 = variableOrder[1]
+  const p1 = v1 && parameters[v1].split(',')
+  const p2 = v2 && parameters[v2].split(',')
 
   if(!aggregations) return null
 
   return (
     <div className="Aggregations">
       <h2>Subset Aggregations</h2>
-      {makeHeader(parameters, v1, v2)}
+      {makeHeader(parameters, v1, p1, v2, p2)}
       <table>
         <thead>
-          {v2 && parameters[v2] ?
+          {v2 && p2 ?
             <>
               <tr>
                 <th></th>
-                {parameters[v2].map((v, i) =>{
+                {p2.map((v, i) =>{
                   return (
                     <th colSpan={2} key={i}>{VARIABLES[v2].mapping[v]}</th>
                   )
@@ -74,7 +76,7 @@ const Aggregations = ({details, variableOrder}) => {
               </tr>
               <tr>
                 <th></th>
-                {parameters[v2].map((v, i) =>{
+                {p2.map((v, i) =>{
                   return (
                     <React.Fragment key={i}>
                       <th># of Records</th>
@@ -93,7 +95,7 @@ const Aggregations = ({details, variableOrder}) => {
           }
         </thead>
         <tbody>
-          {buildRows(aggregations, v1, parameters[v1], v2, parameters[v2])}
+          {buildRows(aggregations, v1, p1, v2, p2)}
         </tbody>
        </table>
     </div>

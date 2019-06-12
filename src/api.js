@@ -35,7 +35,7 @@ function addGeographyParams(obj) {
 }
 
 function makeUrl(obj, isCSV) {
-  let url = '/v2/data-browser-api/view'
+  let url = '/v2/data-browser-api-new/view'
 
   if(obj.nationwide) url += '/nationwide'
 
@@ -55,7 +55,7 @@ function runFetch(url, isCSV) {
   if (isCSV) {
     headers = {
       'Content-Type': 'text/csv',
-      Accept: 'text/csv'
+      Accept: 'text/csv, text/plain'
     }
   }
 
