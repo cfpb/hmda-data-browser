@@ -26,8 +26,9 @@ class Subsets extends Component {
     this.variableOptions = createVariableOptions()
 
     this.state = {
-      state: '',
-      msaMd: '',
+      states: [],
+      msamds: [],
+      nationwide: false,
       variables: {},
       variableOrder: [],
       details: {},
@@ -52,29 +53,46 @@ class Subsets extends Component {
       })
   }
 
-  onGeographyChange(selectedOption) {
-    let state, msaMd
-    let { value, label } = selectedOption
-    value = value + ''
+  onGeographyChange(selectedGeographies) {
+    let states = []
+    let msamds = []
+    let isNationwide = false
 
-    if(!label) return
+    selectedGeographies.forEach(geography => {
+      let { value, label } = geography
+      value = value + ''
 
-    if(value === 'nationwide') {
-      state = 'nationwide'
+      if(!label) return
+
+      if(value === 'nationwide') isNationwide = true
+
+      if(label.match('STATEWIDE'))
+        states.push(value)
+      else if(value.match('multi'))
+        msamds.push(value.replace('multi', ''))
+      else {
+        const split = label.split(' - ')
+        states.push(geography.state)
+        msamds.push(split[0])
+      }
+    })
+
+    if(isNationwide){
+      return this.setState({
+        nationwide: true,
+        states: [],
+        msamds: [],
+        details: {}
+      })
     }
-    else if(label.match('STATEWIDE'))
-      state = value
-    else if(value.match('multi'))
-      msaMd = value.replace('multi', '')
-    else {
-      const split = label.split(' - ')
-      state = selectedOption.state
-      msaMd = split[0]
-    }
+
+    states = [...new Set(states)]
+    msamds = [...new Set(msamds)]
 
     return this.setState({
-      state,
-      msaMd,
+      states,
+      msamds,
+      nationwide: false,
       details: {}
     })
   }
@@ -150,8 +168,9 @@ class Subsets extends Component {
   }
 
   render() {
-    const { state, msaMd, variables, variableOrder, details, error } = this.state
+    const { nationwide, states, msamds, variables, variableOrder, details, error } = this.state
     const checksExist = this.someChecksExist()
+
     return (
       <div className="Subsets">
         <div className="intro">
@@ -169,11 +188,13 @@ class Subsets extends Component {
             styles={geographyStyleFn}
             onChange={this.onGeographyChange}
             placeholder="Select a state or MSA/MD"
+            isMulti={true}
             searchable={true}
             autoFocus
             openOnFocus
             simpleValue
-            options={this.geographyOptions}
+            value={nationwide ? {value: 'nationwide', label: 'NATIONWIDE'} : undefined}
+            options={nationwide ? [] : this.geographyOptions}
           />
           <h4>Choose up to two variables:</h4>
           <Select
@@ -186,16 +207,9 @@ class Subsets extends Component {
             options={variableOrder.length >= 2 ? [] : this.variableOptions}
           />
         </div>
-        {state || msaMd ?
+        {nationwide || states.length || msamds.length ?
           <>
             <div className="QuerySummary">
-              {state && msaMd ?
-                <span>Querying for data in<b> MSA/MD {msaMd} </b>in<b> {state}</b></span>
-              : state ?
-                <span>Querying for data in<b> {state}</b></span>
-              :
-                <span>Querying for data in<b> MSA/MD {msaMd}</b></span>
-              }
               <CheckboxContainer vars={variables} selectedVar={variableOrder[0]} position={1} callbackFactory={this.makeCheckboxChange}/>
               <CheckboxContainer vars={variables} selectedVar={variableOrder[1]} position={2} callbackFactory={this.makeCheckboxChange}/>
             <button onClick={this.requestSubset} disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset Details</button>
