@@ -1,34 +1,49 @@
 import fileSaver from 'file-saver'
 
-function makeUrl(obj, isCSV) {
-  let url = '/v2/data-browser-api/view'
-  if (obj.state){
-    if(obj.state === 'nationwide') url += '/nationwide'
-    else url += '/state/' + obj.state
-  }
-  if (obj.msaMd) url += '/msamd/' + obj.msaMd
-
-  if(isCSV) url += '/csv'
-
-  url += '?'
-
+function makeVariableQuerystring(obj) {
+  let qs = ''
   const vars = obj.variables
   if(vars) {
+    qs = '?'
     const keys = Object.keys(vars)
     let isFirstParam = true
     keys.forEach(key => {
       const varKeys = Object.keys(vars[key])
       if(varKeys.length){
         if(isFirstParam) isFirstParam = false
-        else url += '&'
-        url += key + '='
+        else qs += '&'
+        qs += key + '='
         varKeys.forEach((k, i) => {
-          if(i) url += ','
-          url += k
+          if(i) qs += ','
+          qs += k
         })
       }
     })
   }
+  return qs
+}
+
+function addGeographyParams(obj) {
+  let qs = ''
+  const geos = ['states', 'msamds']
+  geos.forEach(v => {
+    if(obj[v].length){
+      qs += `&${v}=${obj[v].join(',')}`
+    }
+  })
+  return qs
+}
+
+function makeUrl(obj, isCSV) {
+  let url = '/v2/data-browser-api/view'
+
+  if(obj.nationwide) url += '/nationwide'
+
+  if(isCSV) url += '/csv'
+  else url += '/aggregations'
+
+  url += makeVariableQuerystring(obj)
+  if(!obj.nationwide) url += addGeographyParams(obj)
 
   return url
 }
