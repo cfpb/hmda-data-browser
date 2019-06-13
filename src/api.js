@@ -43,7 +43,11 @@ function makeUrl(obj, isCSV) {
   else url += '/aggregations'
 
   url += makeVariableQuerystring(obj)
-  if(!obj.nationwide) url += addGeographyParams(obj)
+  if(!obj.nationwide){
+    let geoParams = addGeographyParams(obj)
+    if(!obj.variables) geoParams = '?' + geoParams.slice(1)
+    url += geoParams
+  }
 
   return url
 }

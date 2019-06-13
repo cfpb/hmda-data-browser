@@ -18,8 +18,9 @@ class Geography extends Component {
     this.geographyOptions = createGeographyOptions(this.props)
 
     this.state = {
-      state: '',
-      msaMd: '',
+      states: [],
+      msamds: [],
+      nationwide: false,
       error: null
     }
   }
@@ -31,38 +32,52 @@ class Geography extends Component {
       })
   }
 
+  onGeographyChange(selectedGeographies) {
+    let states = []
+    let msamds = []
+    let isNationwide = false
 
-  onGeographyChange(selectedOption) {
-    let state, msaMd
-    let { value, label } = selectedOption
-    value = value + ''
+    selectedGeographies.forEach(geography => {
+      let { value, label } = geography
+      value = value + ''
 
-    if(!label) return
+      if(!label) return
 
-    if(value === 'nationwide') {
-      state = 'nationwide'
+      if(value === 'nationwide') isNationwide = true
+
+      if(label.match('STATEWIDE'))
+        states.push(value)
+      else if(value.match('multi'))
+        msamds.push(value.replace('multi', ''))
+      else {
+        const split = label.split(' - ')
+        states.push(geography.state)
+        msamds.push(split[0])
+      }
+    })
+
+    if(isNationwide){
+      return this.setState({
+        nationwide: true,
+        states: [],
+        msamds: []
+      })
     }
-    else if(label.match('STATEWIDE'))
-      state = value
-    else if(value.match('multi'))
-      msaMd = value.replace('multi', '')
-    else {
-      const split = label.split(' - ')
-      state = selectedOption.state
-      msaMd = split[0]
-    }
+
+    states = [...new Set(states)]
+    msamds = [...new Set(msamds)]
 
     return this.setState({
-      state,
-      msaMd,
-      details: {}
+      states,
+      msamds,
+      nationwide: false
     })
   }
 
   render() {
-    const { state, msaMd, error } = this.state
+    const { nationwide, states, msamds, error } = this.state
 
-    const isDisabled = !state && !msaMd
+    const isDisabled = !(nationwide || states.length || msamds.length)
 
     return (
       <div className="Subsets">
@@ -81,6 +96,7 @@ class Geography extends Component {
             styles={geographyStyleFn}
             onChange={this.onGeographyChange}
             placeholder="Select a state or MSA/MD"
+            isMulti={true}
             searchable={true}
             autoFocus
             openOnFocus
