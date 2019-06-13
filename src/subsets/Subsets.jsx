@@ -5,6 +5,7 @@ import CheckboxContainer from './CheckboxContainer.jsx'
 import Aggregations from './Aggregations.jsx'
 import Error from './Error.jsx'
 import { getSubsetDetails, getCSV } from '../api.js'
+import { makeSearchFromState } from '../query.js'
 import {
   createGeographyOptions,
   createVariableOptions,
@@ -22,6 +23,7 @@ class Subsets extends Component {
     this.requestSubset = this.requestSubset.bind(this)
     this.requestSubsetCSV = this.requestSubsetCSV.bind(this)
     this.showAggregations = this.showAggregations.bind(this)
+    this.setStateAndRoute = this.setStateAndRoute.bind(this)
     this.geographyOptions = createGeographyOptions(this.props)
     this.variableOptions = createVariableOptions()
 
@@ -36,20 +38,25 @@ class Subsets extends Component {
     }
   }
 
+  setStateAndRoute(state){
+   this.props.history.push({search: makeSearchFromState(state)})
+   this.setState(state)
+  }
+
   requestSubset() {
     getSubsetDetails(this.state)
       .then(details => {
-        this.setState({details})
+        this.setStateAndRoute({details})
       })
       .catch(error => {
-        this.setState({error})
+        this.setStateAndRoute({error})
       })
   }
 
   requestSubsetCSV() {
     getCSV(this.state)
       .catch(error => {
-        this.setState({error})
+        this.setStateAndRoute({error})
       })
   }
 
@@ -78,7 +85,7 @@ class Subsets extends Component {
     })
 
     if(isNationwide){
-      return this.setState({
+      return this.setStateAndRoute({
         nationwide: true,
         states: [],
         msamds: [],
@@ -89,7 +96,7 @@ class Subsets extends Component {
     states = [...new Set(states)]
     msamds = [...new Set(msamds)]
 
-    return this.setState({
+    return this.setStateAndRoute({
       states,
       msamds,
       nationwide: false,
@@ -106,7 +113,7 @@ class Subsets extends Component {
       else selected[variable.value] = {}
     })
 
-    this.setState({
+    this.setStateAndRoute({
       variables: selected,
       variableOrder,
       details: {}
@@ -127,7 +134,7 @@ class Subsets extends Component {
 
       if(!newState.variables[variable][subvar.id]) delete newState.variables[variable][subvar.id]
 
-      this.setState(newState)
+      this.setStateAndRoute(newState)
     }
   }
 
