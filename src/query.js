@@ -1,47 +1,42 @@
-function makeGeography(){
-
-}
-
-function makeVariables(){
-
-}
-
-function makeOptions(){
-
-}
-
 function makeParam(s, key) {
-  if(s[key]) return `${key}=${stringify(s[key])}`
+  if(key === 'variables'){
+    const vars = s[key]
+    return Object.keys(vars).map(v =>{
+      return `${v}=${Object.keys(vars[v]).join(',')}`
+    }).join('&')
+  }
+  if(key === 'details'){
+    return Object.keys(s[key]).length ? 'getDetails=1' : ''
+  }
+  return stringifyIfTruthy(s, key)
 }
 
-function stringify(v) {
+function stringifyIfTruthy(s, key) {
+  const v = s[key]
+  if(Array.isArray(v))
+    return v.length ? formatParam(key, v.join(',')) : ''
+  return v ? formatParam(key, v.toString()) : ''
+}
+
+function formatParam(k,v){
+  return `${k}=${v}`
 }
 
 export function makeSearchFromState(s){
-  console.log('state', s)
-  const params = [
+  let params = [
     makeParam(s, 'states'),
-    makeParam(s, 'states'),
-    makeParam(s, 'states'),
-    makeParam(s, 'states'),
+    makeParam(s, 'msamds'),
+    makeParam(s, 'nationwide'),
+    makeParam(s, 'variables'),
+    makeParam(s, 'details')
   ]
-   const s = `?
-    states=${state.states}
-    ${makeVariables(obj.variableOrder)}
-    ${makeOptions(obj.variables)}
-  `
-  if(s.length === 1) return ''
-}
 
-//qwe.gov/yo?states=TX,CA&msamds=10234&var1=a,b&var2=c,d
-//qwe.gov/yo?geography=TX~10130&variables=abc,def&options=var1~a,b!var2~c,d
-export function makeQuerystring(obj){
-  const s = `?
-    ${makeGeography(obj.state, obj.msaMd)}
-    ${makeVariables(obj.variableOrder)}
-    ${makeOptions(obj.variables)}
-  `
-  if(s.length === 1) return ''
+  params = params.filter(v => v)
+  const str = `?${params.join('&')}`
+
+  if(str.length === 1) return ''
+
+  return str
 }
 
 export function parseQuerystring(search){

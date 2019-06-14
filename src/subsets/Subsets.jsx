@@ -39,8 +39,9 @@ class Subsets extends Component {
   }
 
   setStateAndRoute(state){
-   this.props.history.push({search: makeSearchFromState(state)})
-   this.setState(state)
+   this.setState(state, () => {
+     this.props.history.replace({search: makeSearchFromState(this.state)})
+   })
   }
 
   requestSubset() {
