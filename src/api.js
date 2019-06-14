@@ -82,8 +82,8 @@ function runFetch(url, isCSV) {
 
 function makeCSVName(obj) {
   let name = ''
-  if(obj.state) name += obj.state + '-'
-  if(obj.msaMd) name += obj.msaMd + '-'
+  if(obj.states) name += obj.states.join(',') + '-'
+  if(obj.msamds) name += obj.msamds.join(',') + '-'
 
   if(obj.variables){
     Object.keys(obj.variables).forEach(key => {
