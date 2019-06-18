@@ -1,7 +1,7 @@
 function makeParam(s, key) {
   if(key === 'variables'){
     const vars = s[key]
-    return Object.keys(vars).map(v =>{
+    return s.variableOrder.map(v =>{
       return `${v}=${Object.keys(vars[v]).join(',')}`
     }).join('&')
   }
@@ -20,6 +20,31 @@ function stringifyIfTruthy(s, key) {
 
 function formatParam(k,v){
   return `${k}=${v}`
+}
+
+export function makeStateFromSearch(search, s, detailsCb){
+  const qsParts = search.slice(1).split('&')
+
+  qsParts.forEach(part => {
+    if(!part) return
+
+    let [key, val] = part.split('=')
+    val = val.split(',')
+
+    if(key === 'nationwide') s[key] = true
+    else if(['states', 'msamds'].indexOf(key) !== -1) s[key] = val
+    else if(key === 'getDetails') setTimeout(detailsCb, 0)
+    else {
+      s.variableOrder.push(key)
+      val.forEach(v => {
+        if(s.variables[key]) s.variables[key][v] = true
+        else if(v) s.variables[key] = {[v]: true}
+        else s.variables[key] = {}
+      })
+    }
+  })
+
+  return s
 }
 
 export function makeSearchFromState(s){
