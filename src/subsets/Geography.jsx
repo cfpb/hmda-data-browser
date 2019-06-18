@@ -47,8 +47,8 @@ class Geography extends Component {
 
       if(label.match('STATEWIDE'))
         states.push(value)
-      else if(value.match('multi'))
-        msamds.push(value.replace('multi', ''))
+      //else if(value.match('multi'))
+      //  msamds.push(value.replace('multi', ''))
       else {
         const split = label.split(' - ')
         states.push(geography.state)

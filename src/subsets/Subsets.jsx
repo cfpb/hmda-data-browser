@@ -5,8 +5,12 @@ import CheckboxContainer from './CheckboxContainer.jsx'
 import Aggregations from './Aggregations.jsx'
 import Error from './Error.jsx'
 import { getSubsetDetails, getCSV } from '../api.js'
-import { makeSearchFromState } from '../query.js'
+import { makeSearchFromState, makeStateFromSearch } from '../query.js'
+import msaToName from '../constants/msaToName.js'
+import VARIABLES from '../constants/variables.js'
 import {
+  createStateOption,
+  createMSAOption,
   createGeographyOptions,
   createVariableOptions,
   geographyStyleFn
@@ -27,7 +31,12 @@ class Subsets extends Component {
     this.geographyOptions = createGeographyOptions(this.props)
     this.variableOptions = createVariableOptions()
 
-    this.state = {
+    this.state = this.buildStateFromQuerystring()
+
+  }
+
+  buildStateFromQuerystring(){
+    const defaultState = {
       states: [],
       msamds: [],
       nationwide: false,
@@ -36,6 +45,8 @@ class Subsets extends Component {
       details: {},
       error: null
     }
+
+    return makeStateFromSearch(this.props.location.search, defaultState, this.requestSubset)
   }
 
   setStateAndRoute(state){
@@ -76,11 +87,10 @@ class Subsets extends Component {
 
       if(label.match('STATEWIDE'))
         states.push(value)
-      else if(value.match('multi'))
-        msamds.push(value.replace('multi', ''))
+      //else if(value.match('multi'))
+      //  msamds.push(value.replace('multi', ''))
       else {
         const split = label.split(' - ')
-        states.push(geography.state)
         msamds.push(split[0])
       }
     })
@@ -124,6 +134,7 @@ class Subsets extends Component {
   makeCheckboxChange(variable, subvar) {
     return e => {
       const newState = {
+        details: {},
         variables: {
           ...this.state.variables,
           [variable]: {
@@ -175,7 +186,36 @@ class Subsets extends Component {
     )
   }
 
+  setGeographySelect(states, msamds, nationwide){
+    const options = []
+
+    if(nationwide) return {value: 'nationwide', label: 'NATIONWIDE'}
+
+    if(states.length){
+      states.forEach(state => {
+        createStateOption(state, options)
+      })
+    }
+
+    if(msamds.length){
+      msamds.forEach(msa => {
+        createMSAOption(msa, msaToName[msa], options)
+      })
+    }
+
+    return options
+  }
+
+  setVariableSelect(variableOrder){
+    const options = []
+    variableOrder.forEach(v => {
+      options.push({value: v, label: VARIABLES[v].label})
+    })
+    return options
+  }
+
   render() {
+    console.log(this.state)
     const { nationwide, states, msamds, variables, variableOrder, details, error } = this.state
     const checksExist = this.someChecksExist()
 
@@ -201,7 +241,7 @@ class Subsets extends Component {
             autoFocus
             openOnFocus
             simpleValue
-            value={nationwide ? {value: 'nationwide', label: 'NATIONWIDE'} : undefined}
+            value={this.setGeographySelect(states, msamds)}
             options={nationwide ? [] : this.geographyOptions}
           />
           <h4>Choose up to two variables:</h4>
@@ -212,6 +252,7 @@ class Subsets extends Component {
             searchable={true}
             openOnFocus
             simpleValue
+            value={this.setVariableSelect(variableOrder)}
             options={variableOrder.length >= 2 ? [] : this.variableOptions}
           />
         </div>
