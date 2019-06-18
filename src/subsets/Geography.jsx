@@ -51,7 +51,6 @@ class Geography extends Component {
       //  msamds.push(value.replace('multi', ''))
       else {
         const split = label.split(' - ')
-        states.push(geography.state)
         msamds.push(split[0])
       }
     })
