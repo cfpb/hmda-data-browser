@@ -215,7 +215,6 @@ class Subsets extends Component {
   }
 
   render() {
-    console.log(this.state)
     const { nationwide, states, msamds, variables, variableOrder, details, error } = this.state
     const checksExist = this.someChecksExist()
 
