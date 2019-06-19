@@ -240,7 +240,7 @@ class Subsets extends Component {
             autoFocus
             openOnFocus
             simpleValue
-            value={this.setGeographySelect(states, msamds)}
+            value={this.setGeographySelect(states, msamds, nationwide)}
             options={nationwide ? [] : this.geographyOptions}
           />
           <h4>Choose up to two variables:</h4>
