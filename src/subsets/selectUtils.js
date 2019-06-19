@@ -2,6 +2,17 @@ import stateToMsas from '../constants/stateToMsas.js'
 import STATEOBJ from '../constants/stateObj.js'
 import VARIABLES from '../constants/variables.js'
 
+function createStateOption(state, options){
+  if(state !== 'NA') options.push({value: state, label: `${STATEOBJ[state]} - STATEWIDE`})
+}
+
+function createMSAOption(id, name, options){
+  options.push({
+    value: id,
+    label:  `${id} - ${name}`,
+  })
+}
+
 function createGeographyOptions(props) {
   const subsetYear = props.location.pathname.split('/')[2]
 
@@ -11,15 +22,10 @@ function createGeographyOptions(props) {
   Object.keys(statesWithMsas).forEach(state => {
     //state code
     if(state.length === 2) {
-      geographyOptions.push({value: state, label: `${STATEOBJ[state]} - STATEWIDE`})
-      statesWithMsas[state].forEach(msaMd => {
-        geographyOptions.push({
-          value: msaMd.id,
-          label:  `${msaMd.id} - ${msaMd.name} - ${STATEOBJ[state]}`,
-          state: state
-        })
-      })
+      createStateOption(state, geographyOptions)
+      statesWithMsas[state].forEach(msa => createMSAOption(msa.id, msa.name, geographyOptions))
     } else {
+      /*
       //multistate
       statesWithMsas[state].forEach(msaMd => {
         geographyOptions.push({
@@ -27,6 +33,7 @@ function createGeographyOptions(props) {
           label:  `${msaMd.id.replace('multi','')} - ${msaMd.name} - ENTIRE MSA/MD`
         })
       })
+      */
     }
   })
 
@@ -41,7 +48,8 @@ function createVariableOptions() {
 
 const geographyStyleFn = {
   option: (provided, state) => {
-   if (state.data.value.length === 2) {
+    const value = state.data.value
+   if (value.length === 2 || value === 99999) {
      return {
        ...provided,
        fontWeight: 'bold',
@@ -53,6 +61,8 @@ const geographyStyleFn = {
 }
 
 export {
+  createStateOption,
+  createMSAOption,
   createGeographyOptions,
   createVariableOptions,
   geographyStyleFn

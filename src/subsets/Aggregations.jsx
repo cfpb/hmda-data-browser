@@ -54,7 +54,7 @@ const Aggregations = ({details, variableOrder}) => {
   const v1 = variableOrder[0]
   const v2 = variableOrder[1]
   const p1 = v1 && parameters[v1].split(',')
-  const p2 = v2 && parameters[v2].split(',')
+  const p2 = v2 && parameters[v2] && parameters[v2].split(',')
 
   if(!aggregations) return null
 
