@@ -28,6 +28,7 @@ class Subsets extends Component {
     this.requestSubsetCSV = this.requestSubsetCSV.bind(this)
     this.showAggregations = this.showAggregations.bind(this)
     this.setStateAndRoute = this.setStateAndRoute.bind(this)
+    this.updateSearch = this.updateSearch.bind(this)
     this.geographyOptions = createGeographyOptions(this.props)
     this.variableOptions = createVariableOptions()
 
@@ -46,13 +47,15 @@ class Subsets extends Component {
       error: null
     }
 
-    return makeStateFromSearch(this.props.location.search, defaultState, this.requestSubset)
+    return makeStateFromSearch(this.props.location.search, defaultState, this.requestSubset, this.updateSearch)
+  }
+
+  updateSearch() {
+    this.props.history.replace({search: makeSearchFromState(this.state)})
   }
 
   setStateAndRoute(state){
-   this.setState(state, () => {
-     this.props.history.replace({search: makeSearchFromState(this.state)})
-   })
+   this.setState(state, this.updateSearch)
   }
 
   requestSubset() {
