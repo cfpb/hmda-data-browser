@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import ImageCard from './ImageCard.jsx'
 import Header from './common/Header.jsx'
 import selector from './images/selector.png'
-import subsets from './images/subsets.png'
 import map from './images/map.png'
 
 import './Home.css'
@@ -23,19 +22,10 @@ class Home extends Component {
           <ImageCard
             image={selector}
             year="2018"
-            caption="Entire Datasets by Geography"
-            path="all-data"
+            caption="Datasets by Geography"
+            path="data"
             enabled
-          >Download entire raw datasets by state, MSA/MD, or nationwide.
-          </ImageCard>
-          <ImageCard
-            image={subsets}
-            year="2018"
-            caption="Subsets of data"
-            path="subsets"
-            enabled
-          >
-        Customize your analysis of HMDA data. Create subsets of data here, using pre-selected filters that allow you to compare queries.
+          >Download entire datasets by state, MSA/MD, or nationwide or filter them by selected variables.
           </ImageCard>
           <ImageCard
             image={map}

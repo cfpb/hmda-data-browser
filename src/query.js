@@ -50,7 +50,7 @@ function sanitizeArray(key, val) {
   else knownKeys = Object.keys(VARIABLES[key].mapping)
 
   val.forEach(v => {
-    if(knownKeys.indexOf(v) !== -1) arr.push(v)
+    if(knownKeys.indexOf(v) !== -1 || v === '') arr.push(v)
   })
 
   return arr

@@ -1,19 +1,20 @@
-.Subsets {
+.Geography {
   max-width: 1040px;
   margin: 0 auto;
   padding: 0 3rem;
 }
 
-.Subsets .Selects {
-  padding-bottom: 40px;
+.Geography .GeoSelect {
   border-bottom: 1px solid #d1d1d1;
 }
-.Subsets .QuerySummary {
+
+.Geography .QuerySummary {
   align-items: stretch;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
   font-size: 20px;
+  margin-top: 1em;
 }
 
 .QuerySummary > span {
@@ -28,7 +29,6 @@
 
 .CheckboxContainer{
   width: 50%;
-  height: 300px;
   padding: 0.5em;
 }
 
@@ -42,6 +42,7 @@
 
 .CheckboxContainer .PlaceholderBorder {
   border: 3px dashed #b1b1b1;
+  height: 300px;
   font-style: italic;
   color: #666;
   align-items: center;
@@ -70,7 +71,7 @@
   color: #fff;
   border: 0;
   cursor: pointer;
-  margin: 1em 0.5em 0 0;
+  margin: 2em 0.5em 2em 0;
   padding: 1em;
   font-size: 16px;
   font-weight: bold;
@@ -144,10 +145,6 @@
 .Aggregations ul h4 {
   margin: 0;
   font-size: 16px;
-}
-
-.CSVButton {
-  float: right;
 }
 
 .CSVButtonContainer {
