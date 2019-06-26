@@ -83,8 +83,9 @@ function runFetch(url, isCSV) {
 
 function makeCSVName(obj, includeVariables=true) {
   let name = ''
-  if(obj.states) name += obj.states.join(',') + '-'
-  if(obj.msamds) name += obj.msamds.join(',') + '-'
+  if(obj.states.length) name += obj.states.join(',') + '-'
+  if(obj.msamds.length) name += obj.msamds.join(',') + '-'
+  if(obj.nationwide) name = 'nationwide-'
 
   if(obj.variables && includeVariables){
     Object.keys(obj.variables).forEach(key => {
@@ -107,7 +108,7 @@ function getCSV(url, name){
   return runFetch(url, true).then(csv => {
           return fileSaver.saveAs(
             new Blob([csv], { type: 'text/csv;charset=utf-16' }),
-            makeCSVName(name)
+            name
     )
   })
 }
