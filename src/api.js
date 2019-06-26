@@ -1,18 +1,14 @@
 import fileSaver from 'file-saver'
 
-function makeVariableQuerystring(obj) {
+function addVariableParams(obj) {
   let qs = ''
   const vars = obj.variables
   if(vars) {
-    qs = '?'
     const keys = Object.keys(vars)
-    let isFirstParam = true
     keys.forEach(key => {
       const varKeys = Object.keys(vars[key])
       if(varKeys.length){
-        if(isFirstParam) isFirstParam = false
-        else qs += '&'
-        qs += key + '='
+        qs += `&${key}=`
         varKeys.forEach((k, i) => {
           if(i) qs += ','
           qs += k
@@ -23,18 +19,21 @@ function makeVariableQuerystring(obj) {
   return qs
 }
 
-function addGeographyParams(obj) {
-  let qs = ''
+function createGeographyQuerystring(obj) {
+  let qs = '?'
+  let isFirstParam = true
   const geos = ['states', 'msamds']
   geos.forEach(v => {
     if(obj[v].length){
-      qs += `&${v}=${obj[v].join(',')}`
+      if(isFirstParam) isFirstParam = false
+      else qs += '&'
+      qs += `${v}=${obj[v].join(',')}`
     }
   })
   return qs
 }
 
-function makeUrl(obj, isCSV) {
+function makeUrl(obj, isCSV, includeVariables=true) {
   let url = '/v2/data-browser-api-new/view'
 
   if(obj.nationwide) url += '/nationwide'
@@ -42,12 +41,14 @@ function makeUrl(obj, isCSV) {
   if(isCSV) url += '/csv'
   else url += '/aggregations'
 
-  url += makeVariableQuerystring(obj)
-  if(!obj.nationwide){
-    let geoParams = addGeographyParams(obj)
-    if(!obj.variables) geoParams = '?' + geoParams.slice(1)
-    url += geoParams
+  if(obj.nationwide){
+    if(includeVariables) url += '?' + addVariableParams(obj).slice(1)
+  }else {
+    url += createGeographyQuerystring(obj)
+    if(includeVariables) url += addVariableParams(obj)
   }
+
+
 
   return url
 }
@@ -80,12 +81,13 @@ function runFetch(url, isCSV) {
     })
 }
 
-function makeCSVName(obj) {
+function makeCSVName(obj, includeVariables=true) {
   let name = ''
-  if(obj.states) name += obj.states.join(',') + '-'
-  if(obj.msamds) name += obj.msamds.join(',') + '-'
+  if(obj.states.length) name += obj.states.join(',') + '-'
+  if(obj.msamds.length) name += obj.msamds.join(',') + '-'
+  if(obj.nationwide) name = 'nationwide-'
 
-  if(obj.variables){
+  if(obj.variables && includeVariables){
     Object.keys(obj.variables).forEach(key => {
       name += key + '-'
     })
@@ -102,11 +104,19 @@ export function getSubsetDetails(obj){
   return runFetch(makeUrl(obj))
 }
 
-export function getCSV(obj){
-  return runFetch(makeUrl(obj, true), true).then(csv => {
+function getCSV(url, name){
+  return runFetch(url, true).then(csv => {
           return fileSaver.saveAs(
             new Blob([csv], { type: 'text/csv;charset=utf-16' }),
-            makeCSVName(obj)
+            name
     )
   })
+}
+
+export function getGeographyCSV(obj){
+  return getCSV(makeUrl(obj, true, false), makeCSVName(obj, false))
+}
+
+export function getSubsetCSV(obj){
+  return getCSV(makeUrl(obj, true), makeCSVName(obj))
 }

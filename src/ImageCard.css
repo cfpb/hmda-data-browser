@@ -28,14 +28,14 @@
 
 .ImageWrapper {
   overflow:hidden;
-  width: 286px;
-  height:202px;
+  width: 429px;
+  height:285px;
 }
 
 .imagechild {
   transition: transform 0.3s;
-  width:286px;
-  height:202px;
+  width:429px;
+  height:285px;
 }
 
 .ImageCard > h4 {

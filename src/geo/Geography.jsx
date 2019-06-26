@@ -4,7 +4,7 @@ import Header from '../common/Header.jsx'
 import CheckboxContainer from './CheckboxContainer.jsx'
 import Aggregations from './Aggregations.jsx'
 import Error from './Error.jsx'
-import { getSubsetDetails, getCSV } from '../api.js'
+import { getSubsetDetails, getGeographyCSV, getSubsetCSV } from '../api.js'
 import { makeSearchFromState, makeStateFromSearch } from '../query.js'
 import msaToName from '../constants/msaToName.js'
 import VARIABLES from '../constants/variables.js'
@@ -16,9 +16,9 @@ import {
   geographyStyleFn
 } from './selectUtils.js'
 
-import './Subsets.css'
+import './Geography.css'
 
-class Subsets extends Component {
+class Geography extends Component {
   constructor(props) {
     super(props)
     this.onGeographyChange = this.onGeographyChange.bind(this)
@@ -26,6 +26,7 @@ class Subsets extends Component {
     this.makeCheckboxChange = this.makeCheckboxChange.bind(this)
     this.requestSubset = this.requestSubset.bind(this)
     this.requestSubsetCSV = this.requestSubsetCSV.bind(this)
+    this.requestGeographyCSV = this.requestGeographyCSV.bind(this)
     this.showAggregations = this.showAggregations.bind(this)
     this.setStateAndRoute = this.setStateAndRoute.bind(this)
     this.updateSearch = this.updateSearch.bind(this)
@@ -58,6 +59,13 @@ class Subsets extends Component {
    this.setState(state, this.updateSearch)
   }
 
+  requestGeographyCSV() {
+    getGeographyCSV(this.state)
+      .catch(error => {
+        this.setState({error})
+      })
+  }
+
   requestSubset() {
     getSubsetDetails(this.state)
       .then(details => {
@@ -69,7 +77,7 @@ class Subsets extends Component {
   }
 
   requestSubsetCSV() {
-    getCSV(this.state)
+    getSubsetCSV(this.state)
       .catch(error => {
         this.setStateAndRoute({error})
       })
@@ -182,7 +190,7 @@ class Subsets extends Component {
       <>
         <Aggregations details={details} variableOrder={variableOrder}/>
         <div className="CSVButtonContainer">
-          <button onClick={this.requestSubsetCSV} disabled={!total} className={total ? 'QueryButton CSVButton' : 'QueryButton CSVButton disabled'}>Download Data</button>
+          <button onClick={this.requestSubsetCSV} disabled={!total} className={total ? 'QueryButton CSVButton' : 'QueryButton CSVButton disabled'}>Download Subset</button>
           {this.renderTotal(total)}
         </div>
       </>
@@ -219,20 +227,22 @@ class Subsets extends Component {
 
   render() {
     const { nationwide, states, msamds, variables, variableOrder, details, error } = this.state
+    const enabled = nationwide || states.length || msamds.length
     const checksExist = this.someChecksExist()
 
     return (
-      <div className="Subsets">
+      <div className="Geography">
         <div className="intro">
-          <Header type={1} headingText="Subsets of HMDA data">
+          <Header type={1} headingText="Geography of HMDA data">
             <p className="lead">
-              Customize your analysis of HMDA data. Create subsets of data here,
-              using pre-selected filters that allow you to compare queries. For
-              questions/suggestions, contact hmdafeedback@cfpb.gov.
+              Download CSVs of HMDA data by state, MSA, or nationwide.
+              By default, these files contain every collected data variable and can be used for advanced analysis.
+              You can also select filters to create subsets of the datasets that are easier to manage in common spreadsheet programs.
+              For questions/suggestions, contact hmdafeedback@cfpb.gov.
             </p>
           </Header>
         </div>
-        <div className="Selects">
+        <div className="GeoSelect">
           <h4>Choose a state, MSA/MD, or nationwide:</h4>
           <Select
             styles={geographyStyleFn}
@@ -246,25 +256,26 @@ class Subsets extends Component {
             value={this.setGeographySelect(states, msamds, nationwide)}
             options={nationwide ? [] : this.geographyOptions}
           />
-          <h4>Choose up to two variables:</h4>
-          <Select
-            onChange={this.onVariableChange}
-            placeholder="Select a variable"
-            isMulti={true}
-            searchable={true}
-            openOnFocus
-            simpleValue
-            value={this.setVariableSelect(variableOrder)}
-            options={variableOrder.length >= 2 ? [] : this.variableOptions}
-          />
+          <button onClick={this.requestGeographyCSV} disabled={!enabled} className={ enabled ?  'QueryButton' : 'QueryButton disabled'}>Download Entire Dataset</button>
         </div>
-        {nationwide || states.length || msamds.length ?
+        {enabled ?
           <>
+            <h4>Or filter by up to two variables:</h4>
+            <Select
+              onChange={this.onVariableChange}
+              placeholder="Select a variable"
+              isMulti={true}
+              searchable={true}
+              openOnFocus
+              simpleValue
+              value={this.setVariableSelect(variableOrder)}
+              options={variableOrder.length >= 2 ? [] : this.variableOptions}
+            />
             <div className="QuerySummary">
               <CheckboxContainer vars={variables} selectedVar={variableOrder[0]} position={1} callbackFactory={this.makeCheckboxChange}/>
               <CheckboxContainer vars={variables} selectedVar={variableOrder[1]} position={2} callbackFactory={this.makeCheckboxChange}/>
-            <button onClick={this.requestSubset} disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset Details</button>
             </div>
+            <button onClick={this.requestSubset} disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset Details</button>
             {error ? <Error error={error}/> : null}
             {details.aggregations && !error ? this.showAggregations(details, variableOrder) : null}
           </>
@@ -274,4 +285,4 @@ class Subsets extends Component {
     )
   }
 }
-export default Subsets
+export default Geography
