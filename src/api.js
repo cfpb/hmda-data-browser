@@ -34,7 +34,7 @@ function createGeographyQuerystring(obj) {
 }
 
 function makeUrl(obj, isCSV, includeVariables=true) {
-  let url = '/v2/data-browser-api-new/view'
+  let url = '/v2/data-browser-api/view'
 
   if(obj.nationwide) url += '/nationwide'
 
