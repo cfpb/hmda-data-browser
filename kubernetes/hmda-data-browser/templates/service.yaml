@@ -30,14 +30,11 @@ metadata:
       apiVersion: ambassador/v0
       kind: Mapping
       name: data_browser_mapping
+      ambassador_id: ambassador-default-1
       prefix: /data-browser/
       rewrite: /data-browser/
       service: {{ include "hmda-data-browser.fullname" . }}:{{ .Values.service.port }}
 spec:
-  type: {{ .Values.ambassador.service.type }}
+  clusterIP: None  
   ports:
-  - name: {{ include "hmda-data-browser.fullname" . }}-ambassador
-    port: {{ .Values.ambassador.port }}
-    targetPort: {{ .Values.service.port }}
-  selector:
-service: {{ include "hmda-data-browser.fullname" . }}-ambassador
+    - port: {{ .Values.service.port }}
