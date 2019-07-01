@@ -1,5 +1,6 @@
 import stateToMsas from '../constants/stateToMsas.js'
 import STATEOBJ from '../constants/stateObj.js'
+import MSATONAME from '../constants/msaToName.js'
 import VARIABLES from '../constants/variables.js'
 
 function createStateOption(state, options){
@@ -23,14 +24,14 @@ function createGeographyOptions(props) {
     //state code
     if(state.length === 2) {
       createStateOption(state, geographyOptions)
-      statesWithMsas[state].forEach(msa => createMSAOption(msa.id, msa.name, geographyOptions))
+      statesWithMsas[state].forEach(msa => createMSAOption(msa, MSATONAME[msa], geographyOptions))
     } else {
       /*
       //multistate
       statesWithMsas[state].forEach(msaMd => {
         geographyOptions.push({
-          value: msaMd.id,
-          label:  `${msaMd.id.replace('multi','')} - ${msaMd.name} - ENTIRE MSA/MD`
+          value: msaMd,
+          label:  `${msaMd.replace('multi','')} - ${MSATONAME[msaMd]} - ENTIRE MSA/MD`
         })
       })
       */
