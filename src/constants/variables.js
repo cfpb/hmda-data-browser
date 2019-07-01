@@ -36,61 +36,59 @@ const constructionMethodList = [
 ]
 
 const sexList = [
-  'Male',
-  'Female',
-  'Joint'
+  { id: '1', name: 'Male'},
+  { id: '2', name: 'Female'},
+  { id: '3', name: 'Joint'}
 ]
 
 const raceList = [
-  'American Indian or Alaska Native',
-  'Asian',
-  'Black or African American',
-  'Native Hawaiian or Other Pacific Islander',
-  'White',
-  '2 Or More Minority Races',
-  'Joint',
-  'Free Form Text Only',
-  'Race Not Available'
+  { id: '1', name: 'American Indian or Alaska Native'},
+  { id: '2', name: 'Asian'},
+  { id: '3', name: 'Black or African American'},
+  { id: '4', name: 'Native Hawaiian or Other Pacific Islander'},
+  { id: '5', name: 'White'},
+  { id: '6', name: '2 Or More Minority Races'},
+  { id: '7', name: 'Joint'},
+  { id: '8', name: 'Free Form Text Only'},
+  { id: '9', name: 'Race Not Available'}
 ]
 
 const ethnicityList = [
-  'Hispanic or Latino',
-  'Not Hispanic or Latino',
-  'Joint',
-  'Ethnicity Not Available',
-  'Free Form Text Only'
+  { id: '1', name: 'Hispanic or Latino'},
+  { id: '2', name: 'Not Hispanic or Latino'},
+  { id: '3', name: 'Joint'},
+  { id: '4', name: 'Ethnicity Not Available'},
+  { id: '5', name: 'Free Form Text Only'}
 ]
 
 const totalUnitList = [
-  '1',
-  '2',
-  '3',
-  '4',
-  '5-24',
-  '25-49',
-  '50-99',
-  '100-149',
-  '>149'
+  { id: '1', name: '1'},
+  { id: '2', name: '2'},
+  { id: '3', name: '3'},
+  { id: '4', name: '4'},
+  { id: '5', name: '5-24'},
+  { id: '6', name: '25-49'},
+  { id: '7', name: '50-99'},
+  { id: '8', name: '100-149'},
+  { id: '9', name: '>149'}
 ]
 
 const dwellingCategoryList = [
-  'Single Family (1-4 Units):Site-Built',
-  'Multifamily:Site-Built',
-  'Single Family (1-4 Units):Manufactured',
-  'Multifamily:Manufactured'
+  { id: '1', name: 'Single Family (1-4 Units):Site-Built'},
+  { id: '2', name: 'Multifamily:Site-Built'},
+  { id: '3', name: 'Single Family (1-4 Units):Manufactured'},
+  { id: '4', name: 'Multifamily:Manufactured'}
 ]
 
 const loanProductList = [
-  'Conventional:First Lien',
-  'FHA:First Lien',
-  'VA:First Lien',
-  'FSA/RHS:First Lien',
-  'Conventional:Subordinate Lien',
-  'FHA:Subordinate Lien',
-  'VA:Subordinate Lien',
-  'FSA/RHS:Subordinate Lien'
+  { id: '1', name: 'Conventional:First Lien' },
+  { id: '2', name: 'FHA:First Lien' },
+  { id: '3', name: 'VA:First Lien' },
+  { id: '4', name: 'FSA/RHS:First Lien' },
+  { id: '5', name: 'FHA:Subordinate Lien' },
+  { id: '6', name: 'VA:Subordinate Lien' },
+  { id: '7', name: 'FSA/RHS:Subordinate Lien' }
 ]
-
 
 const actions_taken = buildWithId('Action Taken', actionsList)
 const loan_types = buildWithId('Loan Type', loanTypeList)
@@ -98,12 +96,12 @@ const loan_purposes = buildWithId('Loan Purpose', loanPurposeList)
 const lien_statuses = buildWithId('Lien Status', lienStatusList)
 const construction_methods = buildWithId('Construction Method', constructionMethodList)
 
-const sexes = buildEncoded('Sex', sexList)
-const races = buildEncoded('Race', raceList)
-const ethnicities = buildEncoded('Ethnicities', ethnicityList)
-const total_units = buildEncoded('Total Units', totalUnitList)
-const dwelling_categories = buildEncoded('Dwelling Categories', dwellingCategoryList)
-const loan_products = buildEncoded('Loan Products', loanProductList)
+const sexes = buildWithId('Sex', sexList)
+const races = buildWithId('Race', raceList)
+const ethnicities = buildWithId('Ethnicities', ethnicityList)
+const total_units = buildWithId('Total Units', totalUnitList)
+const dwelling_categories = buildWithId('Dwelling Categories', dwellingCategoryList)
+const loan_products = buildWithId('Loan Products', loanProductList)
 
 function makeObj(label) {
   return {
