@@ -100,7 +100,7 @@ const construction_methods = buildWithId('Construction Method', constructionMeth
 
 const sexes = buildEncoded('Sex', sexList)
 const races = buildEncoded('Race', raceList)
-const ethnicities = buildEncoded('Ethnicities', ethnicityList)
+const ethnicities = buildEncoded('Ethnicity', ethnicityList)
 const total_units = buildEncoded('Total Units', totalUnitList)
 const dwelling_categories = buildEncoded('Dwelling Categories', dwellingCategoryList)
 const loan_products = buildEncoded('Loan Products', loanProductList)
