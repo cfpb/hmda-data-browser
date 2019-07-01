@@ -272,8 +272,8 @@ class Geography extends Component {
               options={variableOrder.length >= 2 ? [] : this.variableOptions}
             />
             <div className="QuerySummary">
-              <CheckboxContainer vars={variables} selectedVar={variableOrder[0]} position={1} callbackFactory={this.makeCheckboxChange}/>
-              <CheckboxContainer vars={variables} selectedVar={variableOrder[1]} position={2} callbackFactory={this.makeCheckboxChange}/>
+              { variableOrder[0] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[0]} callbackFactory={this.makeCheckboxChange}/> : null }
+              { variableOrder[1] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[1]} callbackFactory={this.makeCheckboxChange}/> : null }
             </div>
             <button onClick={this.requestSubset} disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset Details</button>
             {error ? <Error error={error}/> : null}
