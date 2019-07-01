@@ -13,21 +13,14 @@ function renderCheckboxes(variable, vars, makeCb) {
 }
 
 const CheckboxContainer = props => {
-  const { vars, selectedVar, position, callbackFactory } = props
+  const { vars, selectedVar, callbackFactory } = props
 
   return (
     <div className="CheckboxContainer">
-      {selectedVar
-        ?
-          <div className="border">
-            <h3>{VARIABLES[selectedVar].label}</h3>
-            {renderCheckboxes(selectedVar, vars, callbackFactory)}
-          </div>
-        :
-          <div className="PlaceholderBorder border">
-            <span>Variable {position} Options</span>
-          </div>
-      }
+      <div className="border">
+        <h3>{VARIABLES[selectedVar].label}</h3>
+        {renderCheckboxes(selectedVar, vars, callbackFactory)}
+      </div>
     </div>
   )
 }

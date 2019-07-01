@@ -12,9 +12,8 @@
   align-items: stretch;
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
   font-size: 20px;
-  margin-top: 1em;
 }
 
 .QuerySummary > span {
@@ -29,7 +28,7 @@
 
 .CheckboxContainer{
   width: 50%;
-  padding: 0.5em;
+  padding: 1.5em 0.5em 0 0.5em;
 }
 
 .CheckboxContainer .border {
@@ -38,15 +37,6 @@
   display: flex;
   flex-flow: column nowrap;
   font-size: 16px;
-}
-
-.CheckboxContainer .PlaceholderBorder {
-  border: 3px dashed #b1b1b1;
-  height: 300px;
-  font-style: italic;
-  color: #666;
-  align-items: center;
-  justify-content: center;
 }
 
 .CheckboxContainer h3 {
