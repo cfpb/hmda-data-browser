@@ -8,7 +8,7 @@ function buildRows(aggregations, v1, p1, v2, p2) {
 
   for(let i=0; i<p1.length; i++){
     const row = []
-    row.push(<th key="header">{VARIABLES[v1].mapping[p1[i]]}</th>)
+    row.push(<th key="header">{VARIABLES[v1].mapping[encodeURIComponent(p1[i])]}</th>)
     if(p2) {
       for(let j=0; j<p2.length; j++){
         const currAgg = extractAgg(agg, v1, p1[i], v2, p2[j])
@@ -39,10 +39,10 @@ function makeHeader(params, v1, p1, v2, p2) {
   if(params.state) list.push(<li key="0"><h4>State:</h4><ul className="sublist"><li>{params.state.split(',').map(v => STATEOBJ[v]).join(', ')}</li></ul></li>)
   if(params.msamd) list.push(<li key="1"><h4>MSA/MD:</h4><ul className="sublist"><li>{params.msamd.split(',').join(', ')}</li></ul></li>)
   list.push(<li key="2"><h4>{VARIABLES[v1].label}:</h4><ul className="sublist">{p1.map((v, i) => {
-    return <li key={i}>{VARIABLES[v1].mapping[v]}</li>
+    return <li key={i}>{VARIABLES[v1].mapping[encodeURIComponent(v)]}</li>
   })}</ul></li>)
   if(v2 && params[v2]) list.push(<li key="3"><h4>{VARIABLES[v2].label}:</h4><ul className="sublist">{p2.map((v, i) => {
-    return <li key={i}>{VARIABLES[v2].mapping[v]}</li>
+    return <li key={i}>{VARIABLES[v2].mapping[encodeURIComponent(v)]}</li>
   })
   }</ul></li>)
 
@@ -70,7 +70,7 @@ const Aggregations = ({details, variableOrder}) => {
                 <th></th>
                 {p2.map((v, i) =>{
                   return (
-                    <th colSpan={2} key={i}>{VARIABLES[v2].mapping[v]}</th>
+                    <th colSpan={2} key={i}>{VARIABLES[v2].mapping[encodeURIComponent(v)]}</th>
                   )
                 })}
               </tr>
