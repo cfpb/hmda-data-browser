@@ -3,7 +3,7 @@ import STATEOBJ from '../constants/stateObj.js'
 import MSATONAME from '../constants/msaToName.js'
 import VARIABLES from '../constants/variables.js'
 
-function formatWithCommas(str) {
+function formatWithCommas(str='') {
   str = str + ''
   let formatted = ''
   let comma = ','
