@@ -1,5 +1,6 @@
 import React from 'react'
 import STATEOBJ from '../constants/stateObj.js'
+import MSATONAME from '../constants/msaToName.js'
 import VARIABLES from '../constants/variables.js'
 
 function buildRows(aggregations, v1, p1, v2, p2) {
@@ -37,7 +38,7 @@ function extractAgg(agg, v1, sv1, v2, sv2){
 function makeHeader(params, v1, p1, v2, p2) {
   const list = []
   if(params.state) list.push(<li key="0"><h4>State:</h4><ul className="sublist"><li>{params.state.split(',').map(v => STATEOBJ[v]).join(', ')}</li></ul></li>)
-  if(params.msamd) list.push(<li key="1"><h4>MSA/MD:</h4><ul className="sublist"><li>{params.msamd.split(',').join(', ')}</li></ul></li>)
+  if(params.msamd) list.push(<li key="1"><h4>MSA/MD:</h4><ul className="sublist"><li>{params.msamd.split(',').map(v => `${v}\u00A0-\u00A0${MSATONAME[v]}`).join(', ')}</li></ul></li>)
   list.push(<li key="2"><h4>{VARIABLES[v1].label}:</h4><ul className="sublist">{p1.map((v, i) => {
     return <li key={i}>{VARIABLES[v1].mapping[v]}</li>
   })}</ul></li>)
