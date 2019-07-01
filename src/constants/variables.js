@@ -131,7 +131,7 @@ function buildEncoded(label, list) {
   list.forEach(name => {
     const id = encodeURIComponent(name)
     obj.options.push({ id, name })
-    obj.mapping[name] = name
+    obj.mapping[id] = name
   })
 
   return obj
