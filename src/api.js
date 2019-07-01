@@ -19,6 +19,10 @@ function addVariableParams(obj) {
   return qs
 }
 
+function addYears() {
+  return '&years=2018'
+}
+
 function createGeographyQuerystring(obj) {
   let qs = '?'
   let isFirstParam = true
@@ -48,7 +52,7 @@ function makeUrl(obj, isCSV, includeVariables=true) {
     if(includeVariables) url += addVariableParams(obj)
   }
 
-
+  url += addYears()
 
   return url
 }
