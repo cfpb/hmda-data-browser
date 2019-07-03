@@ -142,8 +142,8 @@
 }
 
 .AggregationTotal {
-  float: right;
-  margin-right: 1em;
+  display: inline;
+  margin-left: 1em;
   font-size: 1.1em;
   line-height: 4.4em;
 }
