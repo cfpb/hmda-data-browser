@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Select from 'react-select'
+import { Link } from 'react-router-dom'
 import Header from '../common/Header.jsx'
 import CheckboxContainer from './CheckboxContainer.jsx'
 import Aggregations from './Aggregations.jsx'
@@ -232,6 +233,7 @@ class Geography extends Component {
 
     return (
       <div className="Geography">
+        <Link className="BackLink" to="../../">{'\u2b05'} DATA BROWSER HOME</Link>
         <div className="intro">
           <Header type={1} headingText="Geography of HMDA data">
             <p className="lead">
