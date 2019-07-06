@@ -64,10 +64,7 @@ class Geography extends Component {
   }
 
   requestGeographyCSV() {
-    return getGeographyCSV(this.state)
-      .catch(error => {
-        return this.setState({error})
-      })
+    getGeographyCSV(this.state)
   }
 
   requestSubset() {
@@ -82,10 +79,7 @@ class Geography extends Component {
   }
 
   requestSubsetCSV() {
-    return getSubsetCSV(this.state)
-      .catch(error => {
-        return this.setStateAndRoute({error})
-      })
+    getSubsetCSV(this.state)
   }
 
   onGeographyChange(selectedGeographies) {
