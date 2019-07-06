@@ -1,14 +1,14 @@
 .LoadingInline.LoadingIconWrapper {
-  height: 22px;
-  width: 22px;
+  height: 30px;
+  width: 30px;
   display: inline-block;
   margin-left: 5px;
   margin-top: 0;
-  padding-top: 3px;
+  padding-top: 10px;
 }
 .LoadingInline.LoadingIconWrapper .LoadingIcon {
-  height: 22px;
-  width: 22px;
+  height: 30px;
+  width: 30px;
 }
 
 .status .LoadingInline {
