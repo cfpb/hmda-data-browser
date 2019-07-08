@@ -1,5 +1,3 @@
-import fileSaver from 'file-saver'
-
 function addVariableParams(obj) {
   let qs = ''
   const vars = obj.variables
@@ -58,16 +56,9 @@ function makeUrl(obj, isCSV, includeVariables=true) {
   return url
 }
 
-function runFetch(url, isCSV) {
+function runFetch(url) {
 
   let headers = { Accept: 'application/json' }
-
-  if (isCSV) {
-    headers = {
-      'Content-Type': 'text/csv',
-      Accept: 'text/csv, text/plain'
-    }
-  }
 
   var fetchOptions = {
     method: 'GET',
@@ -78,9 +69,6 @@ function runFetch(url, isCSV) {
     .then(response => {
       if(response.status > 399) throw response
       return new Promise(resolve => {
-        if (isCSV) {
-          return resolve(response.text())
-        }
         resolve(response.json())
       })
     })
@@ -110,12 +98,11 @@ export function getSubsetDetails(obj){
 }
 
 function getCSV(url, name){
-  return runFetch(url, true).then(csv => {
-          return fileSaver.saveAs(
-            new Blob([csv], { type: 'text/csv;charset=utf-16' }),
-            name
-    )
-  })
+  let a = document.createElement('a')
+  a.href = url
+  a.setAttribute('download', name)
+  a.click()
+  a = null
 }
 
 export function getGeographyCSV(obj){

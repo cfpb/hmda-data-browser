@@ -20,7 +20,6 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "file-saver": "2.0.2",
     "react": "16.8.4",
     "react-app-polyfill": "0.1.3",
     "react-dom": "16.8.4",
