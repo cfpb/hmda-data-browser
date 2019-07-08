@@ -182,7 +182,7 @@ class Geography extends Component {
   }
 
   renderTotal(total){
-    return <div className="AggregationTotal">Data contains <h4>{total}</h4> row{total === 1 ? '' : 's'}</div>
+    return <div className="AggregationTotal">The filtered data contains <h4>{total}</h4> row{total === 1 ? '' : 's'}, each with all 93 public data fields.</div>
   }
 
   showAggregations(details, variableOrder){
@@ -191,8 +191,8 @@ class Geography extends Component {
       <>
         <Aggregations details={details} variableOrder={variableOrder}/>
         <div className="CSVButtonContainer">
-          <LoadingButton onClick={this.requestSubsetCSV} disabled={!total}>Download Filtered Data</LoadingButton>
           {this.renderTotal(total)}
+          <LoadingButton onClick={this.requestSubsetCSV} disabled={!total}>Download Filtered Data</LoadingButton>
         </div>
       </>
     )

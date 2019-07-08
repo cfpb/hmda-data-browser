@@ -74,7 +74,7 @@ const Aggregations = ({details, variableOrder}) => {
 
   return (
     <div className="Aggregations">
-      <h2>Subset Aggregations</h2>
+      <h2>Data Summary</h2>
       {makeHeader(parameters, v1, p1, v2, p2)}
       <table>
         <thead>
