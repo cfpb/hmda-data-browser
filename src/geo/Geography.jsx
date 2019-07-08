@@ -233,22 +233,21 @@ class Geography extends Component {
       <div className="Geography">
         <Link className="BackLink" to="../../">{'\u2b05'} DATA BROWSER HOME</Link>
         <div className="intro">
-          <Header type={1} headingText="Geography of HMDA data">
+          <Header type={1} headingText="HMDA Dataset Filtering">
             <p className="lead">
-              Download CSVs of HMDA data by state, MSA, or nationwide.
-              By default, these files contain every collected data variable and can be used for advanced analysis.
-              You can also select filters to create subsets of the datasets that are easier to manage in common spreadsheet programs.
+              Download CSVs of HMDA data. These files contain all <a href="https://github.com/cfpb/hmda-platform/raw/master/docs/v2/spec/2018_Public_LAR_Data_Dictionary.pdf">data fields</a> available in the public data record and can be used for advanced analysis.
               For questions/suggestions, contact hmdafeedback@cfpb.gov.
             </p>
           </Header>
         </div>
         <div className="GeoSelect">
-          <h4>Choose a state, MSA/MD, or nationwide:</h4>
+          <h3>Dataset by Geography</h3>
+          <p>Filter HMDA data by geography levels: nationwide, state, & MSA/MD</p>
           <Select
             controlShouldRenderValue={true}
             styles={geographyStyleFn}
             onChange={this.onGeographyChange}
-            placeholder="Select a state or MSA/MD"
+            placeholder="Select or type a state, an MSA/MD, or 'nationwide'"
             isMulti={true}
             searchable={true}
             autoFocus
@@ -260,8 +259,9 @@ class Geography extends Component {
           <LoadingButton onClick={this.requestGeographyCSV} disabled={!enabled}>Download Entire Dataset</LoadingButton>
         </div>
         {enabled ?
-          <>
-            <h4>Or filter by up to two variables:</h4>
+          <div className="GeoSelect">
+            <h3>Dataset by Pre-selected Filters</h3>
+            <p>Narrow down your geography selection by filtering on popular variables</p>
             <Select
               onChange={this.onVariableChange}
               placeholder="Select a variable"
@@ -279,7 +279,7 @@ class Geography extends Component {
             <LoadingButton loading={loadingDetails} onClick={this.requestSubset} disabled={!checksExist}>Get Subset Details</LoadingButton>
             {error ? <Error error={error}/> : null}
             {details.aggregations && !error ? this.showAggregations(details, variableOrder) : null}
-          </>
+          </div>
         : null
       }
       </div>

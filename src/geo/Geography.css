@@ -4,18 +4,27 @@
   padding: 0 3rem;
 }
 
-.Geography .GeoSelect {
+.GeoSelect > h3 {
+  margin-bottom: 0;
+}
+
+.GeoSelect > p {
+  color: #5b616b;
+  font-size: 15px;
+  margin:2px 0 4px 0;
+}
+
+.GeoSelect:first-of-type {
   border-bottom: 1px solid #d1d1d1;
 }
 
-.Geography .QuerySummary {
+.QuerySummary {
   align-items: stretch;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
   font-size: 20px;
 }
-
 .QuerySummary > span {
   display: inline-block;
   width: 100%;
