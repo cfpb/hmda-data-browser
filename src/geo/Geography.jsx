@@ -20,6 +20,8 @@ import {
 
 import './Geography.css'
 
+import pdfIcon from '../images/pdf-icon.svg'
+
 class Geography extends Component {
   constructor(props) {
     super(props)
@@ -235,7 +237,7 @@ class Geography extends Component {
         <div className="intro">
           <Header type={1} headingText="HMDA Dataset Filtering">
             <p className="lead">
-              Download CSVs of HMDA data. These files contain all <a href="https://github.com/cfpb/hmda-platform/raw/master/docs/v2/spec/2018_Public_LAR_Data_Dictionary.pdf">data fields</a> available in the public data record and can be used for advanced analysis.
+              Download CSVs of HMDA data. These files contain all <a href="https://github.com/cfpb/hmda-platform/raw/master/docs/v2/spec/2018_Public_LAR_Data_Dictionary.pdf">data fields<img className="IconPdf" alt="pdf" src={pdfIcon} height="16" /></a> available in the public data record and can be used for advanced analysis.
               For questions/suggestions, contact hmdafeedback@cfpb.gov.
             </p>
           </Header>

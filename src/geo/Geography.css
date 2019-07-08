@@ -4,6 +4,14 @@
   padding: 0 3rem;
 }
 
+.Geography .lead img {
+  opacity: 0.7;
+}
+
+.IconPdf {
+  margin: 0 1px -3px 2px;
+}
+
 .SelectWrapper > h3 {
   margin: 1.2em 0 0 0;
 }
