@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import Header from '../common/Header.jsx'
 import CheckboxContainer from './CheckboxContainer.jsx'
 import Aggregations from './Aggregations.jsx'
+import LoadingButton from './LoadingButton.jsx'
 import Error from './Error.jsx'
 import { getSubsetDetails, getGeographyCSV, getSubsetCSV } from '../api.js'
 import { makeSearchFromState, makeStateFromSearch } from '../query.js'
@@ -46,6 +47,7 @@ class Geography extends Component {
       variables: {},
       variableOrder: [],
       details: {},
+      loadingDetails: false,
       error: null
     }
 
@@ -57,30 +59,32 @@ class Geography extends Component {
   }
 
   setStateAndRoute(state){
-   this.setState(state, this.updateSearch)
+    state.loadingDetails = false
+    return this.setState(state, this.updateSearch)
   }
 
   requestGeographyCSV() {
-    getGeographyCSV(this.state)
+    return getGeographyCSV(this.state)
       .catch(error => {
-        this.setState({error})
+        return this.setState({error})
       })
   }
 
   requestSubset() {
-    getSubsetDetails(this.state)
+    this.setState({loadingDetails: true})
+    return getSubsetDetails(this.state)
       .then(details => {
-        this.setStateAndRoute({details})
+        return this.setStateAndRoute({details})
       })
       .catch(error => {
-        this.setStateAndRoute({error})
+        return this.setStateAndRoute({error})
       })
   }
 
   requestSubsetCSV() {
-    getSubsetCSV(this.state)
+    return getSubsetCSV(this.state)
       .catch(error => {
-        this.setStateAndRoute({error})
+        return this.setStateAndRoute({error})
       })
   }
 
@@ -191,7 +195,7 @@ class Geography extends Component {
       <>
         <Aggregations details={details} variableOrder={variableOrder}/>
         <div className="CSVButtonContainer">
-          <button onClick={this.requestSubsetCSV} disabled={!total} className={total ? 'QueryButton CSVButton' : 'QueryButton CSVButton disabled'}>Download Subset</button>
+          <LoadingButton onClick={this.requestSubsetCSV} disabled={!total}>Download Subset</LoadingButton>
           {this.renderTotal(total)}
         </div>
       </>
@@ -227,7 +231,7 @@ class Geography extends Component {
   }
 
   render() {
-    const { nationwide, states, msamds, variables, variableOrder, details, error } = this.state
+    const { nationwide, states, msamds, variables, variableOrder, details, loadingDetails, error } = this.state
     const enabled = nationwide || states.length || msamds.length
     const checksExist = this.someChecksExist()
 
@@ -247,6 +251,7 @@ class Geography extends Component {
         <div className="GeoSelect">
           <h4>Choose a state, MSA/MD, or nationwide:</h4>
           <Select
+            controlShouldRenderValue={true}
             styles={geographyStyleFn}
             onChange={this.onGeographyChange}
             placeholder="Select a state or MSA/MD"
@@ -258,7 +263,7 @@ class Geography extends Component {
             value={this.setGeographySelect(states, msamds, nationwide)}
             options={nationwide ? [] : this.geographyOptions}
           />
-          <button onClick={this.requestGeographyCSV} disabled={!enabled} className={ enabled ?  'QueryButton' : 'QueryButton disabled'}>Download Entire Dataset</button>
+          <LoadingButton onClick={this.requestGeographyCSV} disabled={!enabled}>Download Entire Dataset</LoadingButton>
         </div>
         {enabled ?
           <>
@@ -277,7 +282,7 @@ class Geography extends Component {
               { variableOrder[0] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[0]} callbackFactory={this.makeCheckboxChange}/> : null }
               { variableOrder[1] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[1]} callbackFactory={this.makeCheckboxChange}/> : null }
             </div>
-            <button onClick={this.requestSubset} disabled={!checksExist} className={ checksExist ? 'QueryButton' : 'QueryButton disabled'}>Get Subset Details</button>
+            <LoadingButton loading={loadingDetails} onClick={this.requestSubset} disabled={!checksExist}>Get Subset Details</LoadingButton>
             {error ? <Error error={error}/> : null}
             {details.aggregations && !error ? this.showAggregations(details, variableOrder) : null}
           </>
