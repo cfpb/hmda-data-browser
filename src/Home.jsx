@@ -22,7 +22,7 @@ class Home extends Component {
           <ImageCard
             image={selector}
             year="2018"
-            caption="Datasets by Geography"
+            caption="HMDA Dataset Filtering"
             path="data"
             enabled
           >Download entire datasets by state, MSA/MD, or nationwide or filter them by selected variables.
