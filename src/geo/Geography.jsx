@@ -240,7 +240,7 @@ class Geography extends Component {
             </p>
           </Header>
         </div>
-        <div className="GeoSelect">
+        <div className="SelectWrapper">
           <h3>Dataset by Geography</h3>
           <p>Filter HMDA data by geography levels: nationwide, state, & MSA/MD</p>
           <Select
@@ -259,27 +259,29 @@ class Geography extends Component {
           <LoadingButton onClick={this.requestGeographyCSV} disabled={!enabled}>Download Entire Dataset</LoadingButton>
         </div>
         {enabled ?
-          <div className="GeoSelect">
-            <h3>Dataset by Pre-selected Filters</h3>
-            <p>Narrow down your geography selection by filtering on popular variables</p>
-            <Select
-              onChange={this.onVariableChange}
-              placeholder="Select a variable"
-              isMulti={true}
-              searchable={true}
-              openOnFocus
-              simpleValue
-              value={this.setVariableSelect(variableOrder)}
-              options={variableOrder.length >= 2 ? [] : this.variableOptions}
-            />
-            <div className="QuerySummary">
-              { variableOrder[0] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[0]} callbackFactory={this.makeCheckboxChange}/> : null }
-              { variableOrder[1] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[1]} callbackFactory={this.makeCheckboxChange}/> : null }
+          <>
+            <div className="SelectWrapper">
+              <h3>Dataset by Pre-selected Filters</h3>
+              <p>Narrow down your geography selection by filtering on popular variables</p>
+              <Select
+                onChange={this.onVariableChange}
+                placeholder="Select a variable"
+                isMulti={true}
+                searchable={true}
+                openOnFocus
+                simpleValue
+                value={this.setVariableSelect(variableOrder)}
+                options={variableOrder.length >= 2 ? [] : this.variableOptions}
+              />
+              <div className="QuerySummary">
+                { variableOrder[0] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[0]} callbackFactory={this.makeCheckboxChange}/> : null }
+                { variableOrder[1] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[1]} callbackFactory={this.makeCheckboxChange}/> : null }
+              </div>
+              <LoadingButton loading={loadingDetails} onClick={this.requestSubset} disabled={!checksExist}>View Data Summary</LoadingButton>
             </div>
-            <LoadingButton loading={loadingDetails} onClick={this.requestSubset} disabled={!checksExist}>Get Subset Details</LoadingButton>
             {error ? <Error error={error}/> : null}
             {details.aggregations && !error ? this.showAggregations(details, variableOrder) : null}
-          </div>
+          </>
         : null
       }
       </div>
