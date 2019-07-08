@@ -20,6 +20,8 @@ import {
 
 import './Geography.css'
 
+import pdfIcon from '../images/pdf-icon.svg'
+
 class Geography extends Component {
   constructor(props) {
     super(props)
@@ -180,7 +182,7 @@ class Geography extends Component {
   }
 
   renderTotal(total){
-    return <div className="AggregationTotal">Data contains <h4>{total}</h4> row{total === 1 ? '' : 's'}</div>
+    return <div className="AggregationTotal">The filtered data contains <h4>{total}</h4> row{total === 1 ? '' : 's'}, each with all 93 public data fields.</div>
   }
 
   showAggregations(details, variableOrder){
@@ -189,8 +191,8 @@ class Geography extends Component {
       <>
         <Aggregations details={details} variableOrder={variableOrder}/>
         <div className="CSVButtonContainer">
-          <LoadingButton onClick={this.requestSubsetCSV} disabled={!total}>Download Subset</LoadingButton>
           {this.renderTotal(total)}
+          <LoadingButton onClick={this.requestSubsetCSV} disabled={!total}>Download Filtered Data</LoadingButton>
         </div>
       </>
     )
@@ -233,22 +235,21 @@ class Geography extends Component {
       <div className="Geography">
         <Link className="BackLink" to="../../">{'\u2b05'} DATA BROWSER HOME</Link>
         <div className="intro">
-          <Header type={1} headingText="Geography of HMDA data">
+          <Header type={1} headingText="HMDA Dataset Filtering">
             <p className="lead">
-              Download CSVs of HMDA data by state, MSA, or nationwide.
-              By default, these files contain every collected data variable and can be used for advanced analysis.
-              You can also select filters to create subsets of the datasets that are easier to manage in common spreadsheet programs.
+              Download CSVs of HMDA data. These files contain all <a href="https://github.com/cfpb/hmda-platform/raw/master/docs/v2/spec/2018_Public_LAR_Data_Dictionary.pdf">data fields<img className="IconPdf" alt="pdf" src={pdfIcon} height="16" /></a> available in the public data record and can be used for advanced analysis.
               For questions/suggestions, contact hmdafeedback@cfpb.gov.
             </p>
           </Header>
         </div>
-        <div className="GeoSelect">
-          <h4>Choose a state, MSA/MD, or nationwide:</h4>
+        <div className="SelectWrapper">
+          <h3>Dataset by Geography</h3>
+          <p>Filter HMDA data by geography levels: nationwide, state, & MSA/MD</p>
           <Select
             controlShouldRenderValue={true}
             styles={geographyStyleFn}
             onChange={this.onGeographyChange}
-            placeholder="Select a state or MSA/MD"
+            placeholder="Select or type a state, an MSA/MD, or 'nationwide'"
             isMulti={true}
             searchable={true}
             autoFocus
@@ -261,22 +262,25 @@ class Geography extends Component {
         </div>
         {enabled ?
           <>
-            <h4>Or filter by up to two variables:</h4>
-            <Select
-              onChange={this.onVariableChange}
-              placeholder="Select a variable"
-              isMulti={true}
-              searchable={true}
-              openOnFocus
-              simpleValue
-              value={this.setVariableSelect(variableOrder)}
-              options={variableOrder.length >= 2 ? [] : this.variableOptions}
-            />
-            <div className="QuerySummary">
-              { variableOrder[0] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[0]} callbackFactory={this.makeCheckboxChange}/> : null }
-              { variableOrder[1] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[1]} callbackFactory={this.makeCheckboxChange}/> : null }
+            <div className="SelectWrapper">
+              <h3>Dataset by Pre-selected Filters</h3>
+              <p>Narrow down your geography selection by filtering on popular variables</p>
+              <Select
+                onChange={this.onVariableChange}
+                placeholder="Select a variable"
+                isMulti={true}
+                searchable={true}
+                openOnFocus
+                simpleValue
+                value={this.setVariableSelect(variableOrder)}
+                options={variableOrder.length >= 2 ? [] : this.variableOptions}
+              />
+              <div className="QuerySummary">
+                { variableOrder[0] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[0]} callbackFactory={this.makeCheckboxChange}/> : null }
+                { variableOrder[1] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[1]} callbackFactory={this.makeCheckboxChange}/> : null }
+              </div>
+              <LoadingButton loading={loadingDetails} onClick={this.requestSubset} disabled={!checksExist}>View Data Summary</LoadingButton>
             </div>
-            <LoadingButton loading={loadingDetails} onClick={this.requestSubset} disabled={!checksExist}>Get Subset Details</LoadingButton>
             {error ? <Error error={error}/> : null}
             {details.aggregations && !error ? this.showAggregations(details, variableOrder) : null}
           </>

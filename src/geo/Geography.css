@@ -4,18 +4,35 @@
   padding: 0 3rem;
 }
 
-.Geography .GeoSelect {
+.Geography .lead img {
+  opacity: 0.7;
+}
+
+.IconPdf {
+  margin: 0 1px -3px 2px;
+}
+
+.SelectWrapper > h3 {
+  margin: 1.2em 0 0 0;
+}
+
+.SelectWrapper > p {
+  color: #5b616b;
+  font-size: 15px;
+  margin:2px 0 4px 0;
+}
+
+.SelectWrapper {
   border-bottom: 1px solid #d1d1d1;
 }
 
-.Geography .QuerySummary {
+.QuerySummary {
   align-items: stretch;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
   font-size: 20px;
 }
-
 .QuerySummary > span {
   display: inline-block;
   width: 100%;
@@ -80,12 +97,8 @@
   cursor: not-allowed;
 }
 
-.Aggregations {
-  margin-top: 4em;
-}
-
 .Aggregations h2 {
-  margin-bottom: 1em;
+  margin: 0.8em 0 1em 0;
 }
 
 .Aggregations table {
@@ -142,10 +155,7 @@
 }
 
 .AggregationTotal {
-  display: inline;
-  margin-left: 1em;
   font-size: 1.1em;
-  line-height: 4.4em;
 }
 
 .CSVButtonContainer h4 {
