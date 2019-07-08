@@ -191,7 +191,7 @@ class Geography extends Component {
       <>
         <Aggregations details={details} variableOrder={variableOrder}/>
         <div className="CSVButtonContainer">
-          <LoadingButton onClick={this.requestSubsetCSV} disabled={!total}>Download Subset</LoadingButton>
+          <LoadingButton onClick={this.requestSubsetCSV} disabled={!total}>Download Filtered Data</LoadingButton>
           {this.renderTotal(total)}
         </div>
       </>
