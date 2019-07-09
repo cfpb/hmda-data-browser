@@ -294,7 +294,7 @@ class Geography extends Component {
               <Select
                 controlShouldRenderValue={false}
                 onChange={this.onVariableChange}
-                placeholder="Select a variable"
+                placeholder={variableOrder.length >= 2 ? 'Remove a variable to select another' : 'Select a variable'}
                 isMulti={true}
                 searchable={true}
                 openOnFocus
