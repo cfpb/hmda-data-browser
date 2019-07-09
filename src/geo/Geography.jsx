@@ -2,10 +2,12 @@ import React, { Component } from 'react'
 import Select from 'react-select'
 import { Link } from 'react-router-dom'
 import Header from '../common/Header.jsx'
+import Pills from './Pills.jsx'
 import CheckboxContainer from './CheckboxContainer.jsx'
 import Aggregations from './Aggregations.jsx'
 import LoadingButton from './LoadingButton.jsx'
 import Error from './Error.jsx'
+import PDFIcon from '../images/PDFIcon.jsx'
 import { getSubsetDetails, getGeographyCSV, getSubsetCSV } from '../api.js'
 import { makeSearchFromState, makeStateFromSearch } from '../query.js'
 import msaToName from '../constants/msaToName.js'
@@ -15,12 +17,12 @@ import {
   createMSAOption,
   createGeographyOptions,
   createVariableOptions,
-  geographyStyleFn
+  geographyStyleFn,
+  formatWithCommas
 } from './selectUtils.js'
 
 import './Geography.css'
 
-import pdfIcon from '../images/pdf-icon.svg'
 
 class Geography extends Component {
   constructor(props) {
@@ -63,6 +65,28 @@ class Geography extends Component {
   setStateAndRoute(state){
     state.loadingDetails = false
     return this.setState(state, this.updateSearch)
+  }
+
+  removeSelected(selected, options) {
+    if(selected.length === 0) return options
+
+    const trimmed = []
+    selected = [...selected]
+
+    for(let i=0; i < options.length; i++){
+      if(!selected.length) trimmed.push(options[i])
+      else {
+        for(let j=0; j<selected.length; j++){
+          if(selected[j].value === options[i].value){
+            selected = [selected.slice(0,j), selected.slice(j+1)].flat()
+            break
+          } else if (j === selected.length - 1){
+            trimmed.push(options[i])
+          }
+        }
+      }
+    }
+    return trimmed
   }
 
   requestGeographyCSV() {
@@ -186,7 +210,7 @@ class Geography extends Component {
   }
 
   showAggregations(details, variableOrder){
-    const total = this.makeTotal(details)
+    const total = formatWithCommas(this.makeTotal(details))
     return (
       <>
         <Aggregations details={details} variableOrder={variableOrder}/>
@@ -230,6 +254,8 @@ class Geography extends Component {
     const { nationwide, states, msamds, variables, variableOrder, details, loadingDetails, error } = this.state
     const enabled = nationwide || states.length || msamds.length
     const checksExist = this.someChecksExist()
+    const geoValues =  this.setGeographySelect(states, msamds, nationwide)
+    const variableValues = this.setVariableSelect(variableOrder)
 
     return (
       <div className="Geography">
@@ -237,7 +263,7 @@ class Geography extends Component {
         <div className="intro">
           <Header type={1} headingText="HMDA Dataset Filtering">
             <p className="lead">
-              Download CSVs of HMDA data. These files contain all <a href="https://github.com/cfpb/hmda-platform/raw/master/docs/v2/spec/2018_Public_LAR_Data_Dictionary.pdf">data fields<img className="IconPdf" alt="pdf" src={pdfIcon} height="16" /></a> available in the public data record and can be used for advanced analysis.
+              Download CSVs of HMDA data. These files contain all <a href="https://github.com/cfpb/hmda-platform/raw/master/docs/v2/spec/2018_Public_LAR_Data_Dictionary.pdf">data fields<PDFIcon /></a> available in the public data record and can be used for advanced analysis.
               For questions/suggestions, contact hmdafeedback@cfpb.gov.
             </p>
           </Header>
@@ -246,7 +272,7 @@ class Geography extends Component {
           <h3>Dataset by Geography</h3>
           <p>Filter HMDA data by geography levels: nationwide, state, & MSA/MD</p>
           <Select
-            controlShouldRenderValue={true}
+            controlShouldRenderValue={false}
             styles={geographyStyleFn}
             onChange={this.onGeographyChange}
             placeholder="Select or type a state, an MSA/MD, or 'nationwide'"
@@ -255,9 +281,10 @@ class Geography extends Component {
             autoFocus
             openOnFocus
             simpleValue
-            value={this.setGeographySelect(states, msamds, nationwide)}
-            options={nationwide ? [] : this.geographyOptions}
+            value={geoValues}
+            options={nationwide ? [] : this.removeSelected(geoValues, this.geographyOptions)}
           />
+          <Pills values={geoValues} onChange={this.onGeographyChange} />
           <LoadingButton onClick={this.requestGeographyCSV} disabled={!enabled}>Download Entire Dataset</LoadingButton>
         </div>
         {enabled ?
@@ -266,15 +293,17 @@ class Geography extends Component {
               <h3>Dataset by Pre-selected Filters</h3>
               <p>Narrow down your geography selection by filtering on popular variables</p>
               <Select
+                controlShouldRenderValue={false}
                 onChange={this.onVariableChange}
-                placeholder="Select a variable"
+                placeholder={variableOrder.length >= 2 ? 'Remove a variable to select another' : 'Select a variable'}
                 isMulti={true}
                 searchable={true}
                 openOnFocus
                 simpleValue
-                value={this.setVariableSelect(variableOrder)}
-                options={variableOrder.length >= 2 ? [] : this.variableOptions}
+                value={variableValues}
+                options={variableOrder.length >= 2 ? [] : this.removeSelected(variableValues, this.variableOptions)}
               />
+              <Pills values={variableValues} onChange={this.onVariableChange} />
               <div className="QuerySummary">
                 { variableOrder[0] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[0]} callbackFactory={this.makeCheckboxChange}/> : null }
                 { variableOrder[1] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[1]} callbackFactory={this.makeCheckboxChange}/> : null }
