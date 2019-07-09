@@ -225,7 +225,7 @@ class Geography extends Component {
   setGeographySelect(states, msamds, nationwide){
     const options = []
 
-    if(nationwide) return {value: 'nationwide', label: 'NATIONWIDE'}
+    if(nationwide) return [{value: 'nationwide', label: 'NATIONWIDE'}]
 
     if(states.length){
       states.forEach(state => {
