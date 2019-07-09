@@ -2,10 +2,12 @@ import React, { Component } from 'react'
 import Select from 'react-select'
 import { Link } from 'react-router-dom'
 import Header from '../common/Header.jsx'
+import Pills from './Pills.jsx'
 import CheckboxContainer from './CheckboxContainer.jsx'
 import Aggregations from './Aggregations.jsx'
 import LoadingButton from './LoadingButton.jsx'
 import Error from './Error.jsx'
+import PDFIcon from '../images/PDFIcon.jsx'
 import { getSubsetDetails, getGeographyCSV, getSubsetCSV } from '../api.js'
 import { makeSearchFromState, makeStateFromSearch } from '../query.js'
 import msaToName from '../constants/msaToName.js'
@@ -20,7 +22,6 @@ import {
 
 import './Geography.css'
 
-import pdfIcon from '../images/pdf-icon.svg'
 
 class Geography extends Component {
   constructor(props) {
@@ -230,6 +231,8 @@ class Geography extends Component {
     const { nationwide, states, msamds, variables, variableOrder, details, loadingDetails, error } = this.state
     const enabled = nationwide || states.length || msamds.length
     const checksExist = this.someChecksExist()
+    const geoValues =  this.setGeographySelect(states, msamds, nationwide)
+    const variableValues = this.setVariableSelect(variableOrder)
 
     return (
       <div className="Geography">
@@ -237,7 +240,7 @@ class Geography extends Component {
         <div className="intro">
           <Header type={1} headingText="HMDA Dataset Filtering">
             <p className="lead">
-              Download CSVs of HMDA data. These files contain all <a href="https://github.com/cfpb/hmda-platform/raw/master/docs/v2/spec/2018_Public_LAR_Data_Dictionary.pdf">data fields<img className="IconPdf" alt="pdf" src={pdfIcon} height="16" /></a> available in the public data record and can be used for advanced analysis.
+              Download CSVs of HMDA data. These files contain all <a href="https://github.com/cfpb/hmda-platform/raw/master/docs/v2/spec/2018_Public_LAR_Data_Dictionary.pdf">data fields<PDFIcon /></a> available in the public data record and can be used for advanced analysis.
               For questions/suggestions, contact hmdafeedback@cfpb.gov.
             </p>
           </Header>
@@ -255,9 +258,10 @@ class Geography extends Component {
             autoFocus
             openOnFocus
             simpleValue
-            value={this.setGeographySelect(states, msamds, nationwide)}
+            value={geoValues}
             options={nationwide ? [] : this.geographyOptions}
           />
+      {/* <Pills values={geoValues} onChange={this.onGeographyChange} />*/}
           <LoadingButton onClick={this.requestGeographyCSV} disabled={!enabled}>Download Entire Dataset</LoadingButton>
         </div>
         {enabled ?
@@ -272,9 +276,10 @@ class Geography extends Component {
                 searchable={true}
                 openOnFocus
                 simpleValue
-                value={this.setVariableSelect(variableOrder)}
+                value={variableValues}
                 options={variableOrder.length >= 2 ? [] : this.variableOptions}
               />
+              <Pills values={variableValues} onChange={this.onGeographyChange} />
               <div className="QuerySummary">
                 { variableOrder[0] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[0]} callbackFactory={this.makeCheckboxChange}/> : null }
                 { variableOrder[1] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[1]} callbackFactory={this.makeCheckboxChange}/> : null }
