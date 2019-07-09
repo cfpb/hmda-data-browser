@@ -34,6 +34,7 @@ svg {
   justify-content: flex-start;
   font-size: 20px;
 }
+
 .QuerySummary > span {
   display: inline-block;
   width: 100%;
@@ -169,17 +170,38 @@ svg {
 }
 
 .Pill {
-  background: #e6e6e6;
   color: #222;
   display: inline-block;
+  font-size: 14px;
+  border-radius: 2px;
 }
 
 .PillValue, .PillClose {
-  display: inline;
+  display: inline-block;
+  background-color: #e6e6e6;
+  border-radius: 2px;
 }
 
-.PillClose svg{
-  display:inline-block;
-  line-height:1;
-  stroke-width:0;
+.PillValue {
+  margin: 0.75em 0 0 0;
+  padding: 8px 4px 8px 8px;
 }
+
+.PillClose {
+  padding: 8px 8px 8px 2px;
+  margin: 0.75em 0.75em 0 -2px;
+}
+
+.PillClose svg {
+  display: inline-block;
+  line-height: 1;
+  stroke-width: 0;
+  margin: 0 0 -2px 4px;
+}
+
+.PillClose:hover {
+  background-color: #ffbdad;
+  color: #de350b;
+}
+
+.Select-option.is-selected { display: none; }
