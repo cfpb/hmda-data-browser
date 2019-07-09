@@ -9,7 +9,7 @@ function createStateOption(state, options){
 
 function createMSAOption(id, name, options){
   options.push({
-    value: id,
+    value: '' + id,
     label:  `${id} - ${name}`,
   })
 }

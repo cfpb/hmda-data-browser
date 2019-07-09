@@ -66,6 +66,28 @@ class Geography extends Component {
     return this.setState(state, this.updateSearch)
   }
 
+  removeSelected(selected, options) {
+    if(selected.length === 0) return options
+
+    const trimmed = []
+    selected = [...selected]
+
+    for(let i=0; i < options.length; i++){
+      if(!selected.length) trimmed.push(options[i])
+      else {
+        for(let j=0; j<selected.length; j++){
+          if(selected[j].value === options[i].value){
+            selected = [selected.slice(0,j), selected.slice(j+1)].flat()
+            break
+          } else if (j === selected.length - 1){
+            trimmed.push(options[i])
+          }
+        }
+      }
+    }
+    return trimmed
+  }
+
   requestGeographyCSV() {
     getGeographyCSV(this.state)
   }
@@ -249,7 +271,7 @@ class Geography extends Component {
           <h3>Dataset by Geography</h3>
           <p>Filter HMDA data by geography levels: nationwide, state, & MSA/MD</p>
           <Select
-            controlShouldRenderValue={true}
+            controlShouldRenderValue={false}
             styles={geographyStyleFn}
             onChange={this.onGeographyChange}
             placeholder="Select or type a state, an MSA/MD, or 'nationwide'"
@@ -259,7 +281,7 @@ class Geography extends Component {
             openOnFocus
             simpleValue
             value={geoValues}
-            options={nationwide ? [] : this.geographyOptions}
+            options={nationwide ? [] : this.removeSelected(geoValues, this.geographyOptions)}
           />
           <Pills values={geoValues} onChange={this.onGeographyChange} />
           <LoadingButton onClick={this.requestGeographyCSV} disabled={!enabled}>Download Entire Dataset</LoadingButton>
@@ -270,6 +292,7 @@ class Geography extends Component {
               <h3>Dataset by Pre-selected Filters</h3>
               <p>Narrow down your geography selection by filtering on popular variables</p>
               <Select
+                controlShouldRenderValue={false}
                 onChange={this.onVariableChange}
                 placeholder="Select a variable"
                 isMulti={true}
@@ -277,7 +300,7 @@ class Geography extends Component {
                 openOnFocus
                 simpleValue
                 value={variableValues}
-                options={variableOrder.length >= 2 ? [] : this.variableOptions}
+                options={variableOrder.length >= 2 ? [] : this.removeSelected(variableValues, this.variableOptions)}
               />
               <Pills values={variableValues} onChange={this.onGeographyChange} />
               <div className="QuerySummary">
