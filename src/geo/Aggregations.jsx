@@ -2,19 +2,7 @@ import React from 'react'
 import STATEOBJ from '../constants/stateObj.js'
 import MSATONAME from '../constants/msaToName.js'
 import VARIABLES from '../constants/variables.js'
-
-function formatWithCommas(str='') {
-  str = str + ''
-  let formatted = ''
-  let comma = ','
-  for(let i = str.length; i > 0; i-=3) {
-    let start = i - 3
-    if(start < 0) start = 0
-    if(start === 0) comma = ''
-    formatted = `${comma}${str.slice(start, i)}${formatted}`
-  }
-  return formatted
-}
+import { formatWithCommas } from './selectUtils.js'
 
 function buildRows(aggregations, v1, p1, v2, p2) {
   const agg = [...aggregations]

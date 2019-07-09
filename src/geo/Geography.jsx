@@ -17,7 +17,8 @@ import {
   createMSAOption,
   createGeographyOptions,
   createVariableOptions,
-  geographyStyleFn
+  geographyStyleFn,
+  formatWithCommas
 } from './selectUtils.js'
 
 import './Geography.css'
@@ -209,7 +210,7 @@ class Geography extends Component {
   }
 
   showAggregations(details, variableOrder){
-    const total = this.makeTotal(details)
+    const total = formatWithCommas(this.makeTotal(details))
     return (
       <>
         <Aggregations details={details} variableOrder={variableOrder}/>
