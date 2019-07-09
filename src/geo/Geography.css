@@ -3,11 +3,14 @@
   margin: 0 auto;
   padding: 0 3rem;
 }
+svg {
+  fill: currentColor;
+  stroke: currentColor;
+}
 
 .lead .PDFIcon{
   height: 16px;
   margin: 0 1px -3px 2px;
-  fill: currentColor;
 }
 
 .SelectWrapper > h3 {
@@ -80,6 +83,7 @@
   padding: 1em;
   font-size: 16px;
   font-weight: bold;
+  border-radius: 3px;
 }
 
 .QueryButton:hover {
@@ -164,10 +168,18 @@
   margin-top: 4em;
 }
 
-.pillCloseSVG{
+.Pill {
+  background: #e6e6e6;
+  color: #222;
+  display: inline-block;
+}
+
+.PillValue, .PillClose {
+  display: inline;
+}
+
+.PillClose svg{
   display:inline-block;
   line-height:1;
   stroke-width:0;
-  stroke: currentColor;
-  fill: currentColor;
 }

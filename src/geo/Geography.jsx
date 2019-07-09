@@ -261,7 +261,7 @@ class Geography extends Component {
             value={geoValues}
             options={nationwide ? [] : this.geographyOptions}
           />
-      {/* <Pills values={geoValues} onChange={this.onGeographyChange} />*/}
+          <Pills values={geoValues} onChange={this.onGeographyChange} />
           <LoadingButton onClick={this.requestGeographyCSV} disabled={!enabled}>Download Entire Dataset</LoadingButton>
         </div>
         {enabled ?
