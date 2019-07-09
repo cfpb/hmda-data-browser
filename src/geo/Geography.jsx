@@ -302,7 +302,7 @@ class Geography extends Component {
                 value={variableValues}
                 options={variableOrder.length >= 2 ? [] : this.removeSelected(variableValues, this.variableOptions)}
               />
-              <Pills values={variableValues} onChange={this.onGeographyChange} />
+              <Pills values={variableValues} onChange={this.onVariableChange} />
               <div className="QuerySummary">
                 { variableOrder[0] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[0]} callbackFactory={this.makeCheckboxChange}/> : null }
                 { variableOrder[1] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[1]} callbackFactory={this.makeCheckboxChange}/> : null }
