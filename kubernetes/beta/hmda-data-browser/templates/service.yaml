@@ -30,7 +30,7 @@ metadata:
       apiVersion: ambassador/v0
       kind: Mapping
       name: data_browser_mapping
-      ambassador_id: ambassador-default-1
+      ambassador_id: ambassador-beta-2
       prefix: /data-browser/
       rewrite: /data-browser/
       service: {{ include "hmda-data-browser.fullname" . }}:{{ .Values.service.port }}
