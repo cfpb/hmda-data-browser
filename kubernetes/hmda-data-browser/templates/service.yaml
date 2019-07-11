@@ -34,7 +34,7 @@ metadata:
       prefix: /data-browser/
       rewrite: /data-browser/
       service: {{ include "hmda-data-browser.fullname" . }}:{{ .Values.service.port }}
-      timeout_ms: 300000ms
+      timeout_ms: 300000
 spec:
   clusterIP: None  
   ports:
