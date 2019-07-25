@@ -285,7 +285,7 @@ class Geography extends Component {
             options={nationwide ? [] : this.removeSelected(geoValues, this.geographyOptions)}
           />
           <Pills values={geoValues} onChange={this.onGeographyChange} />
-          <LoadingButton onClick={this.requestGeographyCSV} disabled={!enabled}>Download Entire Dataset</LoadingButton>
+          <LoadingButton onClick={this.requestGeographyCSV} disabled={!enabled}>Download Dataset</LoadingButton>
         </div>
         {enabled ?
           <>
