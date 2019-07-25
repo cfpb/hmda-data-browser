@@ -94,7 +94,7 @@ class Geography extends Component {
   }
 
   requestSubset() {
-    this.setState({loadingDetails: true})
+    this.setState({error: null, loadingDetails: true})
     return getSubsetDetails(this.state)
       .then(details => {
         return this.setStateAndRoute({details})
