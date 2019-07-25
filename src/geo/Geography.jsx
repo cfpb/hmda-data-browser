@@ -36,9 +36,12 @@ class Geography extends Component {
     this.showAggregations = this.showAggregations.bind(this)
     this.setStateAndRoute = this.setStateAndRoute.bind(this)
     this.updateSearch = this.updateSearch.bind(this)
+    this.scrollToTable = this.scrollToTable.bind(this)
     this.geographyOptions = createGeographyOptions(this.props)
     this.variableOptions = createVariableOptions()
 
+
+    this.tableRef = React.createRef()
     this.state = this.buildStateFromQuerystring()
 
   }
@@ -89,6 +92,11 @@ class Geography extends Component {
     return trimmed
   }
 
+  scrollToTable(){
+    if(!this.tableRef.current) return
+    this.tableRef.current.scrollIntoView({behavior: 'smooth', block: 'center'})
+  }
+
   requestGeographyCSV() {
     getGeographyCSV(this.state)
   }
@@ -97,6 +105,7 @@ class Geography extends Component {
     this.setState({error: null, loadingDetails: true})
     return getSubsetDetails(this.state)
       .then(details => {
+        setTimeout(this.scrollToTable, 100)
         return this.setStateAndRoute({details})
       })
       .catch(error => {
@@ -213,7 +222,7 @@ class Geography extends Component {
     const total = formatWithCommas(this.makeTotal(details))
     return (
       <>
-        <Aggregations details={details} variableOrder={variableOrder}/>
+        <Aggregations ref={this.tableRef} details={details} variableOrder={variableOrder}/>
         <div className="CSVButtonContainer">
           {this.renderTotal(total)}
           <LoadingButton onClick={this.requestSubsetCSV} disabled={!total}>Download Filtered Data</LoadingButton>

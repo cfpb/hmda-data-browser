@@ -51,17 +51,17 @@ function makeHeader(params, v1, p1, v2, p2) {
   return <ul>{list}</ul>
 }
 
-const Aggregations = ({details, variableOrder}) => {
-  const {aggregations, parameters } = details
-  const v1 = variableOrder[0]
-  const v2 = variableOrder[1]
+const Aggregations = React.forwardRef((props, ref) => {
+  const {aggregations, parameters } = props.details
+  const v1 = props.variableOrder[0]
+  const v2 = props.variableOrder[1]
   const p1 = v1 && parameters[v1].split(',')
   const p2 = v2 && parameters[v2] && parameters[v2].split(',')
 
   if(!aggregations) return null
 
   return (
-    <div className="Aggregations">
+    <div ref={ref} className="Aggregations">
       <h2>Data Summary</h2>
       {makeHeader(parameters, v1, p1, v2, p2)}
       <table>
@@ -102,5 +102,5 @@ const Aggregations = ({details, variableOrder}) => {
        </table>
     </div>
   )
-}
+})
 export default Aggregations
