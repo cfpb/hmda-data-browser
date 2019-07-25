@@ -11,9 +11,13 @@ const ImageCard = props => {
       <Link
         disabled={!props.enabled}
         to={props.path+'/'+props.year}>
-        <div className="ImageWrapper">
-          <img src={props.image} alt={props.caption} className="imagechild"/>
-        </div>
+        {props.image
+          ?
+          <div className="ImageWrapper">
+            <img src={props.image} alt={props.caption} className="imagechild"/>
+          </div>
+        : null
+        }
         <h4>{props.caption}</h4>
       </Link>
       {props.children}
