@@ -12,7 +12,7 @@ class Home extends Component {
       <div className="home">
         <div className="intro">
           <Header type={1} headingText="HMDA Data Browser">
-            <p className="lead">The HMDA Data Browser allows institutions to filter and analyze HMDA data, download whole data sets, and visualize data through charts, graphs, and maps.</p>
+            <p className="lead">The HMDA Data Browser allows users to filter, analyze, and download HMDA datasets and visualize data through charts, graphs, and maps.</p>
           </Header>
         </div>
 
