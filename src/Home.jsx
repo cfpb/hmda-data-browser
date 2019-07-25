@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import ImageCard from './ImageCard.jsx'
 import Header from './common/Header.jsx'
-import selector from './images/selector.png'
-import map from './images/map.png'
 
 import './Home.css'
 
@@ -20,7 +18,6 @@ class Home extends Component {
 
         <div className="card-container">
           <ImageCard
-            image={selector}
             year="2018"
             caption="HMDA Dataset Filtering"
             path="data"
@@ -28,7 +25,6 @@ class Home extends Component {
           >Download entire datasets by state, MSA/MD, or nationwide or filter them by selected variables.
           </ImageCard>
           <ImageCard
-            image={map}
             caption="Maps & Graphs (coming soon)"
             path="maps-graphs"
           >
