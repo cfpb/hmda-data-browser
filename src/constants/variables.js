@@ -38,7 +38,8 @@ const constructionMethodList = [
 const sexList = [
   'Male',
   'Female',
-  'Joint'
+  'Joint',
+  'Sex Not Available'
 ]
 
 const raceList = [
