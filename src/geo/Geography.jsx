@@ -6,7 +6,6 @@ import Pills from './Pills.jsx'
 import CheckboxContainer from './CheckboxContainer.jsx'
 import Aggregations from './Aggregations.jsx'
 import LoadingButton from './LoadingButton.jsx'
-import Beta from '../Beta.jsx'
 import Error from './Error.jsx'
 import PDFIcon from '../images/PDFIcon.jsx'
 import { getSubsetDetails, getGeographyCSV, getSubsetCSV } from '../api.js'
@@ -269,7 +268,6 @@ class Geography extends Component {
 
     return (
       <div className="Geography">
-        <Beta />
         <Link className="BackLink" to="../../">{'\u2b05'} DATA BROWSER HOME</Link>
         <div className="intro">
           <Header type={1} headingText="HMDA Dataset Filtering">

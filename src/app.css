@@ -101,7 +101,8 @@ hr {
   border-bottom: none;
 }
 .Beta {
-  margin-bottom: -30px;
+  margin: 0 auto -30px auto;
+  max-width: 1040px;
 }
 .BackLink {
   font-family: SourceSansProBold;
