@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import ImageCard from './ImageCard.jsx'
 import Header from './common/Header.jsx'
+import Beta from './Beta.jsx'
 
 import './Home.css'
 
@@ -8,6 +9,7 @@ class Home extends Component {
   render() {
     return (
       <div className="home">
+        <Beta/>
         <div className="intro">
           <Header type={1} headingText="HMDA Data Browser">
             <p className="lead">The HMDA Data Browser allows users to filter, analyze, and download HMDA datasets and visualize data through charts, graphs, and maps.</p>
