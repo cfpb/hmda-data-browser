@@ -31,7 +31,7 @@ metadata:
       kind: Mapping
       name: data_browser_mapping
       ambassador_id: ambassador-beta-2
-      prefix: /data-browser/
+      prefix: /
       rewrite: /data-browser/
       service: {{ include "hmda-data-browser.fullname" . }}:{{ .Values.service.port }}
 spec:
