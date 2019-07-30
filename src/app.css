@@ -100,10 +100,13 @@ hr {
 .header {
   border-bottom: none;
 }
-
+.Beta {
+  margin: 0 auto -30px auto;
+  max-width: 1040px;
+}
 .BackLink {
   font-family: SourceSansProBold;
   font-size: 1.3rem;
-  position: absolute;
-  top: 90px;
+  display: block;
+  margin: 45px 0 -49px 0;
 }

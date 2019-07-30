@@ -12,7 +12,13 @@ const links = [
   { name: 'Tools', href: '/tools/' }
 ]
 
-const Header = () => {
+const betaLinks = [
+  { name: 'Home', href: '/' },
+  { name: 'Data Browser', href: '/data-browser/' }
+]
+
+const Header = props => {
+  const currentLinks = props.isBeta ? betaLinks : links
   return (
     <React.Fragment>
       <a className="skipnav" href="#main-content">
@@ -31,7 +37,7 @@ const Header = () => {
           </div>
           <nav className="nav">
             <ul className="nav-primary">
-              {links.map(link => {
+              {currentLinks.map(link => {
                 return (
                   <li key={link.name}>
                     <a
