@@ -17,6 +17,18 @@ function formatWithCommas(str='') {
   return formatted
 }
 
+function separateGeographyOptions(options){
+  const states = []
+  const msas = []
+  //skip nationwide
+  for(let i=1; i<options.length; i++){
+    let opt = options[i]
+    if(opt.value.length === 2) states.push(opt)
+    else msas.push(opt)
+  }
+  return [states, msas]
+}
+
 function createStateOption(state, options){
   if(state !== 'NA') options.push({value: state, label: `${STATEOBJ[state]} - STATEWIDE`})
 }
@@ -77,6 +89,7 @@ export {
   createMSAOption,
   createGeographyOptions,
   createVariableOptions,
+  separateGeographyOptions,
   geographyStyleFn,
   formatWithCommas
 }
