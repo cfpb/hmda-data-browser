@@ -20,10 +20,10 @@ function createStateOption(state, options){
   if(state !== 'NA') options.push({value: state, label: `${STATEOBJ[state]} - STATEWIDE`})
 }
 
-function createMSAOption(id, name, options){
+function createMSAOption(id, name, state, options){
   options.push({
     value: '' + id,
-    label:  `${id} - ${name}`,
+    label:  `${id} - ${name} - ${state}`,
   })
 }
 
@@ -37,7 +37,7 @@ function createGeographyOptions(props) {
     //state code
     if(state.length === 2) {
       createStateOption(state, geographyOptions)
-      statesWithMsas[state].forEach(msa => createMSAOption(msa, MSATONAME[msa], geographyOptions))
+      statesWithMsas[state].forEach(msa => createMSAOption(msa, MSATONAME[msa], STATEOBJ[state], geographyOptions))
     } else {
       /*
       //multistate
