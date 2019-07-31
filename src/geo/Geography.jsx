@@ -11,8 +11,6 @@ import PDFIcon from '../images/PDFIcon.jsx'
 import { getSubsetDetails, getGeographyCSV, getSubsetCSV } from '../api.js'
 import { makeSearchFromState, makeStateFromSearch } from '../query.js'
 import msaToName from '../constants/msaToName.js'
-import msaToState from '../constants/msaToState.js'
-import STATEOBJ from '../constants/stateObj.js'
 import VARIABLES from '../constants/variables.js'
 import {
   createStateOption,
@@ -134,8 +132,6 @@ class Geography extends Component {
 
       if(label.match('STATEWIDE'))
         states.push(value)
-      //else if(value.match('multi'))
-      //  msamds.push(value.replace('multi', ''))
       else {
         const split = label.split(' - ')
         msamds.push(split[0])
@@ -246,7 +242,7 @@ class Geography extends Component {
 
     if(msamds.length){
       msamds.forEach(msa => {
-        createMSAOption(msa, msaToName[msa], STATEOBJ[msaToState[msa]], options)
+        createMSAOption(msa, msaToName[msa], options)
       })
     }
 
