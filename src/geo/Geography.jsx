@@ -17,6 +17,7 @@ import {
   createMSAOption,
   createGeographyOptions,
   createVariableOptions,
+  separateGeographyOptions,
   geographyStyleFn,
   formatWithCommas
 } from './selectUtils.js'
@@ -40,6 +41,9 @@ class Geography extends Component {
     this.geographyOptions = createGeographyOptions(this.props)
     this.variableOptions = createVariableOptions()
 
+    const [stateOptions, msaOptions] = separateGeographyOptions(this.geographyOptions)
+    this.stateOptions = stateOptions
+    this.msaOptions = msaOptions
 
     this.tableRef = React.createRef()
     this.state = this.buildStateFromQuerystring()
@@ -132,8 +136,6 @@ class Geography extends Component {
 
       if(label.match('STATEWIDE'))
         states.push(value)
-      //else if(value.match('multi'))
-      //  msamds.push(value.replace('multi', ''))
       else {
         const split = label.split(' - ')
         msamds.push(split[0])
@@ -259,6 +261,15 @@ class Geography extends Component {
     return options
   }
 
+  makeGeograpyPlaceholder(nationwide, geoValues) {
+    if(nationwide) return 'Nationwide selected, clear this selection to pick states or MSA/MDs'
+    if(geoValues.length){
+      if(geoValues[0].value.length === 2) return 'Select or type additional states'
+      return 'Select or type additional MSA/MDs'
+    }
+    return "Select or type a state, an MSA/MD, or 'nationwide'"
+  }
+
   render() {
     const { nationwide, states, msamds, variables, variableOrder, details, loadingDetails, error } = this.state
     const enabled = nationwide || states.length || msamds.length
@@ -284,14 +295,21 @@ class Geography extends Component {
             controlShouldRenderValue={false}
             styles={geographyStyleFn}
             onChange={this.onGeographyChange}
-            placeholder="Select or type a state, an MSA/MD, or 'nationwide'"
+            placeholder={this.makeGeograpyPlaceholder(nationwide, geoValues)}
             isMulti={true}
             searchable={true}
             autoFocus
             openOnFocus
             simpleValue
             value={geoValues}
-            options={nationwide ? [] : this.removeSelected(geoValues, this.geographyOptions)}
+            options={nationwide
+              ? []
+              : geoValues.length
+                ? geoValues[0].value.length === 2
+                  ? this.removeSelected(geoValues, this.stateOptions)
+                  : this.removeSelected(geoValues, this.msaOptions)
+                : this.geographyOptions
+            }
           />
           <Pills values={geoValues} onChange={this.onGeographyChange} />
           <LoadingButton onClick={this.requestGeographyCSV} disabled={!enabled}>Download Dataset</LoadingButton>

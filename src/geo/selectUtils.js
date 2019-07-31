@@ -1,6 +1,7 @@
 import stateToMsas from '../constants/stateToMsas.js'
 import STATEOBJ from '../constants/stateObj.js'
 import MSATONAME from '../constants/msaToName.js'
+import MSATOSTATE from '../constants/msaToState.js'
 import VARIABLES from '../constants/variables.js'
 
 function formatWithCommas(str='') {
@@ -16,14 +17,27 @@ function formatWithCommas(str='') {
   return formatted
 }
 
+function separateGeographyOptions(options){
+  const states = []
+  const msas = []
+  //skip nationwide
+  for(let i=1; i<options.length; i++){
+    let opt = options[i]
+    if(opt.value.length === 2) states.push(opt)
+    else msas.push(opt)
+  }
+  return [states, msas]
+}
+
 function createStateOption(state, options){
   if(state !== 'NA') options.push({value: state, label: `${STATEOBJ[state]} - STATEWIDE`})
 }
 
 function createMSAOption(id, name, options){
+  const stateLabel = MSATOSTATE[id].map(v => STATEOBJ[v]).join(' - ')
   options.push({
     value: '' + id,
-    label:  `${id} - ${name}`,
+    label:  `${id} - ${name} - ${stateLabel}`,
   })
 }
 
@@ -33,22 +47,18 @@ function createGeographyOptions(props) {
   const statesWithMsas = stateToMsas[subsetYear]
   let geographyOptions = [{value: 'nationwide', label: 'NATIONWIDE'}]
 
+  const multi = new Set()
+
   Object.keys(statesWithMsas).forEach(state => {
-    //state code
-    if(state.length === 2) {
-      createStateOption(state, geographyOptions)
-      statesWithMsas[state].forEach(msa => createMSAOption(msa, MSATONAME[msa], geographyOptions))
-    } else {
-      /*
-      //multistate
-      statesWithMsas[state].forEach(msaMd => {
-        geographyOptions.push({
-          value: msaMd,
-          label:  `${msaMd.replace('multi','')} - ${MSATONAME[msaMd]} - ENTIRE MSA/MD`
-        })
-      })
-      */
-    }
+    createStateOption(state, geographyOptions)
+    statesWithMsas[state].forEach(msa => {
+      if(MSATOSTATE[msa].length > 1) multi.add(msa)
+      else createMSAOption(msa, MSATONAME[msa], geographyOptions)
+    })
+  })
+
+  multi.forEach(msa => {
+    createMSAOption(msa, MSATONAME[msa], geographyOptions)
   })
 
   return geographyOptions
@@ -79,6 +89,7 @@ export {
   createMSAOption,
   createGeographyOptions,
   createVariableOptions,
+  separateGeographyOptions,
   geographyStyleFn,
   formatWithCommas
 }
