@@ -8,7 +8,7 @@ function buildRows(aggregations, parameters, variableOrder) {
   return aggregations.map((row, i) => {
     return (
       <tr key={i}>
-        <th>{variableOrder.map(v => row[v]).join(', ')}</th>
+        <th>{variableOrder.map(v => VARIABLES[v].mapping[encodeURIComponent(row[v])]).join(', ')}</th>
         <td>{formatWithCommas(row.count)}</td>
         <td>{formatWithCommas(row.sum)}</td>
       </tr>

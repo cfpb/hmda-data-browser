@@ -111,6 +111,10 @@ svg {
   width: 100%;
 }
 
+.Aggregations thead {
+  font-family: SourceSansProBold;
+}
+
 .Aggregations th {
   background-color: #f1f1f1;
   font-weight: bold;
@@ -120,6 +124,10 @@ svg {
   border: 1px solid #5b616b;
   padding: 1rem 1.5rem;
   text-align: center;
+}
+
+.Aggregations th:first-child {
+  text-align: left;
 }
 
 .Aggregations ul {
