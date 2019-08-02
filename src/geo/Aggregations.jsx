@@ -40,13 +40,17 @@ function makeHeader(params, variableOrder) {
 // eslint-disable-next-line
 const Aggregations = React.forwardRef((props, ref) => {
   const { aggregations, parameters } = props.details
-  const { variableOrder } = props
+  const ordered = []
   if(!aggregations) return null
+
+  props.variableOrder.forEach(v => {
+    if(parameters[v]) ordered.push(v)
+  })
 
   return (
     <div ref={ref} className="Aggregations">
       <h2>Data Summary</h2>
-      {makeHeader(parameters, variableOrder)}
+      {makeHeader(parameters, ordered)}
       <table>
         <thead>
           <tr>
@@ -56,7 +60,7 @@ const Aggregations = React.forwardRef((props, ref) => {
           </tr>
         </thead>
         <tbody>
-          {buildRows(aggregations, variableOrder)}
+          {buildRows(aggregations, ordered)}
         </tbody>
        </table>
     </div>
