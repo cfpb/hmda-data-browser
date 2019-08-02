@@ -101,6 +101,18 @@ class Geography extends Component {
     this.tableRef.current.scrollIntoView({behavior: 'smooth', block: 'center'})
   }
 
+  sortAggregations(aggregations, variableOrder) {
+    function runSort(i, a, b){
+      const currA = a[variableOrder[i]]
+      const currB = b[variableOrder[i]]
+      if(currA < currB) return -1
+      if(currA > currB) return 1
+      return runSort(i+1, a, b)
+    }
+
+    aggregations.sort(runSort.bind(null, 0))
+  }
+
   requestGeographyCSV() {
     getGeographyCSV(this.state)
   }
@@ -109,6 +121,7 @@ class Geography extends Component {
     this.setState({error: null, loadingDetails: true})
     return getSubsetDetails(this.state)
       .then(details => {
+        this.sortAggregations(details.aggregations, this.state.variableOrder)
         setTimeout(this.scrollToTable, 100)
         return this.setStateAndRoute({details})
       })

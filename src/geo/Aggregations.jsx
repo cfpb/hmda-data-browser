@@ -5,7 +5,6 @@ import VARIABLES from '../constants/variables.js'
 import { formatWithCommas } from './selectUtils.js'
 
 function buildRows(aggregations, variableOrder) {
-  sortAggregations(aggregations, variableOrder)
   return aggregations.map((row, i) => {
     return (
       <tr key={i}>
@@ -15,19 +14,6 @@ function buildRows(aggregations, variableOrder) {
       </tr>
     )
   })
-}
-
-function sortAggregations(aggregations, variableOrder) {
-
-  function runSort(i, a, b){
-    const currA = a[variableOrder[i]]
-    const currB = b[variableOrder[i]]
-    if(currA < currB) return -1
-    if(currA > currB) return 1
-    return runSort(i+1, a, b)
-  }
-
-  aggregations.sort(runSort.bind(null, 0))
 }
 
 function makeHeader(params, variableOrder) {
@@ -55,9 +41,6 @@ function makeHeader(params, variableOrder) {
 const Aggregations = React.forwardRef((props, ref) => {
   const { aggregations, parameters } = props.details
   const { variableOrder } = props
-  const v1 = props.variableOrder[0]
-  const p1 = v1 && parameters[v1].split(',')
-console.log(v1, p1)
   if(!aggregations) return null
 
   return (
