@@ -46,8 +46,8 @@ svg {
 }
 
 .CheckboxContainer{
-  width: 50%;
-  padding: 1.5em 0.5em 0 0.5em;
+  width: 33%;
+  padding: 1.5em 0.5em 0.5em 0.5em;
 }
 
 .CheckboxContainer .border {
@@ -111,6 +111,10 @@ svg {
   width: 100%;
 }
 
+.Aggregations thead {
+  font-family: SourceSansProBold;
+}
+
 .Aggregations th {
   background-color: #f1f1f1;
   font-weight: bold;
@@ -120,6 +124,10 @@ svg {
   border: 1px solid #5b616b;
   padding: 1rem 1.5rem;
   text-align: center;
+}
+
+.Aggregations th:first-child {
+  text-align: left;
 }
 
 .Aggregations ul {
@@ -136,7 +144,8 @@ svg {
 
 .Aggregations > ul > li {
   width: 25%;
-  float: left;
+  display: inline-block;
+  vertical-align: top;
   margin-bottom: 1em;
 }
 
