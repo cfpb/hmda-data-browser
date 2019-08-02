@@ -4,100 +4,62 @@ import MSATONAME from '../constants/msaToName.js'
 import VARIABLES from '../constants/variables.js'
 import { formatWithCommas } from './selectUtils.js'
 
-function buildRows(aggregations, v1, p1, v2, p2) {
-  const agg = [...aggregations]
-  const rows = []
-
-  for(let i=0; i<p1.length; i++){
-    const row = []
-    row.push(<th key="header">{VARIABLES[v1].mapping[encodeURIComponent(p1[i])]}</th>)
-    if(p2) {
-      for(let j=0; j<p2.length; j++){
-        const currAgg = extractAgg(agg, v1, p1[i], v2, p2[j])
-        row.push(<td key={`count${i}${j}`}>{formatWithCommas(currAgg.count)}</td>)
-        row.push(<td key={`sum${i}${j}`}>{formatWithCommas(currAgg.sum)}</td>)
-      }
-    }else{
-      const currAgg = extractAgg(agg, v1, p1[i])
-      row.push(<td key={`count${i}`}>{formatWithCommas(currAgg.count)}</td>)
-      row.push(<td key={`sum${i}`}>{formatWithCommas(currAgg.sum)}</td>)
-    }
-    rows.push(<tr key={i}>{row}</tr>)
-  }
-  return <>{rows}</>
-
+function buildRows(aggregations, parameters, variableOrder) {
+  return aggregations.map((row, i) => {
+    return (
+      <tr key={i}>
+        <th>{variableOrder.map(v => row[v]).join(', ')}</th>
+        <td>{formatWithCommas(row.count)}</td>
+        <td>{formatWithCommas(row.sum)}</td>
+      </tr>
+    )
+  })
 }
 
-function extractAgg(agg, v1, sv1, v2, sv2){
-  for(let i=0; i<agg.length; i++){
-    if(agg[i][v1] === sv1 && (!v2 || agg[i][v2] === sv2)){
-      return agg.splice(i, 1)[0]
-    }
-  }
-}
-
-function makeHeader(params, v1, p1, v2, p2) {
+function makeHeader(params, variableOrder) {
   const list = []
   if(params.state) list.push(<li key="0"><h4>State:</h4><ul className="sublist"><li>{params.state.split(',').map(v => STATEOBJ[v]).join(', ')}</li></ul></li>)
   if(params.msamd) list.push(<li key="1"><h4>MSA/MD:</h4><ul className="sublist"><li>{params.msamd.split(',').map(v => `${v}\u00A0-\u00A0${MSATONAME[v]}`).join(', ')}</li></ul></li>)
-  list.push(<li key="2"><h4>{VARIABLES[v1].label}:</h4><ul className="sublist">{p1.map((v, i) => {
-    return <li key={i}>{VARIABLES[v1].mapping[encodeURIComponent(v)]}</li>
-  })}</ul></li>)
-  if(v2 && params[v2]) list.push(<li key="3"><h4>{VARIABLES[v2].label}:</h4><ul className="sublist">{p2.map((v, i) => {
-    return <li key={i}>{VARIABLES[v2].mapping[encodeURIComponent(v)]}</li>
+
+  variableOrder.forEach((variable, i) => {
+    list.push(
+      <li key={variable}>
+        <h4>{VARIABLES[variable].label}:</h4>
+        <ul className="sublist">
+          {params[variable].split(',').map((v, i) => {
+            return <li key={i}>{VARIABLES[variable].mapping[encodeURIComponent(v)]}</li>
+          })}
+        </ul>
+      </li>
+    )
   })
-  }</ul></li>)
 
   return <ul>{list}</ul>
 }
 
+// eslint-disable-next-line
 const Aggregations = React.forwardRef((props, ref) => {
-  const {aggregations, parameters } = props.details
+  const { aggregations, parameters } = props.details
+  const { variableOrder } = props
   const v1 = props.variableOrder[0]
-  const v2 = props.variableOrder[1]
   const p1 = v1 && parameters[v1].split(',')
-  const p2 = v2 && parameters[v2] && parameters[v2].split(',')
-
+console.log(v1, p1)
   if(!aggregations) return null
 
   return (
     <div ref={ref} className="Aggregations">
       <h2>Data Summary</h2>
-      {makeHeader(parameters, v1, p1, v2, p2)}
+      {makeHeader(parameters, variableOrder)}
       <table>
         <thead>
-          {v2 && p2 ?
-            <>
-              <tr>
-                <th></th>
-                {p2.map((v, i) =>{
-                  return (
-                    <th colSpan={2} key={i}>{VARIABLES[v2].mapping[encodeURIComponent(v)]}</th>
-                  )
-                })}
-              </tr>
-              <tr>
-                <th></th>
-                {p2.map((v, i) =>{
-                  return (
-                    <React.Fragment key={i}>
-                      <th># of Records</th>
-                      <th>$ Amount</th>
-                    </React.Fragment>
-                  )
-                })}
-              </tr>
-            </>
-            :
-              <tr>
-                <th></th>
-                <th># of Records</th>
-                <th>$ Amount</th>
-              </tr>
-          }
+          <tr>
+            <th>Selected Variables</th>
+            <th># of Records</th>
+            <th>$ Amount</th>
+          </tr>
         </thead>
         <tbody>
-          {buildRows(aggregations, v1, p1, v2, p2)}
+          {buildRows(aggregations, parameters, variableOrder)}
         </tbody>
        </table>
     </div>

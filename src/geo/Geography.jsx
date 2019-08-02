@@ -322,18 +322,19 @@ class Geography extends Component {
               <Select
                 controlShouldRenderValue={false}
                 onChange={this.onVariableChange}
-                placeholder={variableOrder.length >= 2 ? 'Remove a variable to select another' : 'Select a variable'}
+                placeholder="Select a variable"
                 isMulti={true}
                 searchable={true}
                 openOnFocus
                 simpleValue
                 value={variableValues}
-                options={variableOrder.length >= 2 ? [] : this.removeSelected(variableValues, this.variableOptions)}
+                options={this.removeSelected(variableValues, this.variableOptions)}
               />
               <Pills values={variableValues} onChange={this.onVariableChange} />
               <div className="QuerySummary">
-                { variableOrder[0] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[0]} callbackFactory={this.makeCheckboxChange}/> : null }
-                { variableOrder[1] ? <CheckboxContainer vars={variables} selectedVar={variableOrder[1]} callbackFactory={this.makeCheckboxChange}/> : null }
+                {variableOrder.map(variable => {
+                  return <CheckboxContainer key={variable} vars={variables} selectedVar={variable} callbackFactory={this.makeCheckboxChange}/>
+                })}
               </div>
               <LoadingButton loading={loadingDetails} onClick={this.requestSubset} disabled={!checksExist}>View Data Summary</LoadingButton>
             </div>
