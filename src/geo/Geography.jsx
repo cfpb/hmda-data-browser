@@ -335,13 +335,13 @@ class Geography extends Component {
               <Select
                 controlShouldRenderValue={false}
                 onChange={this.onVariableChange}
-                placeholder="Select a variable"
+                placeholder={variableOrder.length >= 2 ? 'Remove a variable to select another' : 'Select a variable'}
                 isMulti={true}
                 searchable={true}
                 openOnFocus
                 simpleValue
                 value={variableValues}
-                options={this.removeSelected(variableValues, this.variableOptions)}
+                options={variableOrder.length >= 2 ? [] : this.removeSelected(variableValues, this.variableOptions)}
               />
               <Pills values={variableValues} onChange={this.onVariableChange} />
               <div className="QuerySummary">
