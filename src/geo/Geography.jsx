@@ -331,7 +331,7 @@ class Geography extends Component {
           <>
             <div className="SelectWrapper">
               <h3>Dataset by Pre-selected Filters</h3>
-              <p>Narrow down your geography selection by filtering on popular variables</p>
+              <p>Narrow down your geography selection by filtering on up to two popular variables</p>
               <Select
                 controlShouldRenderValue={false}
                 onChange={this.onVariableChange}
