@@ -27,6 +27,10 @@ svg {
   border-bottom: 1px solid #d1d1d1;
 }
 
+.GeographyTotal, .GeographyTotal > h4{
+  display: inline;
+}
+
 .QuerySummary {
   align-items: stretch;
   display: flex;

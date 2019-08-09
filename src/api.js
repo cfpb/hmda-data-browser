@@ -93,6 +93,11 @@ function makeCSVName(obj, includeVariables=true) {
   return name
 }
 
+export function getCount(type, geographies) {
+  let url = `/v2/data-browser-api/view/count?years=2018&${type}=${geographies.join(',')}`
+  return runFetch(url)
+}
+
 export function getSubsetDetails(obj){
   return runFetch(makeUrl(obj))
 }

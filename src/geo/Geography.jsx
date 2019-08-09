@@ -6,9 +6,10 @@ import Pills from './Pills.jsx'
 import CheckboxContainer from './CheckboxContainer.jsx'
 import Aggregations from './Aggregations.jsx'
 import LoadingButton from './LoadingButton.jsx'
+import LoadingIcon from '../common/LoadingIcon.jsx'
 import Error from './Error.jsx'
 import PDFIcon from '../images/PDFIcon.jsx'
-import { getSubsetDetails, getGeographyCSV, getSubsetCSV } from '../api.js'
+import { getCount, getSubsetDetails, getGeographyCSV, getSubsetCSV } from '../api.js'
 import { makeSearchFromState, makeStateFromSearch } from '../query.js'
 import msaToName from '../constants/msaToName.js'
 import VARIABLES from '../constants/variables.js'
@@ -55,6 +56,8 @@ class Geography extends Component {
       states: [],
       msamds: [],
       nationwide: false,
+      fetchingCount: false,
+      geographyRowCount: null,
       variables: {},
       variableOrder: [],
       details: {},
@@ -62,7 +65,9 @@ class Geography extends Component {
       error: null
     }
 
-    return makeStateFromSearch(this.props.location.search, defaultState, this.requestSubset, this.updateSearch)
+    const newState = makeStateFromSearch(this.props.location.search, defaultState, this.requestSubset, this.updateSearch)
+    this.getGeographyCount(newState.states, newState.msamds)
+    return newState
   }
 
   updateSearch() {
@@ -134,10 +139,34 @@ class Geography extends Component {
     getSubsetCSV(this.state)
   }
 
+  getGeographyCount(states, msamds) {
+    const self = this
+    return setTimeout(function() {
+      let label, geography
+      if(states.length){
+        label = 'states'
+        geography = states
+      } else if(msamds.length){
+        label = 'msamds'
+        geography = msamds
+      } else {
+        return
+      }
+      self.setState({fetchingCount: true})
+      getCount(label, geography).then(countJSON => {
+        self.setState({fetchingCount: false, geographyRowCount: countJSON.aggregations[0].count})
+      })
+      .catch(error => {
+        return self.setStateAndRoute({error})
+      })
+    },0)
+  }
+
   onGeographyChange(selectedGeographies) {
     let states = []
     let msamds = []
     let isNationwide = false
+
 
     selectedGeographies.forEach(geography => {
       let { value, label } = geography
@@ -160,6 +189,7 @@ class Geography extends Component {
         nationwide: true,
         states: [],
         msamds: [],
+        geographyRowCount: null,
         details: {}
       })
     }
@@ -167,10 +197,13 @@ class Geography extends Component {
     states = [...new Set(states)]
     msamds = [...new Set(msamds)]
 
+    this.getGeographyCount(states, msamds)
+
     return this.setStateAndRoute({
       states,
       msamds,
       nationwide: false,
+      geographyRowCount: null,
       details: {}
     })
   }
@@ -284,7 +317,7 @@ class Geography extends Component {
   }
 
   render() {
-    const { nationwide, states, msamds, variables, variableOrder, details, loadingDetails, error } = this.state
+    const { nationwide, states, msamds, fetchingCount, geographyRowCount, variables, variableOrder, details, loadingDetails, error } = this.state
     const enabled = nationwide || states.length || msamds.length
     const checksExist = this.someChecksExist()
     const geoValues =  this.setGeographySelect(states, msamds, nationwide)
@@ -326,6 +359,7 @@ class Geography extends Component {
           />
           <Pills values={geoValues} onChange={this.onGeographyChange} />
           <LoadingButton onClick={this.requestGeographyCSV} disabled={!enabled}>Download Dataset</LoadingButton>
+          {fetchingCount ? <LoadingIcon className="LoadingInline"/> : geographyRowCount !== null ? <div className="GeographyTotal">This dataset contains <h4>{geographyRowCount}</h4> row{geographyRowCount === 1 ? '' : 's'}.</div> : null}
         </div>
         {enabled ?
           <>
