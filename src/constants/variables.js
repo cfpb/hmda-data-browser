@@ -48,7 +48,7 @@ const raceList = [
   'Black or African American',
   'Native Hawaiian or Other Pacific Islander',
   'White',
-  '2 Or More Minority Races',
+  '2 or more minority races',
   'Joint',
   'Free Form Text Only',
   'Race Not Available'
