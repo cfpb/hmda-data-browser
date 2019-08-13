@@ -12,6 +12,7 @@ import { getSubsetDetails, getGeographyCSV, getSubsetCSV } from '../api.js'
 import { makeSearchFromState, makeStateFromSearch } from '../query.js'
 import msaToName from '../constants/msaToName.js'
 import VARIABLES from '../constants/variables.js'
+import STATE_COUNTS from '../constants/stateCounts.js'
 import {
   createStateOption,
   createMSAOption,
@@ -55,6 +56,7 @@ class Geography extends Component {
       states: [],
       msamds: [],
       nationwide: false,
+      isLargeFile: false,
       variables: {},
       variableOrder: [],
       details: {},
@@ -62,7 +64,9 @@ class Geography extends Component {
       error: null
     }
 
-    return makeStateFromSearch(this.props.location.search, defaultState, this.requestSubset, this.updateSearch)
+    const newState = makeStateFromSearch(this.props.location.search, defaultState, this.requestSubset, this.updateSearch)
+    newState.isLargeFile = newState.nationwide || this.checkIfLargeFile(newState.states, newState.msamds)
+    return newState
   }
 
   updateSearch() {
@@ -134,6 +138,22 @@ class Geography extends Component {
     getSubsetCSV(this.state)
   }
 
+  checkLargeMsamds(msamds) {
+    for(let i=0; i<msamds.length; i++){
+      if(msamds[i] === '99999') return true
+    }
+    return false
+  }
+
+  checkIfLargeFile(states, msamds) {
+    if(states.length) return this.checkIfLargeStateCounts(states)
+    return this.checkLargeMsamds(msamds)
+  }
+
+  checkIfLargeStateCounts(states) {
+    return states.reduce((acc, curr) => acc + STATE_COUNTS[curr], 0) > 1048576
+  }
+
   onGeographyChange(selectedGeographies) {
     let states = []
     let msamds = []
@@ -160,7 +180,8 @@ class Geography extends Component {
         nationwide: true,
         states: [],
         msamds: [],
-        details: {}
+        details: {},
+        isLargeFile: true
       })
     }
 
@@ -171,7 +192,8 @@ class Geography extends Component {
       states,
       msamds,
       nationwide: false,
-      details: {}
+      details: {},
+      isLargeFile: this.checkIfLargeFile(states, msamds)
     })
   }
 
@@ -284,7 +306,7 @@ class Geography extends Component {
   }
 
   render() {
-    const { nationwide, states, msamds, variables, variableOrder, details, loadingDetails, error } = this.state
+    const { nationwide, states, msamds, isLargeFile, variables, variableOrder, details, loadingDetails, error } = this.state
     const enabled = nationwide || states.length || msamds.length
     const checksExist = this.someChecksExist()
     const geoValues =  this.setGeographySelect(states, msamds, nationwide)
@@ -326,6 +348,7 @@ class Geography extends Component {
           />
           <Pills values={geoValues} onChange={this.onGeographyChange} />
           <LoadingButton onClick={this.requestGeographyCSV} disabled={!enabled}>Download Dataset</LoadingButton>
+          {isLargeFile ? <div className="LargeFileWarning"><h4>Warning:</h4> This dataset is too large to be opened in Excel</div>: null}
         </div>
         {enabled ?
           <>
