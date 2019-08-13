@@ -13,6 +13,7 @@ import { makeSearchFromState, makeStateFromSearch } from '../query.js'
 import msaToName from '../constants/msaToName.js'
 import VARIABLES from '../constants/variables.js'
 import STATE_COUNTS from '../constants/stateCounts.js'
+import MSAMD_COUNTS from '../constants/msamdCounts.js'
 import {
   createStateOption,
   createMSAOption,
@@ -138,20 +139,13 @@ class Geography extends Component {
     getSubsetCSV(this.state)
   }
 
-  checkLargeMsamds(msamds) {
-    for(let i=0; i<msamds.length; i++){
-      if(msamds[i] === '99999') return true
-    }
-    return false
-  }
-
   checkIfLargeFile(states, msamds) {
-    if(states.length) return this.checkIfLargeStateCounts(states)
-    return this.checkLargeMsamds(msamds)
+    if(states.length) return this.checkIfLargeCount(states, STATE_COUNTS)
+    return this.checkIfLargeCount(msamds, MSAMD_COUNTS)
   }
 
-  checkIfLargeStateCounts(states) {
-    return states.reduce((acc, curr) => acc + STATE_COUNTS[curr], 0) > 1048576
+  checkIfLargeCount(selected, countMap) {
+    return selected.reduce((acc, curr) => acc + countMap[curr], 0) > 1048576
   }
 
   onGeographyChange(selectedGeographies) {
