@@ -93,29 +93,30 @@ const loanProductList = [
 ]
 
 
-const actions_taken = buildWithId('Action Taken', actionsList)
-const loan_types = buildWithId('Loan Type', loanTypeList)
-const loan_purposes = buildWithId('Loan Purpose', loanPurposeList)
-const lien_statuses = buildWithId('Lien Status', lienStatusList)
-const construction_methods = buildWithId('Construction Method', constructionMethodList)
+const actions_taken = buildWithId('Action Taken', 'action_taken', actionsList)
+const loan_types = buildWithId('Loan Type', 'loan_type', loanTypeList)
+const loan_purposes = buildWithId('Loan Purpose', 'loan_purpose', loanPurposeList)
+const lien_statuses = buildWithId('Lien Status', 'lien_status', lienStatusList)
+const construction_methods = buildWithId('Construction Method', 'construction_method', constructionMethodList)
 
-const sexes = buildEncoded('Sex', sexList)
-const races = buildEncoded('Race', raceList)
-const ethnicities = buildEncoded('Ethnicity', ethnicityList)
-const total_units = buildEncoded('Total Units', totalUnitList)
-const dwelling_categories = buildEncoded('Dwelling Categories', dwellingCategoryList)
-const loan_products = buildEncoded('Loan Products', loanProductList)
+const sexes = buildEncoded('Sex', 'derived_sex', sexList)
+const races = buildEncoded('Race', 'derived_race', raceList)
+const ethnicities = buildEncoded('Ethnicity', 'derived_ethnicity', ethnicityList)
+const total_units = buildEncoded('Total Units', 'total_units', totalUnitList)
+const dwelling_categories = buildEncoded('Dwelling Categories', 'derived_dwelling_category', dwellingCategoryList)
+const loan_products = buildEncoded('Loan Products', 'derived_loan_product_type', loanProductList)
 
-function makeObj(label) {
+function makeObj(label, definition) {
   return {
     label,
+    definition,
     options: [],
     mapping: {}
   }
 }
 
-function buildWithId(label, list) {
-  const obj = makeObj(label)
+function buildWithId(label, definition, list) {
+  const obj = makeObj(label, definition)
 
   list.forEach(o => {
     const nameWithId = `${o.id} - ${o.name}`
@@ -126,8 +127,8 @@ function buildWithId(label, list) {
   return obj
 }
 
-function buildEncoded(label, list) {
-  const obj = makeObj(label)
+function buildEncoded(label, definition, list) {
+  const obj = makeObj(label, definition)
 
   list.forEach(name => {
     const id = encodeURIComponent(name)
