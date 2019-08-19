@@ -1,5 +1,6 @@
 import React from 'react'
 import VARIABLES from '../constants/variables.js'
+import DocLink from './DocLink.jsx'
 
 function renderCheckboxes(variable, vars, makeCb) {
   return VARIABLES[variable].options.map((v) => {
@@ -13,12 +14,14 @@ function renderCheckboxes(variable, vars, makeCb) {
 }
 
 const CheckboxContainer = props => {
-  const { vars, selectedVar, callbackFactory } = props
+  const { vars, selectedVar, year, callbackFactory } = props
 
   return (
     <div className="CheckboxContainer">
       <div className="border">
-        <h3>{VARIABLES[selectedVar].label}</h3>
+        <DocLink year={year} definition={VARIABLES[selectedVar].definition}>
+          <h3>{VARIABLES[selectedVar].label}</h3>
+        </DocLink>
         {renderCheckboxes(selectedVar, vars, callbackFactory)}
       </div>
     </div>

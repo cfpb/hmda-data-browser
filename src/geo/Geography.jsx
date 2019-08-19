@@ -253,7 +253,7 @@ class Geography extends Component {
     const total = formatWithCommas(this.makeTotal(details))
     return (
       <>
-        <Aggregations ref={this.tableRef} details={details} variableOrder={variableOrder}/>
+        <Aggregations ref={this.tableRef} details={details} variableOrder={variableOrder} year={this.props.match.params.year}/>
         <div className="CSVButtonContainer">
           {this.renderTotal(total)}
           <LoadingButton onClick={this.requestSubsetCSV} disabled={!total}>Download Filtered Data</LoadingButton>
@@ -363,7 +363,7 @@ class Geography extends Component {
               <Pills values={variableValues} onChange={this.onVariableChange} />
               <div className="QuerySummary">
                 {variableOrder.map(variable => {
-                  return <CheckboxContainer key={variable} vars={variables} selectedVar={variable} callbackFactory={this.makeCheckboxChange}/>
+                  return <CheckboxContainer key={variable} vars={variables} selectedVar={variable} callbackFactory={this.makeCheckboxChange} year={this.props.match.params.year}/>
                 })}
               </div>
               <LoadingButton loading={loadingDetails} onClick={this.requestSubset} disabled={!checksExist}>View Data Summary</LoadingButton>

@@ -2,6 +2,7 @@ import React from 'react'
 import STATEOBJ from '../constants/stateObj.js'
 import MSATONAME from '../constants/msaToName.js'
 import VARIABLES from '../constants/variables.js'
+import DocLink from './DocLink.jsx'
 import { formatWithCommas } from './selectUtils.js'
 
 function buildRows(aggregations, variableOrder) {
@@ -16,7 +17,7 @@ function buildRows(aggregations, variableOrder) {
   })
 }
 
-function makeHeader(params, variableOrder) {
+function makeHeader(params, variableOrder, year) {
   const list = []
   if(params.state) list.push(<li key="0"><h4>State:</h4><ul className="sublist"><li>{params.state.split(',').map(v => STATEOBJ[v]).join(', ')}</li></ul></li>)
   if(params.msamd) list.push(<li key="1"><h4>MSA/MD:</h4><ul className="sublist"><li>{params.msamd.split(',').map(v => `${v}\u00A0-\u00A0${MSATONAME[v]}`).join(', ')}</li></ul></li>)
@@ -24,7 +25,9 @@ function makeHeader(params, variableOrder) {
   variableOrder.forEach((variable, i) => {
     list.push(
       <li key={variable}>
-        <h4>{VARIABLES[variable].label}:</h4>
+        <DocLink year={year} definition={VARIABLES[variable].definition}>
+          <h4>{VARIABLES[variable].label}:</h4>
+        </DocLink>
         <ul className="sublist">
           {params[variable].split(',').map((v, i) => {
             return <li key={i}>{VARIABLES[variable].mapping[encodeURIComponent(v)]}</li>
@@ -50,7 +53,7 @@ const Aggregations = React.forwardRef((props, ref) => {
   return (
     <div ref={ref} className="Aggregations">
       <h2>Data Summary</h2>
-      {makeHeader(parameters, ordered)}
+      {makeHeader(parameters, ordered, props.year)}
       <table>
         <thead>
           <tr>
