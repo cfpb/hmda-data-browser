@@ -342,7 +342,7 @@ class Geography extends Component {
           />
           <Pills values={geoValues} onChange={this.onGeographyChange} />
           <LoadingButton onClick={this.requestGeographyCSV} disabled={!enabled}>Download Dataset</LoadingButton>
-          {isLargeFile ? <div className="LargeFileWarning"><h4>Warning:</h4> This dataset is too large to be opened in Excel</div>: null}
+          {isLargeFile ? <div className="LargeFileWarning"><h4>Warning:</h4> This dataset may be too large to be opened in standard spreadsheet applications</div>: null}
         </div>
         {enabled ?
           <>
