@@ -139,17 +139,16 @@ function buildEncoded(label, definition, list) {
   return obj
 }
 
-
 export default {
   actions_taken,
-  races,
-  sexes,
   loan_types,
   loan_purposes,
   lien_statuses,
   construction_methods,
-  ethnicities,
   total_units,
-  dwelling_categories,
-  loan_products
+  ethnicities,
+  races,
+  sexes,
+  loan_products,
+  dwelling_categories
 }
