@@ -10,11 +10,16 @@ import Beta from './Beta.jsx'
 
 import './app.css'
 
+const betaLinks = [
+  { name: 'Home', href: '/' },
+  { name: 'Data Browser', href: '/data-browser/' }
+]
+
 const App = () => {
   const isBeta = window.location.host.match('beta')
   return (
     <React.Fragment>
-      <Header isBeta={isBeta}/>
+      <Header links={isBeta ? betaLinks : null}/>
       {isBeta ? <Beta/> : null}
       <Switch>
         <Route exact path="/" component={Home} />

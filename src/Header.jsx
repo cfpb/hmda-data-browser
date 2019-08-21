@@ -9,16 +9,12 @@ const links = [
   { name: 'Filing', href: '/filing/2018/' },
   { name: 'Data Browser', href: '/data-browser/' },
   { name: 'Data Publication', href: '/data-publication/' },
-  { name: 'Tools', href: '/tools/' }
-]
-
-const betaLinks = [
-  { name: 'Home', href: '/' },
-  { name: 'Data Browser', href: '/data-browser/' }
+  { name: 'Tools', href: '/tools/' },
+  { name: 'Documentation', href: '/documentation/' }
 ]
 
 const Header = props => {
-  const currentLinks = props.isBeta ? betaLinks : links
+  const currentLinks = props.links || links
   return (
     <React.Fragment>
       <a className="skipnav" href="#main-content">
@@ -38,12 +34,16 @@ const Header = props => {
           <nav className="nav">
             <ul className="nav-primary">
               {currentLinks.map(link => {
+                const path = window.location.pathname
+                let isActive = path.match(link.href)
+                if(link.href === '/') isActive = link.href === path
+
                 return (
                   <li key={link.name}>
                     <a
                       href={link.href}
                       className={
-                        link.name === 'Data Browser'
+                          isActive
                           ? 'nav-link active'
                           : 'nav-link'
                       }
