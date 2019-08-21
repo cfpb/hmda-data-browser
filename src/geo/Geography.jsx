@@ -7,7 +7,6 @@ import CheckboxContainer from './CheckboxContainer.jsx'
 import Aggregations from './Aggregations.jsx'
 import LoadingButton from './LoadingButton.jsx'
 import Error from './Error.jsx'
-import PDFIcon from '../images/PDFIcon.jsx'
 import { getSubsetDetails, getGeographyCSV, getSubsetCSV } from '../api.js'
 import { makeSearchFromState, makeStateFromSearch } from '../query.js'
 import msaToName from '../constants/msaToName.js'
@@ -312,14 +311,14 @@ class Geography extends Component {
         <div className="intro">
           <Header type={1} headingText="HMDA Dataset Filtering">
             <p className="lead">
-              Download CSVs of HMDA data. These files contain all <a href="https://github.com/cfpb/hmda-platform/raw/master/docs/v2/spec/2018_Public_LAR_Data_Dictionary.pdf">data fields<PDFIcon /></a> available in the public data record and can be used for advanced analysis.
+              Download CSVs of HMDA data. These files contain all <a target="_blank" rel="noopener noreferrerr" href="/documentation/2018/lar-data-fields/">data fields</a> available in the public data record and can be used for advanced analysis.
               For questions/suggestions, contact hmdafeedback@cfpb.gov.
             </p>
           </Header>
         </div>
         <div className="SelectWrapper">
           <h3>Dataset by Geography</h3>
-          <p>Filter HMDA data by geography levels: nationwide, state, & MSA/MD</p>
+          <p>Filter HMDA data by geography levels: <a target="_blank" rel="noopener noreferrerr" href="/documentation/2018/data-browser-filters/#Nationwide">nationwide, state, & MSA/MD</a></p>
           <Select
             controlShouldRenderValue={false}
             styles={geographyStyleFn}
@@ -348,7 +347,7 @@ class Geography extends Component {
           <>
             <div className="SelectWrapper">
               <h3>Dataset by Pre-selected Filters</h3>
-              <p>Narrow down your geography selection by filtering on up to two popular variables</p>
+              <p>Narrow down your geography selection by filtering on up to two <a target="_blank" rel="noopener noreferrerr" href="/documentation/2018/data-browser-filters/#action_taken">popular variables</a></p>
               <Select
                 controlShouldRenderValue={false}
                 onChange={this.onVariableChange}

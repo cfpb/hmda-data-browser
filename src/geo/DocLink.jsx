@@ -1,7 +1,7 @@
 import React from 'react'
 
 function makeUrl({year, definition}) {
-  return `/documentation/${year}/lar-data-fields/#${definition}`
+  return `/documentation/${year}/data-browser-filters/#${definition}`
 }
 
 const DocLink = props => {
