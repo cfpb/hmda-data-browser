@@ -10,7 +10,11 @@ const Beta = props => {
       >
         <p>
           Welcome to the beta version of the HMDA Data Browser.
-          All included data is artificial and has been generated for testing purposes only.
+          Data included is for testing purposes only.
+          To view a financial institution's 2018 HMDA data, visit the
+          <a className="home-link" href="https://ffiec.cfpb.gov/data-browser/" aria-label="Home">
+            live version of the Data Browser.
+          </a>
           For questions/suggestions, contact hmdafeedback@cfpb.gov.
         </p>
       </Alert>
