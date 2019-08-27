@@ -245,7 +245,7 @@ class Geography extends Component {
   }
 
   renderTotal(total){
-    return <div className="AggregationTotal">The filtered data contains <h4>{total}</h4> row{total === 1 ? '' : 's'}, each with all 107 public data fields.</div>
+    return <div className="AggregationTotal">The filtered data contains <h4>{total}</h4> row{total === 1 ? '' : 's'}, each with all 99 public data fields.</div>
   }
 
   showAggregations(details, variableOrder){
