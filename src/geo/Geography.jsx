@@ -89,7 +89,7 @@ class Geography extends Component {
       else {
         for(let j=0; j<selected.length; j++){
           if(selected[j].value === options[i].value){
-            selected = [selected.slice(0,j), selected.slice(j+1)].flat()
+            selected = selected.slice(0,j).concat(selected.slice(j+1))
             break
           } else if (j === selected.length - 1){
             trimmed.push(options[i])
@@ -177,9 +177,6 @@ class Geography extends Component {
         isLargeFile: true
       })
     }
-
-    states = [...new Set(states)]
-    msamds = [...new Set(msamds)]
 
     return this.setStateAndRoute({
       states,

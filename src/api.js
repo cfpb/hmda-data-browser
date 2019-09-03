@@ -105,7 +105,7 @@ function getCSV(url, name){
   a.setAttribute('download', name)
   document.body.appendChild(a)
   a.click()
-  a.remove()
+  document.body.removeChild(a)
   a = null
 }
 
