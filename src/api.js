@@ -99,7 +99,7 @@ export function getSubsetDetails(obj){
 
 function getCSV(url, name){
   let a = document.createElement('a')
-  document.body.appendChild(a)
+  document.body.appendChild(a) 
   a.href = url
   a.setAttribute('download', name)
   a.click()
