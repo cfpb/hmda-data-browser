@@ -98,11 +98,14 @@ export function getSubsetDetails(obj){
 }
 
 function getCSV(url, name){
-  let a = document.createElement('a')
-  document.body.appendChild(a) 
+  let a = document.createElement('a') 
   a.href = url
+  a.style.display = 'none'
+  a.setAttribute('type', 'hidden')
   a.setAttribute('download', name)
+  document.body.appendChild(a)
   a.click()
+  a.remove()
   a = null
 }
 
