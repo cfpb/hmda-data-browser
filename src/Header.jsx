@@ -4,7 +4,7 @@ import BannerUSA from './BannerUSA'
 import './Header.css'
 import logo from './images/ffiec-logo.svg'
 
-const links = [
+const defaultLinks = [
   { name: 'Home', href: '/' },
   { name: 'Filing', href: '/filing/2018/' },
   { name: 'Data Browser', href: '/data-browser/' },
@@ -13,10 +13,9 @@ const links = [
   { name: 'Documentation', href: '/documentation/' }
 ]
 
-const Header = props => {
-  const currentLinks = props.links || links
+const Header = ({pathname='/', links = defaultLinks}) => {
   return (
-    <React.Fragment>
+    <>
       <a className="skipnav" href="#main-content">
         Skip to main content
       </a>
@@ -33,10 +32,9 @@ const Header = props => {
           </div>
           <nav className="nav">
             <ul className="nav-primary">
-              {currentLinks.map(link => {
-                const path = window.location.pathname
-                let isActive = path.match(link.href)
-                if(link.href === '/') isActive = link.href === path
+              {links.map(link => {
+                let isActive = pathname.match(link.href)
+                if(link.href === '/') isActive = link.href === pathname
 
                 return (
                   <li key={link.name}>
@@ -61,7 +59,7 @@ const Header = props => {
           </nav>
         </div>
       </header>
-    </React.Fragment>
+    </>
   )
 }
 
