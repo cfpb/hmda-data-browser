@@ -17,7 +17,7 @@ const betaLinks = [
 
 const App = () => {
   const isBeta = window.location.host.match('beta')
-  const headerLinks =  isBeta ? betaLinks : null
+  const headerLinks =  isBeta ? betaLinks : undefined
   return (
     <>
       <Header pathname={window.location.pathname} links={headerLinks}/>
