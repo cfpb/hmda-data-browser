@@ -37,6 +37,7 @@ export function createGeographyQuerystring(obj={states:[], msamds: []}) {
 }
 
 export function makeUrl(obj, isCSV, includeVariables=true) {
+  if(!obj) return ''
   let url = '/v2/data-browser-api/view'
 
   if(obj.nationwide) url += '/nationwide'
@@ -47,6 +48,7 @@ export function makeUrl(obj, isCSV, includeVariables=true) {
   if(obj.nationwide){
     if(includeVariables) url += '?' + addVariableParams(obj).slice(1)
   }else {
+    if(!obj.states && !obj.msamds) return ''
     url += createGeographyQuerystring(obj)
     if(includeVariables) url += addVariableParams(obj)
   }
@@ -75,9 +77,10 @@ export function runFetch(url) {
 }
 
 export function makeCSVName(obj, includeVariables=true) {
+  if(!obj) return ''
   let name = ''
-  if(obj.states.length) name += obj.states.join(',') + '-'
-  if(obj.msamds.length) name += obj.msamds.join(',') + '-'
+  if(obj.states && obj.states.length) name += obj.states.join(',') + '-'
+  if(obj.msamds && obj.msamds.length) name += obj.msamds.join(',') + '-'
   if(obj.nationwide) name = 'nationwide-'
 
   if(obj.variables && includeVariables){
