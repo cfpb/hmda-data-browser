@@ -6,10 +6,10 @@ const msaKeys = Object.keys(MSAS)
 const stateKeys = Object.keys(STATES)
 const varKeys = Object.keys(VARIABLES)
 
-function makeParam(s, key) {
+export function makeParam(s, key) {
   if(key === 'variables'){
     const vars = s[key]
-    if(Object.keys(vars).length !== s.variableOrder.length) return
+    if(Object.keys(vars).length !== s.variableOrder.length) return ''
     return s.variableOrder.map(v =>{
       return `${v}=${Object.keys(vars[v]).join(',')}`
     }).join('&')
@@ -20,18 +20,18 @@ function makeParam(s, key) {
   return stringifyIfTruthy(s, key)
 }
 
-function stringifyIfTruthy(s, key) {
+export function stringifyIfTruthy(s, key) {
   const v = s[key]
   if(Array.isArray(v))
     return v.length ? formatParam(key, v.join(',')) : ''
   return v ? formatParam(key, v.toString()) : ''
 }
 
-function formatParam(k,v){
+export function formatParam(k, v){
   return `${k}=${v}`
 }
 
-function isInvalidKey(key, s){
+export function isInvalidKey(key, s){
   const sKeys = Object.keys(s)
   if( sKeys.indexOf(key) !== -1 ||
       varKeys.indexOf(key) !== -1 ||
@@ -42,7 +42,7 @@ function isInvalidKey(key, s){
   return true
 }
 
-function sanitizeArray(key, val) {
+export function sanitizeArray(key, val) {
   const arr = []
   let knownKeys
 
@@ -112,15 +112,4 @@ export function makeSearchFromState(s){
   if(str.length === 1) return ''
 
   return str
-}
-
-export function parseQuerystring(search){
-  const obj = {}
-
-  search.slice(1).split('&').forEach(v => {
-    const spl = v.split('=')
-    obj[spl[0]] = spl[1]
-  })
-
-  return obj
 }
