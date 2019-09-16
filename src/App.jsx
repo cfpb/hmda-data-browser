@@ -17,9 +17,10 @@ const betaLinks = [
 
 const App = () => {
   const isBeta = window.location.host.match('beta')
+  const headerLinks =  isBeta ? betaLinks : undefined
   return (
-    <React.Fragment>
-      <Header links={isBeta ? betaLinks : null}/>
+    <>
+      <Header pathname={window.location.pathname} links={headerLinks}/>
       {isBeta ? <Beta/> : null}
       <Switch>
         <Route exact path="/" component={Home} />
@@ -33,7 +34,7 @@ const App = () => {
         <Route component={NotFound} />
       </Switch>
       <Footer />
-    </React.Fragment>
+    </>
   )
 }
 

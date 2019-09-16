@@ -1,4 +1,4 @@
-function addVariableParams(obj) {
+export function addVariableParams(obj={}) {
   let qs = ''
   const vars = obj.variables
   if(vars) {
@@ -17,12 +17,12 @@ function addVariableParams(obj) {
   return qs
 }
 
-function addYears(url) {
+export function addYears(url='') {
   if(url.match(/\?/)) return '&years=2018'
   return '?years=2018'
 }
 
-function createGeographyQuerystring(obj) {
+export function createGeographyQuerystring(obj={states:[], msamds: []}) {
   let qs = '?'
   let isFirstParam = true
   const geos = ['states', 'msamds']
@@ -36,7 +36,8 @@ function createGeographyQuerystring(obj) {
   return qs
 }
 
-function makeUrl(obj, isCSV, includeVariables=true) {
+export function makeUrl(obj, isCSV, includeVariables=true) {
+  if(!obj) return ''
   let url = '/v2/data-browser-api/view'
 
   if(obj.nationwide) url += '/nationwide'
@@ -47,6 +48,7 @@ function makeUrl(obj, isCSV, includeVariables=true) {
   if(obj.nationwide){
     if(includeVariables) url += '?' + addVariableParams(obj).slice(1)
   }else {
+    if(!obj.states && !obj.msamds) return ''
     url += createGeographyQuerystring(obj)
     if(includeVariables) url += addVariableParams(obj)
   }
@@ -56,7 +58,7 @@ function makeUrl(obj, isCSV, includeVariables=true) {
   return url
 }
 
-function runFetch(url) {
+export function runFetch(url) {
 
   let headers = { Accept: 'application/json' }
 
@@ -74,10 +76,11 @@ function runFetch(url) {
     })
 }
 
-function makeCSVName(obj, includeVariables=true) {
+export function makeCSVName(obj, includeVariables=true) {
+  if(!obj) return ''
   let name = ''
-  if(obj.states.length) name += obj.states.join(',') + '-'
-  if(obj.msamds.length) name += obj.msamds.join(',') + '-'
+  if(obj.states && obj.states.length) name += obj.states.join(',') + '-'
+  if(obj.msamds && obj.msamds.length) name += obj.msamds.join(',') + '-'
   if(obj.nationwide) name = 'nationwide-'
 
   if(obj.variables && includeVariables){
@@ -97,7 +100,7 @@ export function getSubsetDetails(obj){
   return runFetch(makeUrl(obj))
 }
 
-function getCSV(url, name){
+export function getCSV(url, name){
   let a = document.createElement('a')
   a.href = url
   a.style.display = 'none'
