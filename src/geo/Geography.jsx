@@ -309,7 +309,7 @@ class Geography extends Component {
           <Header type={1} headingText="HMDA Dataset Filtering">
             <p className="lead">
               Download CSVs of HMDA data. These files contain all <a target="_blank" rel="noopener noreferrerr" href="/documentation/2018/lar-data-fields/">data fields</a> available in the public data record and can be used for advanced analysis.
-              For questions/suggestions, contact hmdafeedback@cfpb.gov.
+              For questions/suggestions, contact hmdahelp@cfpb.gov.
             </p>
           </Header>
         </div>
