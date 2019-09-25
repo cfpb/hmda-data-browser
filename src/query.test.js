@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   formatParam,
   stringifyIfTruthy,
@@ -42,12 +41,12 @@ it('makes details param from state when absent', () => {
 })
 
 it('makes variables param from state', () => {
-  expect(makeParam({variables: {a: {b: 123, bb: 1123}, c: {d: 234}}, variableOrder: ['a', 'c']}, 'variables'))
+  expect(makeParam({variables: {a: {b: 123, bb: 1123}, c: {d: 234}}, orderedVariables: ['a', 'c']}, 'variables'))
     .toBe('a=b,bb&c=d')
 })
 
 it('makes variables param from state when unmatched length', () => {
-  expect(makeParam({variables: {a:{b: 123}}, variableOrder: []}, 'variables')).toBe('')
+  expect(makeParam({variables: {a:{b: 123}}, orderedVariables: []}, 'variables')).toBe('')
 })
 
 it('tests a valid Key', () => {
@@ -90,7 +89,7 @@ it('makes state from search', () => {
 
 it('regenerates search on invalid key', done => {
   const regen = jest.fn()
-  const state = makeStateFromSearch('?states=CA', {}, null, regen)
+  makeStateFromSearch('?states=CA', {}, null, regen)
   setTimeout(() => {
     expect(regen.mock.calls.length).toBe(1)
     done()
@@ -109,8 +108,8 @@ it('regenerates search when array gets sanitized', done => {
 
 it('makes search with variables', () => {
   const regen = jest.fn()
-  const state = makeStateFromSearch('?states=CA,XZ&actions_taken=2,3&loan_types=', {states:[], variables:{}, variableOrder: []}, null, regen)
-  expect(state).toEqual({states:['CA'], variableOrder: ['actions_taken', 'loan_types'], variables:{'actions_taken': {2: true, 3: true}, 'loan_types': {}}})
+  const state = makeStateFromSearch('?states=CA,XZ&actions_taken=2,3&loan_types=', {states:[], variables:{}, orderedVariables: []}, null, regen)
+  expect(state).toEqual({states:['CA'], orderedVariables: ['actions_taken', 'loan_types'], variables:{'actions_taken': {2: true, 3: true}, 'loan_types': {}}})
 })
 
 it('calls detailsCb when getDetails is present', done => {
@@ -124,11 +123,11 @@ it('calls detailsCb when getDetails is present', done => {
 })
 
 it('makes search from state', () => {
-  const search = makeSearchFromState({states:['CA'], details:{a:'b'}, variables:{}, variableOrder: []})
+  const search = makeSearchFromState({states:['CA'], details:{a:'b'}, variables:{}, orderedVariables: []})
   expect(search).toBe('?states=CA&getDetails=1')
 })
 
 it('makes empty search from state', () => {
-  const search = makeSearchFromState({states:[], details:{}, variables:{}, variableOrder: []})
+  const search = makeSearchFromState({states:[], details:{}, variables:{}, orderedVariables: []})
   expect(search).toBe('')
 })

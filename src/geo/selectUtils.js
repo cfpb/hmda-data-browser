@@ -3,6 +3,78 @@ import STATEOBJ from '../constants/stateObj.js'
 import MSATONAME from '../constants/msaToName.js'
 import MSATOSTATE from '../constants/msaToState.js'
 import VARIABLES from '../constants/variables.js'
+import msaToName from '../constants/msaToName.js'
+
+function setGeographySelect(states, msamds, nationwide){
+  const options = []
+
+  if(nationwide) return [{value: 'nationwide', label: 'NATIONWIDE'}]
+
+  if(states.length){
+    states.forEach(state => {
+      createStateOption(state, options)
+    })
+  }
+
+  if(msamds.length){
+    msamds.forEach(msa => {
+      createMSAOption(msa, msaToName[msa], options)
+    })
+  }
+
+  return options
+}
+
+function setVariableSelect(orderedVariables){
+  const options = []
+  orderedVariables.forEach(v => {
+    options.push({value: v, label: VARIABLES[v].label})
+  })
+  return options
+}
+
+function makeGeograpyPlaceholder(nationwide, geoValues) {
+  if(nationwide) return 'Nationwide selected, clear this selection to pick states or MSA/MDs'
+  if(geoValues.length){
+    if(geoValues[0].value.length === 2) return 'Select or type additional states'
+    return 'Select or type additional MSA/MDs'
+  }
+  return 'Select or type a state, an MSA/MD, or \'nationwide\''
+}
+
+function someChecksExist(vars){
+  const keys = Object.keys(vars)
+  if(!keys[0]) return false
+
+  const checkVars = vars[keys[0]]
+  const checkKeys = Object.keys(checkVars)
+  for(let j=0; j < checkKeys.length; j++){
+    if(checkVars[checkKeys[j]]) return true
+  }
+  return false
+}
+
+function removeSelected(selected, options) {
+  if(selected.length === 0) return options
+
+  const trimmed = []
+  selected = [...selected]
+
+  for(let i=0; i < options.length; i++){
+    if(!selected.length) trimmed.push(options[i])
+    else {
+      for(let j=0; j<selected.length; j++){
+        if(selected[j].value === options[i].value){
+          selected = selected.slice(0,j).concat(selected.slice(j+1))
+          break
+        } else if (j === selected.length - 1){
+          trimmed.push(options[i])
+        }
+      }
+    }
+  }
+  return trimmed
+}
 
 function formatWithCommas(str='') {
   str = str + ''
@@ -91,5 +163,10 @@ export {
   createVariableOptions,
   separateGeographyOptions,
   geographyStyleFn,
-  formatWithCommas
+  formatWithCommas,
+  removeSelected,
+  makeGeograpyPlaceholder,
+  setGeographySelect,
+  someChecksExist,
+  setVariableSelect
 }
