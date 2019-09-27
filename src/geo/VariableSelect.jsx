@@ -19,8 +19,8 @@ const VariableSelect = ({ options, variables, orderedVariables, loadingDetails, 
         Narrow down your geography selection by filtering on up to two{' '}
         <a
           target="_blank"
-          rel="noopener noreferrerr"
-          href="/documentation/2018/data-browser-filters/#action_taken"
+          rel="noopener noreferrer"
+          href="https://ffiec.cfpb.gov/documentation/2018/data-browser-filters/#action_taken"
         >
           popular variables
         </a>
