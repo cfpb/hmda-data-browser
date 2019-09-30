@@ -9,8 +9,8 @@ const varKeys = Object.keys(VARIABLES)
 export function makeParam(s, key) {
   if(key === 'variables'){
     const vars = s[key]
-    if(Object.keys(vars).length !== s.variableOrder.length) return ''
-    return s.variableOrder.map(v =>{
+    if(Object.keys(vars).length !== s.orderedVariables.length) return ''
+    return s.orderedVariables.map(v =>{
       return `${v}=${Object.keys(vars[v]).join(',')}`
     }).join('&')
   }
@@ -82,7 +82,7 @@ export function makeStateFromSearch(search, s, detailsCb, updateSearch){
     else {
       const sanitized = sanitizeArray(key, val)
       if(sanitized.length !== val.length) regenerateSearch = true
-      if(sanitized.length) s.variableOrder.push(key)
+      if(sanitized.length) s.orderedVariables.push(key)
       sanitized.forEach(v => {
         if(s.variables[key]) s.variables[key][v] = true
         else if(v) s.variables[key] = {[v]: true}
