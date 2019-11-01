@@ -1,28 +1,30 @@
 import React from 'react'
 import Select from 'react-select'
+import CategorySelect from './CategorySelect.jsx'
 import Pills from './Pills.jsx'
 import LoadingButton from './LoadingButton.jsx'
 import {
   removeSelected,
-  setGeographySelect,
-  makeGeograpyPlaceholder,
-  geographyStyleFn
+  setItemSelect,
+  makeItemPlaceholder,
+  itemStyleFn
 } from './selectUtils.js'
 
 
-const GeographySelect = ({options, geographies, isLargeFile, enabled, downloadCallback, onChange }) => {
+const ItemSelect = ({options, geographies, isLargeFile, enabled, downloadCallback, onChange }) => {
   const {states, msamds, nationwide} = geographies
-  const geoValues =  setGeographySelect(states, msamds, nationwide)
+  const geoValues =  setItemSelect(states, msamds, nationwide)
 
   return (
     <div className="SelectWrapper">
-          <h3>Dataset by Geography</h3>
+          <h3>Dataset by Item</h3>
           <p>Filter HMDA data by geography levels: <a target="_blank" rel="noopener noreferrer" href="https://ffiec.cfpb.gov/documentation/2018/data-browser-filters/#Nationwide">nationwide, state, & MSA/MD</a></p>
+          <CategorySelect/>
           <Select
             controlShouldRenderValue={false}
-            styles={geographyStyleFn}
+            styles={itemStyleFn}
             onChange={onChange}
-            placeholder={makeGeograpyPlaceholder(nationwide, geoValues)}
+            placeholder={makeItemPlaceholder(nationwide, geoValues)}
             isMulti={true}
             searchable={true}
             autoFocus
@@ -45,4 +47,4 @@ const GeographySelect = ({options, geographies, isLargeFile, enabled, downloadCa
   )
 }
 
-export default GeographySelect
+export default ItemSelect

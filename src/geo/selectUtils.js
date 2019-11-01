@@ -5,7 +5,7 @@ import MSATOSTATE from '../constants/msaToState.js'
 import VARIABLES from '../constants/variables.js'
 import msaToName from '../constants/msaToName.js'
 
-function setGeographySelect(states, msamds, nationwide){
+function setItemSelect(states, msamds, nationwide){
   const options = []
 
   if(nationwide) return [{value: 'nationwide', label: 'NATIONWIDE'}]
@@ -33,10 +33,10 @@ function setVariableSelect(orderedVariables){
   return options
 }
 
-function makeGeograpyPlaceholder(nationwide, geoValues) {
+function makeItemPlaceholder(nationwide, itemValues) {
   if(nationwide) return 'Nationwide selected, clear this selection to pick states or MSA/MDs'
-  if(geoValues.length){
-    if(geoValues[0].value.length === 2) return 'Select or type additional states'
+  if(itemValues.length){
+    if(itemValues[0].value.length === 2) return 'Select or type additional states'
     return 'Select or type additional MSA/MDs'
   }
   return 'Select or type a state, an MSA/MD, or \'nationwide\''
@@ -89,7 +89,7 @@ function formatWithCommas(str='') {
   return formatted
 }
 
-function separateGeographyOptions(options){
+function separateItemOptions(options){
   const states = []
   const msas = []
   //skip nationwide
@@ -113,27 +113,27 @@ function createMSAOption(id, name, options){
   })
 }
 
-function createGeographyOptions(props) {
+function createItemOptions(props) {
   const subsetYear = props.location.pathname.split('/')[2]
 
   const statesWithMsas = stateToMsas[subsetYear]
-  let geographyOptions = [{value: 'nationwide', label: 'NATIONWIDE'}]
+  let itemOptions = [{value: 'nationwide', label: 'NATIONWIDE'}]
 
   const multi = new Set()
 
   Object.keys(statesWithMsas).forEach(state => {
-    createStateOption(state, geographyOptions)
+    createStateOption(state, itemOptions)
     statesWithMsas[state].forEach(msa => {
       if(MSATOSTATE[msa].length > 1) multi.add(msa)
-      else createMSAOption(msa, MSATONAME[msa], geographyOptions)
+      else createMSAOption(msa, MSATONAME[msa], itemOptions)
     })
   })
 
   multi.forEach(msa => {
-    createMSAOption(msa, MSATONAME[msa], geographyOptions)
+    createMSAOption(msa, MSATONAME[msa], itemOptions)
   })
 
-  return geographyOptions
+  return itemOptions
 }
 
 function createVariableOptions() {
@@ -142,31 +142,53 @@ function createVariableOptions() {
   })
 }
 
-const geographyStyleFn = {
+const heightStyleFn = {
+  valueContainer: p => ({...p, height: '50px'})
+}
+
+const categoryStyleFn = {
+  ...heightStyleFn,
+  container: p => ({...p, width: '20%', display: 'inline-block'}),
+  control: (p, s) => {
+    return {
+      ...p,
+      borderTopRightRadius: 0,
+      borderBottomRightRadius: 0,
+      zIndex: s.isFocused ? 1 : 0
+    }},
+  indicatorsContainer: p => ({...p, zIndex: 1}),
+}
+
+const itemStyleFn = {
+  ...heightStyleFn,
+  container: p => ({...p, width: '80%', display: 'inline-block'}),
+  control: p => ({...p, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }),
   option: (provided, state) => {
     const value = state.data.value
-   if (value.length === 2 || value === 99999) {
-     return {
-       ...provided,
-       fontWeight: 'bold',
-       textDecoration: 'underline'
-     }
-   }
-   return provided
+    if (value.length === 2 || value === 99999) {
+      return {
+        ...provided,
+        fontWeight: 'bold',
+        textDecoration: 'underline'
+      }
+    }
+    return provided
   }
 }
 
 export {
   createStateOption,
   createMSAOption,
-  createGeographyOptions,
+  createItemOptions,
   createVariableOptions,
-  separateGeographyOptions,
-  geographyStyleFn,
+  separateItemOptions,
+  heightStyleFn,
+  itemStyleFn,
+  categoryStyleFn,
   formatWithCommas,
   removeSelected,
-  makeGeograpyPlaceholder,
-  setGeographySelect,
+  makeItemPlaceholder,
+  setItemSelect,
   someChecksExist,
   setVariableSelect
 }

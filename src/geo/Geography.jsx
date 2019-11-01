@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import Header from '../common/Header.jsx'
-import GeographySelect from './GeographySelect.jsx'
+import CategorySelect from './CategorySelect.jsx'
+import ItemSelect from './ItemSelect.jsx'
 import VariableSelect from './VariableSelect.jsx'
 import Aggregations from './Aggregations.jsx'
 import LoadingButton from './LoadingButton.jsx'
@@ -11,8 +12,8 @@ import { makeSearchFromState, makeStateFromSearch } from '../query.js'
 import STATE_COUNTS from '../constants/stateCounts.js'
 import MSAMD_COUNTS from '../constants/msamdCounts.js'
 import {
-  createGeographyOptions,
-  separateGeographyOptions,
+  createItemOptions,
+  separateItemOptions,
   createVariableOptions,
   formatWithCommas
 } from './selectUtils.js'
@@ -34,8 +35,8 @@ class Geography extends Component {
     this.updateSearch = this.updateSearch.bind(this)
     this.scrollToTable = this.scrollToTable.bind(this)
 
-    this.geographyOptions = createGeographyOptions(props)
-    const [stateOptions, msaOptions] = separateGeographyOptions(this.geographyOptions)
+    this.geographyOptions = createItemOptions(props)
+    const [stateOptions, msaOptions] = separateItemOptions(this.geographyOptions)
     this.stateOptions = stateOptions
     this.msaOptions = msaOptions
     this.variableOptions = createVariableOptions()
@@ -236,7 +237,7 @@ class Geography extends Component {
             </p>
           </Header>
         </div>
-        <GeographySelect
+        <ItemSelect
           options={{ states: this.stateOptions, msamds: this.msaOptions, combined: this.geographyOptions }}
           geographies={{ states, msamds, nationwide }}
           isLargeFile={isLargeFile}
