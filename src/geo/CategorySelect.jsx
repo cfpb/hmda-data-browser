@@ -10,14 +10,18 @@ const categories = [
   {value: 'nationwide', label: 'Nationwide'},
 ]
 
-const CategorySelect = ({ onChange }) => {
+const CategorySelect = ({ category, onChange }) => {
+  const value = categories.reduce((acc, curr) => {
+    return acc.value === category ? acc : curr
+  })
+
   return (
     <Select
-      controlShouldRenderValue={false}
       onChange={onChange}
       styles={categoryStyleFn}
       openOnFocus
       simpleValue
+      value={value}
       options={categories}
     />
   )

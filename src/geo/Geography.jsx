@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import Header from '../common/Header.jsx'
-import CategorySelect from './CategorySelect.jsx'
 import ItemSelect from './ItemSelect.jsx'
 import VariableSelect from './VariableSelect.jsx'
 import Aggregations from './Aggregations.jsx'
@@ -24,6 +23,7 @@ import './Geography.css'
 class Geography extends Component {
   constructor(props) {
     super(props)
+    this.onCategoryChange = this.onCategoryChange.bind(this)
     this.onGeographyChange = this.onGeographyChange.bind(this)
     this.onVariableChange = this.onVariableChange.bind(this)
     this.makeCheckboxChange = this.makeCheckboxChange.bind(this)
@@ -48,6 +48,7 @@ class Geography extends Component {
 
   buildStateFromQuerystring(){
     const defaultState = {
+      category: 'states',
       states: [],
       msamds: [],
       nationwide: false,
@@ -118,6 +119,10 @@ class Geography extends Component {
 
   checkIfLargeCount(selected, countMap) {
     return selected.reduce((acc, curr) => acc + countMap[curr], 0) > 1048576
+  }
+
+  onCategoryChange(catObj) {
+    this.setState({category: catObj.value})
   }
 
   onGeographyChange(selectedGeographies) {
@@ -223,7 +228,7 @@ class Geography extends Component {
   }
 
   render() {
-    const { nationwide, states, msamds, isLargeFile, variables, orderedVariables, details, loadingDetails, error } = this.state
+    const { category, nationwide, states, msamds, isLargeFile, variables, orderedVariables, details, loadingDetails, error } = this.state
     const enabled = nationwide || states.length || msamds.length
 
     return (
@@ -239,6 +244,8 @@ class Geography extends Component {
         </div>
         <ItemSelect
           options={{ states: this.stateOptions, msamds: this.msaOptions, combined: this.geographyOptions }}
+          category={category}
+          onCategoryChange={this.onCategoryChange}
           geographies={{ states, msamds, nationwide }}
           isLargeFile={isLargeFile}
           enabled={enabled}

@@ -11,7 +11,7 @@ import {
 } from './selectUtils.js'
 
 
-const ItemSelect = ({options, geographies, isLargeFile, enabled, downloadCallback, onChange }) => {
+const ItemSelect = ({options, category, onCategoryChange, geographies, isLargeFile, enabled, downloadCallback, onChange }) => {
   const {states, msamds, nationwide} = geographies
   const geoValues =  setItemSelect(states, msamds, nationwide)
 
@@ -19,7 +19,7 @@ const ItemSelect = ({options, geographies, isLargeFile, enabled, downloadCallbac
     <div className="SelectWrapper">
           <h3>Dataset by Item</h3>
           <p>Filter HMDA data by geography levels: <a target="_blank" rel="noopener noreferrer" href="https://ffiec.cfpb.gov/documentation/2018/data-browser-filters/#Nationwide">nationwide, state, & MSA/MD</a></p>
-          <CategorySelect/>
+          <CategorySelect category={category} onChange={onCategoryChange}/>
           <Select
             controlShouldRenderValue={false}
             styles={itemStyleFn}
