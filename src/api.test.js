@@ -2,13 +2,13 @@ import React from 'react'
 import {
   addVariableParams,
   addYears,
-  createGeographyQuerystring,
+  createItemQuerystring,
   makeUrl,
   runFetch,
   makeCSVName,
   getSubsetDetails,
   getCSV,
-  getGeographyCSV,
+  getItemCSV,
   getSubsetCSV
 } from './api.js'
 
@@ -29,17 +29,17 @@ it('adds years to an existing qs', () => {
 })
 
 it('creates a geography qs with both states and msamds', () => {
-  const qs=createGeographyQuerystring({states: ['a','b'], msamds: ['c']})
+  const qs=createItemQuerystring({states: ['a','b'], msamds: ['c']})
   expect(qs).toBe('?states=a,b&msamds=c')
 })
 
 it('creates a geography qs with states only', () => {
-  const qs=createGeographyQuerystring({states: ['a','b'], msamds: []})
+  const qs=createItemQuerystring({states: ['a','b'], msamds: []})
   expect(qs).toBe('?states=a,b')
 })
 
 it('creates an empty geography qs', () => {
-  const qs=createGeographyQuerystring()
+  const qs=createItemQuerystring()
   expect(qs).toBe('?')
 })
 
@@ -134,7 +134,7 @@ it('creates an a element and adds and removes it from the DOM', () => {
   expect(click.mock.calls.length).toBe(1)
 })
 
-it('calls getCSV on makeURL and makeCSVName on getGeographyCSV call, preventing variable inclusion', () => {
+it('calls getCSV on makeURL and makeCSVName on getItemCSV call, preventing variable inclusion', () => {
   const setAttribute = jest.fn()
   const click = jest.fn()
   const a = {style:{}, setAttribute, click}
@@ -145,7 +145,7 @@ it('calls getCSV on makeURL and makeCSVName on getGeographyCSV call, preventing 
   window.document.body.appendChild = aC
   window.document.body.removeChild = rC
 
-  getGeographyCSV({states:['abc'], msamds:[], variables: {a:{b:123}}})
+  getItemCSV({states:['abc'], msamds:[], variables: {a:{b:123}}})
 
   expect(setAttribute.mock.calls[1][1]).toBe('abc.csv')
   expect(a.href).toBe('/v2/data-browser-api/view/csv?states=abc&years=2018')

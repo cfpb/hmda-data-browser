@@ -4,16 +4,15 @@ import CategorySelect from './CategorySelect.jsx'
 import Pills from './Pills.jsx'
 import LoadingButton from './LoadingButton.jsx'
 import {
-  removeSelected,
-  setItemSelect,
+  pruneItemOptions,
+  makeItemSelectValues,
   makeItemPlaceholder,
   itemStyleFn
 } from './selectUtils.js'
 
 
-const ItemSelect = ({options, category, onCategoryChange, geographies, isLargeFile, enabled, downloadCallback, onChange }) => {
-  const {states, msamds, nationwide} = geographies
-  const geoValues =  setItemSelect(states, msamds, nationwide)
+const ItemSelect = ({options, category, onCategoryChange, items, isLargeFile, enabled, downloadCallback, onChange }) => {
+  const selectedValues = makeItemSelectValues(category, items)
 
   return (
     <div className="SelectWrapper">
@@ -24,23 +23,17 @@ const ItemSelect = ({options, category, onCategoryChange, geographies, isLargeFi
             controlShouldRenderValue={false}
             styles={itemStyleFn}
             onChange={onChange}
-            placeholder={makeItemPlaceholder(nationwide, geoValues)}
+            placeholder={makeItemPlaceholder(category, selectedValues)}
             isMulti={true}
             searchable={true}
+            isDisabled={category === 'nationwide'}
             autoFocus
             openOnFocus
             simpleValue
-            value={geoValues}
-            options={nationwide
-              ? []
-              : geoValues.length
-                ? geoValues[0].value.length === 2
-                  ? removeSelected(geoValues, options.states)
-                  : removeSelected(geoValues, options.msamds)
-                : options.combined
-            }
+            value={selectedValues}
+            options={pruneItemOptions(category, options, selectedValues)}
           />
-          <Pills values={geoValues} onChange={onChange} />
+         {category === 'nationwide' ? null : <Pills values={selectedValues} onChange={onChange} />}
           <LoadingButton onClick={downloadCallback} disabled={!enabled}>Download Dataset</LoadingButton>
           {isLargeFile ? <div className="LargeFileWarning"><h4>Warning:</h4> This dataset may be too large to be opened in standard spreadsheet applications</div>: null}
         </div>

@@ -1,28 +1,25 @@
 import stateToMsas from '../constants/stateToMsas.js'
 import STATEOBJ from '../constants/stateObj.js'
-import MSATONAME from '../constants/msaToName.js'
 import MSATOSTATE from '../constants/msaToState.js'
 import VARIABLES from '../constants/variables.js'
+import COUNTIES from '../constants/counties.js'
+import fipsToState from '../constants/fipsToState.js'
 import msaToName from '../constants/msaToName.js'
 
-function setItemSelect(states, msamds, nationwide){
-  const options = []
+const itemFnMap = {
+  states: createStateOption,
+  msamds: createMSAOption,
+  counties: createCountyOption,
+}
 
-  if(nationwide) return [{value: 'nationwide', label: 'NATIONWIDE'}]
+function makeItemSelectValues(category, items){
+  if(category === 'nationwide') return [{value: 'nationwide', label: 'NATIONWIDE'}]
+  return items.map(itemFnMap[category])
+}
 
-  if(states.length){
-    states.forEach(state => {
-      createStateOption(state, options)
-    })
-  }
-
-  if(msamds.length){
-    msamds.forEach(msa => {
-      createMSAOption(msa, msaToName[msa], options)
-    })
-  }
-
-  return options
+function pruneItemOptions(category, options, selectedValues){
+  if(category === 'nationwide') return []
+  return removeSelected(selectedValues, options[category])
 }
 
 function setVariableSelect(orderedVariables){
@@ -33,13 +30,11 @@ function setVariableSelect(orderedVariables){
   return options
 }
 
-function makeItemPlaceholder(nationwide, itemValues) {
-  if(nationwide) return 'Nationwide selected, clear this selection to pick states or MSA/MDs'
-  if(itemValues.length){
-    if(itemValues[0].value.length === 2) return 'Select or type additional states'
-    return 'Select or type additional MSA/MDs'
-  }
-  return 'Select or type a state, an MSA/MD, or \'nationwide\''
+function makeItemPlaceholder(category, selectedValues) {
+  let type = category === 'msamds' ? 'MSA/MDs' : category
+  if(type === 'nationwide') return 'Nationwide selected'
+  if(selectedValues.length) return `Select or type additional ${type}`
+  return `Select or type any number of ${type}`
 }
 
 function someChecksExist(vars){
@@ -89,49 +84,49 @@ function formatWithCommas(str='') {
   return formatted
 }
 
-function separateItemOptions(options){
-  const states = []
-  const msas = []
-  //skip nationwide
-  for(let i=1; i<options.length; i++){
-    let opt = options[i]
-    if(opt.value.length === 2) states.push(opt)
-    else msas.push(opt)
-  }
-  return [states, msas]
+function createStateOption(id){
+  return {value: id, label: `${STATEOBJ[id]}`}
 }
 
-function createStateOption(state, options){
-  if(state !== 'NA') options.push({value: state, label: `${STATEOBJ[state]} - STATEWIDE`})
-}
-
-function createMSAOption(id, name, options){
+function createMSAOption(id){
   const stateLabel = MSATOSTATE[id].map(v => STATEOBJ[v]).join(' - ')
-  options.push({
+  return {
     value: '' + id,
-    label:  `${id} - ${name} - ${stateLabel}`,
-  })
+    label:  `${id} - ${msaToName[id]} - ${stateLabel}`
+  }
+}
+
+function createCountyOption(id){
+  const stateLabel = fipsToState[id.slice(0, 2)]
+  return {
+    value: id,
+    label: `${id} - ${COUNTIES[id]} - ${stateLabel}`
+  }
 }
 
 function createItemOptions(props) {
   const subsetYear = props.location.pathname.split('/')[2]
-
   const statesWithMsas = stateToMsas[subsetYear]
-  let itemOptions = [{value: 'nationwide', label: 'NATIONWIDE'}]
 
-  const multi = new Set()
+  let itemOptions = {
+    nationwide: [{value: 'nationwide', label: 'NATIONWIDE'}],
+    states: [],
+    msamds: [],
+    counties: []
+  }
+
+  const msaSet = new Set()
 
   Object.keys(statesWithMsas).forEach(state => {
-    createStateOption(state, itemOptions)
-    statesWithMsas[state].forEach(msa => {
-      if(MSATOSTATE[msa].length > 1) multi.add(msa)
-      else createMSAOption(msa, MSATONAME[msa], itemOptions)
-    })
+    itemOptions.states.push(createStateOption(state))
+    statesWithMsas[state].forEach(msa => msaSet.add(msa))
   })
 
-  multi.forEach(msa => {
-    createMSAOption(msa, MSATONAME[msa], itemOptions)
+  msaSet.forEach(msa => {
+    itemOptions.msamds.push(createMSAOption(msa))
   })
+
+  itemOptions.counties = Object.keys(COUNTIES).map(createCountyOption)
 
   return itemOptions
 }
@@ -162,18 +157,7 @@ const categoryStyleFn = {
 const itemStyleFn = {
   ...heightStyleFn,
   container: p => ({...p, width: '80%', display: 'inline-block'}),
-  control: p => ({...p, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }),
-  option: (provided, state) => {
-    const value = state.data.value
-    if (value.length === 2 || value === 99999) {
-      return {
-        ...provided,
-        fontWeight: 'bold',
-        textDecoration: 'underline'
-      }
-    }
-    return provided
-  }
+  control: p => ({...p, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 })
 }
 
 export {
@@ -181,14 +165,14 @@ export {
   createMSAOption,
   createItemOptions,
   createVariableOptions,
-  separateItemOptions,
   heightStyleFn,
   itemStyleFn,
   categoryStyleFn,
   formatWithCommas,
   removeSelected,
   makeItemPlaceholder,
-  setItemSelect,
+  makeItemSelectValues,
+  pruneItemOptions,
   someChecksExist,
   setVariableSelect
 }
