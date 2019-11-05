@@ -45,7 +45,6 @@ export function isInvalidKey(key, s){
 }
 
 export function sanitizeArray(key, val) {
-  console.log(key, val)
   const arr = []
   let knownKeys
 

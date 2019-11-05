@@ -73,7 +73,7 @@ export function runFetch(url) {
 export function makeCSVName(obj, includeVariables=true) {
   if(!obj) return ''
   let name = ''
-  if(obj.items.length) name += obj.item.join(',') + '-'
+  if(obj.items.length) name += obj.items.join(',') + '-'
   if(obj.category === 'nationwide') name = 'nationwide-'
 
   if(obj.variables && includeVariables){
