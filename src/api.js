@@ -26,6 +26,8 @@ export function createItemQuerystring(obj={items: []}) {
   let qs = '?'
   if(obj.items.length){
     qs += `${obj.category}=${obj.items.join(',')}`
+  }else {
+    qs = ''
   }
   return qs
 }
@@ -42,7 +44,7 @@ export function makeUrl(obj, isCSV, includeVariables=true) {
   if(obj.category === 'nationwide'){
     if(includeVariables) url += '?' + addVariableParams(obj).slice(1)
   }else {
-    if(!obj.items.length) return ''
+    if(!obj.items || !obj.items.length) return ''
     url += createItemQuerystring(obj)
     if(includeVariables) url += addVariableParams(obj)
   }
