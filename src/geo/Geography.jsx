@@ -119,7 +119,11 @@ class Geography extends Component {
   }
 
   onCategoryChange(catObj) {
-    this.setStateAndRoute({category: catObj.value})
+    this.setStateAndRoute({
+      category: catObj.value,
+      items: [],
+      isLargeFile: false
+    })
   }
 
   onItemChange(selectedItems = []) {

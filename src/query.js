@@ -105,7 +105,7 @@ export function makeStateFromSearch(search, s, detailsCb, updateSearch){
 export function makeSearchFromState(s){
   let params = [
     makeParam(s, 'category'),
-    s.category === 'nationwide' ? makeParam(s, 'items') : null,
+    s.category === 'nationwide' ? null : makeParam(s, 'items'),
     makeParam(s, 'variables'),
     makeParam(s, 'details')
   ]
