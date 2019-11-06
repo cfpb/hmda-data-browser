@@ -22,17 +22,13 @@ export function addYears(url='') {
   return '?years=2018'
 }
 
-export function createGeographyQuerystring(obj={states:[], msamds: []}) {
+export function createItemQuerystring(obj={items: []}) {
   let qs = '?'
-  let isFirstParam = true
-  const geos = ['states', 'msamds']
-  geos.forEach(v => {
-    if(obj[v].length){
-      if(isFirstParam) isFirstParam = false
-      else qs += '&'
-      qs += `${v}=${obj[v].join(',')}`
-    }
-  })
+  if(obj.items.length){
+    qs += `${obj.category}=${obj.items.join(',')}`
+  }else {
+    qs = ''
+  }
   return qs
 }
 
@@ -40,16 +36,16 @@ export function makeUrl(obj, isCSV, includeVariables=true) {
   if(!obj) return ''
   let url = '/v2/data-browser-api/view'
 
-  if(obj.nationwide) url += '/nationwide'
+  if(obj.category === 'nationwide') url += '/nationwide'
 
   if(isCSV) url += '/csv'
   else url += '/aggregations'
 
-  if(obj.nationwide){
+  if(obj.category === 'nationwide'){
     if(includeVariables) url += '?' + addVariableParams(obj).slice(1)
   }else {
-    if(!obj.states && !obj.msamds) return ''
-    url += createGeographyQuerystring(obj)
+    if(!obj.items || !obj.items.length) return ''
+    url += createItemQuerystring(obj)
     if(includeVariables) url += addVariableParams(obj)
   }
 
@@ -79,9 +75,8 @@ export function runFetch(url) {
 export function makeCSVName(obj, includeVariables=true) {
   if(!obj) return ''
   let name = ''
-  if(obj.states && obj.states.length) name += obj.states.join(',') + '-'
-  if(obj.msamds && obj.msamds.length) name += obj.msamds.join(',') + '-'
-  if(obj.nationwide) name = 'nationwide-'
+  if(obj.items.length) name += obj.items.join(',') + '-'
+  if(obj.category === 'nationwide') name = 'nationwide-'
 
   if(obj.variables && includeVariables){
     Object.keys(obj.variables).forEach(key => {
@@ -112,7 +107,7 @@ export function getCSV(url, name){
   a = null
 }
 
-export function getGeographyCSV(obj){
+export function getItemCSV(obj){
   return getCSV(makeUrl(obj, true, false), makeCSVName(obj, false))
 }
 
