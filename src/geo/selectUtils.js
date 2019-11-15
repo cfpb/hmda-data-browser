@@ -36,7 +36,7 @@ function makeItemPlaceholder(category, selectedValues) {
   let type = category === 'msamds' ? 'MSA/MDs' : category
   if(type === 'nationwide') return 'Nationwide selected'
   if(selectedValues.length) return `Select or type additional ${type}`
-  return `Select or type any number of ${type}`
+  return `Select or type the name of one or more ${type}`
 }
 
 function someChecksExist(vars){
