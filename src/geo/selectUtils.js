@@ -125,7 +125,7 @@ function createItemOptions(props) {
   const msaSet = new Set()
 
   Object.keys(statesWithMsas).forEach(state => {
-    itemOptions.states.push(createStateOption(state))
+    STATEOBJ[state] && itemOptions.states.push(createStateOption(state))
     statesWithMsas[state].forEach(msa => msaSet.add(msa))
   })
 
