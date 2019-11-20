@@ -10,19 +10,21 @@ import { getSubsetDetails, getItemCSV, getSubsetCSV } from '../api.js'
 import { makeSearchFromState, makeStateFromSearch } from '../query.js'
 import STATE_COUNTS from '../constants/stateCounts.js'
 import MSAMD_COUNTS from '../constants/msamdCounts.js'
+import LEI_COUNTS from '../constants/leiCounts.js'
 import {
   createItemOptions,
   createVariableOptions,
-  formatWithCommas
+  formatWithCommas,
+  isNationwide
 } from './selectUtils.js'
 
 import './Geography.css'
-
 
 class Geography extends Component {
   constructor(props) {
     super(props)
     this.onCategoryChange = this.onCategoryChange.bind(this)
+    this.onInstitutionChange = this.onInstitutionChange.bind(this)
     this.onItemChange = this.onItemChange.bind(this)
     this.onVariableChange = this.onVariableChange.bind(this)
     this.makeCheckboxChange = this.makeCheckboxChange.bind(this)
@@ -46,6 +48,7 @@ class Geography extends Component {
     const defaultState = {
       category: 'states',
       items: [],
+      leis: [],
       isLargeFile: false,
       variables: {},
       orderedVariables: [],
@@ -55,7 +58,7 @@ class Geography extends Component {
     }
 
     const newState = makeStateFromSearch(this.props.location.search, defaultState, this.requestSubset, this.updateSearch)
-    newState.isLargeFile = this.checkIfLargeFile(newState.category, newState.items)
+    newState.isLargeFile = this.checkIfLargeFile(newState.category, isNationwide(newState.category) ? newState.leis : newState.items)
     setTimeout(this.updateSearch, 0)
     return newState
   }
@@ -108,7 +111,9 @@ class Geography extends Component {
   }
 
   checkIfLargeFile(category, items) {
-    if(category === 'nationwide') return true
+    if(isNationwide(category) && !items.length) return true
+    if(isNationwide(category) || category === 'leis') 
+      return this.checkIfLargeCount(items, LEI_COUNTS)
     if(category === 'states') return this.checkIfLargeCount(items, STATE_COUNTS)
     if(category === 'msamds') return this.checkIfLargeCount(items, MSAMD_COUNTS)
     return false
@@ -122,6 +127,7 @@ class Geography extends Component {
     this.setStateAndRoute({
       category: catObj.value,
       items: [],
+      leis: [],
       isLargeFile: this.checkIfLargeFile(catObj.value, [])
     })
   }
@@ -135,6 +141,16 @@ class Geography extends Component {
       items,
       details: {},
       isLargeFile: this.checkIfLargeFile(this.state.category, items)
+    })
+  }
+
+  onInstitutionChange(selectedLEIs = []){
+    const leis = selectedLEIs.map(l => l.value)
+
+    return this.setStateAndRoute({
+      leis,
+      details: {},
+      isLargeFile: this.checkIfLargeFile(this.state.category, leis)
     })
   }
 
@@ -199,8 +215,8 @@ class Geography extends Component {
   }
 
   render() {
-    const { category, items, isLargeFile, variables, orderedVariables, details, loadingDetails, error } = this.state
-    const enabled = category === 'nationwide' || items.length
+    const { category, items, leis, isLargeFile, variables, orderedVariables, details, loadingDetails, error } = this.state
+    const enabled = isNationwide(category) || items.length
 
     return (
       <div className="Geography">
@@ -208,7 +224,7 @@ class Geography extends Component {
         <div className="intro">
           <Header type={1} headingText="HMDA Dataset Filtering">
             <p className="lead">
-              Download CSVs of HMDA data. These files contain all <a target="_blank" rel="noopener noreferrer" href="https://ffiec.cfpb.gov/documentation/2018/lar-data-fields/">data fields</a> available in the public data record and can be used for advanced analysis.
+            You can use the HMDA Data Browser to filter and download CSV files of HMDA data. These files contain all <a target="_blank" rel="noopener noreferrer" href="https://ffiec.cfpb.gov/documentation/2018/lar-data-fields/">data fields</a> available in the public data record and can be used for advanced analysis.
               For questions/suggestions, contact hmdahelp@cfpb.gov.
             </p>
           </Header>
@@ -222,6 +238,8 @@ class Geography extends Component {
           enabled={enabled}
           downloadCallback={this.requestItemCSV}
           onChange={this.onItemChange}
+          onInstitutionChange={this.onInstitutionChange}
+          leis={leis}
         />
         {enabled ?
           <>
