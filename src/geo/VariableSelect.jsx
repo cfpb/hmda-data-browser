@@ -17,7 +17,7 @@ const VariableSelect = ({ options, variables, orderedVariables, loadingDetails, 
     <div className="SelectWrapper">
       <h3>Dataset by Pre-selected Filters</h3>
       <p>
-        Narrow down your geography selection by filtering on up to two{' '}
+        Narrow down your selection by filtering on up to two{' '}
         <a
           target="_blank"
           rel="noopener noreferrer"

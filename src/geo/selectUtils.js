@@ -15,12 +15,12 @@ const itemFnMap = {
 }
 
 function makeItemSelectValues(category, items){
-  if(category === 'nationwide') return [{value: 'nationwide', label: 'NATIONWIDE'}]
+  if(isNationwide(category)) return [{value: 'nationwide', label: 'NATIONWIDE'}]
   return items.map(itemFnMap[category])
 }
 
 function pruneItemOptions(category, options, selectedValues){
-  if(category === 'nationwide') return []
+  if(isNationwide(category)) return []
   return removeSelected(selectedValues, options[category])
 }
 
@@ -34,8 +34,8 @@ function setVariableSelect(orderedVariables){
 
 function makeItemPlaceholder(category, selectedValues) {
   let type = category === 'msamds' ? 'MSA/MDs' : category
-  if (type === 'leis') type = 'LEIs'
-  if(type === 'nationwide') return 'Nationwide selected'
+  if(type === 'leis') type = 'LEIs'
+  if (isNationwide(type)) return 'Nationwide selected'
   if(selectedValues.length) return `Select or type additional ${type}`
   return `Select or type the name of one or more ${type}`
 }
@@ -108,7 +108,7 @@ function createCountyOption(id){
 }
 
 function createLEIOption(id){
-  return {value: id, label: `${id} - ${LEIS[id]}`}
+  return {value: id, label: `${LEIS[id]} - ${id}`}
 }
 
 function createItemOptions(props) {
@@ -135,9 +135,16 @@ function createItemOptions(props) {
   })
 
   itemOptions.counties = Object.keys(COUNTIES).map(createCountyOption)
-  itemOptions.leis = Object.keys(LEIS).map(createLEIOption)
+  itemOptions.leis = Object.keys(LEIS).map(createLEIOption).sort(sortByLabel)
 
   return itemOptions
+}
+
+function sortByLabel(a,b){
+  const [aLabel, bLabel] = [a,b].map(i => i.label.toLowerCase())
+  if(aLabel > bLabel) return 1
+  if(aLabel === bLabel) return 0
+  return -1
 }
 
 function createVariableOptions() {
@@ -169,6 +176,10 @@ const itemStyleFn = {
   control: p => ({...p, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 })
 }
 
+function isNationwide(category) {
+  return category === 'nationwide'
+}
+
 export {
   createStateOption,
   createMSAOption,
@@ -183,5 +194,6 @@ export {
   makeItemSelectValues,
   pruneItemOptions,
   someChecksExist,
-  setVariableSelect
+  setVariableSelect,
+  isNationwide
 }
