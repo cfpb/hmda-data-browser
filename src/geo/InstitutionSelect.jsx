@@ -18,6 +18,11 @@ class InstitutionSelect extends React.Component {
     }
   }
 
+  componentDidUpdate(prevProps){
+    if(prevProps.nationwide && !this.props.nationwide)
+      this.setState({ disableItems: true })
+  }
+
   onMethodChange = opt => {
     opt.value && this.props.onChange([])
     this.setState({ disableItems: opt.value })
@@ -74,6 +79,7 @@ const LeiMethodSelect = ({ onChange, value, options }) => (
     simpleValue
     value={value}
     options={options}
+    isDisabled={options.length < 2}
   />
 )
 
