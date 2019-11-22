@@ -95,7 +95,9 @@ function createMSAOption(id){
   const stateLabel = MSATOSTATE[id].map(v => STATEOBJ[v]).join(' - ')
   return {
     value: '' + id,
-    label:  `${id} - ${msaToName[id]} - ${stateLabel}`
+    label:  `${id} - ${msaToName[id]} - ${stateLabel}`,
+    state: stateLabel,
+    other: msaToName[id]
   }
 }
 
@@ -103,7 +105,9 @@ function createCountyOption(id){
   const stateLabel = fipsToState[id.slice(0, 2)]
   return {
     value: id,
-    label: `${id} - ${COUNTIES[id]} - ${stateLabel}`
+    label: `${id} - ${COUNTIES[id]} - ${stateLabel}`,
+    state: stateLabel,
+    other: COUNTIES[id]
   }
 }
 
@@ -134,16 +138,28 @@ function createItemOptions(props) {
     itemOptions.msamds.push(createMSAOption(msa))
   })
 
-  itemOptions.counties = Object.keys(COUNTIES).map(createCountyOption)
+  itemOptions.msamds = itemOptions.msamds.sort(sortByStateThenOther)
+  itemOptions.counties = Object.keys(COUNTIES).map(createCountyOption).sort(sortByStateThenOther)
   itemOptions.leis = Object.keys(LEIS).map(createLEIOption).sort(sortByLabel)
 
   return itemOptions
 }
 
 function sortByLabel(a,b){
-  const [aLabel, bLabel] = [a,b].map(i => i.label.toLowerCase())
-  if(aLabel > bLabel) return 1
-  if(aLabel === bLabel) return 0
+  const labels = [a,b].map(i => i.label)
+  return compareStrings(...labels)
+}
+
+function sortByStateThenOther(a,b){
+  const statesDiffer = compareStrings(a.state, b.state)
+  if(statesDiffer) return statesDiffer
+  return compareStrings(a.other, b.other)
+}
+
+function compareStrings(a,b){
+  const [aLower, bLower] = [a,b].map(i => i.toLowerCase())
+  if(!aLower || aLower > bLower) return 1
+  if(aLower === bLower) return 0
   return -1
 }
 
