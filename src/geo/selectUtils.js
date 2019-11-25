@@ -42,14 +42,15 @@ function makeItemPlaceholder(category, selectedValues) {
 
 function someChecksExist(vars){
   const keys = Object.keys(vars)
-  if(!keys[0]) return false
+  if(!keys.length) return false
 
-  const checkVars = vars[keys[0]]
-  const checkKeys = Object.keys(checkVars)
-  for(let j=0; j < checkKeys.length; j++){
-    if(checkVars[checkKeys[j]]) return true
-  }
-  return false
+  return keys.some(key => {
+    const checkKeys = Object.keys(vars[key] || [])
+    for(let j=0; j < checkKeys.length; j++){
+      if(vars[key][checkKeys[j]]) return true
+    }
+    return false
+  })
 }
 
 function removeSelected(selected, options) {
@@ -141,6 +142,7 @@ function createItemOptions(props) {
   itemOptions.msamds = itemOptions.msamds.sort(sortByStateThenOther)
   itemOptions.counties = Object.keys(COUNTIES).map(createCountyOption).sort(sortByStateThenOther)
   itemOptions.leis = Object.keys(LEIS).map(createLEIOption).sort(sortByLabel)
+  itemOptions.leis.unshift({ value: 'all', label: 'All Financial Institutions'})
 
   return itemOptions
 }

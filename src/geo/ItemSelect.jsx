@@ -2,9 +2,7 @@ import React from 'react'
 import Select, { createFilter } from 'react-select'
 import MenuList from './MenuList.jsx'
 import CategorySelect from './CategorySelect.jsx'
-import InstitutionSelect from './InstitutionSelect'
 import Pills from './Pills.jsx'
-import LoadingButton from './LoadingButton.jsx'
 import { isNationwide } from './selectUtils'
 import {
   pruneItemOptions,
@@ -19,19 +17,14 @@ const ItemSelect = ({
   category,
   onCategoryChange,
   items,
-  isLargeFile,
-  enabled,
-  downloadCallback,
-  onChange,
-  leis,
-  onInstitutionChange
+  onChange
 }) => {
   const selectedValues = makeItemSelectValues(category, items)
   const nationwide = isNationwide(category)
 
   return (
     <div className='SelectWrapper'>
-      <h3>What geography filter would you like to select?</h3>
+      <h3>Step 1: Select Geography</h3>
       <p>
         Start by selecting a geography filter using the dropdown menu
         below.&nbsp;
@@ -63,21 +56,6 @@ const ItemSelect = ({
       {nationwide ? null : (
         <Pills values={selectedValues} onChange={onChange} />
       )}
-      <InstitutionSelect
-        items={leis}
-        onChange={onInstitutionChange}
-        options={options}
-        nationwide={nationwide}
-      />
-      <LoadingButton onClick={downloadCallback} disabled={!enabled}>
-        Download Dataset
-      </LoadingButton>
-      {isLargeFile ? (
-        <div className='LargeFileWarning'>
-          <h4>Warning:</h4> This dataset may be too large to be opened in
-          standard spreadsheet applications
-        </div>
-      ) : null}
     </div>
   )
 }

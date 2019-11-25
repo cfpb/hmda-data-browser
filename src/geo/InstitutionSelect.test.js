@@ -3,7 +3,7 @@ import React from 'react'
 import InstitutionSelect from './InstitutionSelect'
 
 describe('InstitutionSelect', () => {
-  it('is All by default and disables item input', () => {
+  it('selects all institutions by default and disables item input', () => {
     const changeSpy = jest.fn()
     const wrapper = shallow(
       <InstitutionSelect items={[]} onChange={changeSpy} options={[]} />
@@ -14,30 +14,15 @@ describe('InstitutionSelect', () => {
     expect(itemSelect.prop('placeholder')).toBe('All institutions selected')
   })
 
-  it('enables item input for Specific', () => {
+  it('enables item input for Nationwide', () => {
     const changeSpy = jest.fn()
     const wrapper = shallow(
-      <InstitutionSelect items={[]} onChange={changeSpy} options={[]} />
-    )
-    wrapper.setState({ disableItems: false })
-    const itemSelect = wrapper.find('#lei-item-select')
-
-    expect(itemSelect.prop('isDisabled')).toBe(false)
-    expect(itemSelect.prop('placeholder')).not.toBe('All institutions selected')
-  })
-
-  it('sets input method to Specific when given items', () => {
-    const changeSpy = jest.fn()
-    const wrapper = shallow(
-      <InstitutionSelect
-        items={[{ value: 'test', label: 'test' }]}
-        onChange={changeSpy}
-        options={{leis: []}}
-      />
+      <InstitutionSelect items={[]} onChange={changeSpy} options={[]} nationwide={true}/>
     )
     const itemSelect = wrapper.find('#lei-item-select')
 
     expect(itemSelect.prop('isDisabled')).toBe(false)
-    expect(itemSelect.prop('placeholder')).not.toBe('All institutions selected')
+    expect(itemSelect.prop('placeholder')).toContain('Select or type')
   })
+
 })

@@ -2,20 +2,18 @@ import React from 'react'
 import Select from 'react-select'
 import Pills from './Pills.jsx'
 import CheckboxContainer from './CheckboxContainer.jsx'
-import LoadingButton from './LoadingButton.jsx'
 import {
   setVariableSelect,
-  someChecksExist,
   removeSelected,
   heightStyleFn
 } from './selectUtils.js'
 
 
-const VariableSelect = ({ options, variables, orderedVariables, loadingDetails, year, checkFactory, requestSubset, onChange }) => {
+const VariableSelect = ({ options, variables, orderedVariables, year, checkFactory, onChange }) => {
   const variableValues = setVariableSelect(orderedVariables)
   return (
     <div className="SelectWrapper">
-      <h3>Dataset by Pre-selected Filters</h3>
+      <h3>Step 3: Select a filter (optional)</h3>
       <p>
         Narrow down your selection by filtering on up to two{' '}
         <a
@@ -60,13 +58,6 @@ const VariableSelect = ({ options, variables, orderedVariables, loadingDetails, 
           )
         })}
       </div>
-      <LoadingButton
-        loading={loadingDetails}
-        onClick={requestSubset}
-        disabled={!someChecksExist(variables)}
-      >
-        View Data Summary
-      </LoadingButton>
     </div>
   )
 }
