@@ -14,13 +14,13 @@ const InstitutionSelect = ({ items, onChange, options, nationwide }) => {
   const selectedValues = makeItemSelectValues(category, items)
 
   return (
-    <>
-      <h3>What financial institution would you like to select?</h3>
+    <div className='SelectWrapper'>
+      <h3>Step 2: Select Financial Institution</h3>
       <p>
         You can select one or more financial institutions by entering the
         financial institutions LEI or name. <br />
-        NOTE: Filtering by financial institution is currently only available
-        when the geography filter is set to Nationwide.
+        <strong>NOTE: Filtering by financial institution is currently only available
+        when the geography filter is set to Nationwide.</strong>
       </p>
       <Select
         id='lei-item-select'
@@ -40,7 +40,7 @@ const InstitutionSelect = ({ items, onChange, options, nationwide }) => {
         isDisabled={!nationwide}
       />
       <Pills values={selectedValues} onChange={onChange} />
-    </>
+    </div>
   )
 }
 
