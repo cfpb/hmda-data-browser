@@ -1,5 +1,7 @@
 import { isNationwide } from '../src/geo/selectUtils'
 
+const API_BASE_URL = '/v2/data-browser-api/view'
+
 export function addVariableParams(obj={}) {
   let qs = ''
   const vars = obj.variables
@@ -36,7 +38,7 @@ export function createItemQuerystring(obj = {}) {
 
 export function makeUrl(obj, isCSV, includeVariables=true) {
   if(!obj) return ''
-  let url = '/v2/data-browser-api/view'
+  let url = API_BASE_URL
 
   const nationwide = isNationwide(obj.category)
   const hasItems = obj.items && obj.items.length
@@ -62,6 +64,19 @@ export function makeUrl(obj, isCSV, includeVariables=true) {
   url += addYears(url)
 
   return url
+}
+
+export function makeFilersUrl(obj){
+  if(!obj) return ''
+  let url = API_BASE_URL + '/filers'
+
+  if(isNationwide(obj.category)) 
+    return url + addYears(url)
+
+  url += createItemQuerystring(obj)
+  url += addYears(url)
+  return url 
+
 }
 
 export function runFetch(url) {
