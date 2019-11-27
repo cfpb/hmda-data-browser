@@ -133,7 +133,7 @@ class Geography extends Component {
     this.setStateAndRoute({
       category: catObj.value,
       items: [],
-      leis: [],
+      // leis: [],
       details: {},
       isLargeFile: this.checkIfLargeFile(catObj.value, []),
     })
@@ -270,7 +270,8 @@ class Geography extends Component {
           items={leis}
           onChange={this.onInstitutionChange}
           options={this.itemOptions}
-          nationwide={nationwide}
+          geoCategory={category}
+          geoItems={items}
         />
         <VariableSelect
           options={this.variableOptions}

@@ -11,7 +11,7 @@ describe('InstitutionSelect', () => {
     const itemSelect = wrapper.find('#lei-item-select')
 
     expect(itemSelect.prop('isDisabled')).toBe(true)
-    expect(itemSelect.prop('placeholder')).toBe('All institutions selected')
+    expect(itemSelect.prop('placeholder')).toContain('All institutions selected')
   })
 
   it('enables item input for Nationwide', () => {

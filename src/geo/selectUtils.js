@@ -141,8 +141,8 @@ function createItemOptions(props) {
 
   itemOptions.msamds = itemOptions.msamds.sort(sortByStateThenOther)
   itemOptions.counties = Object.keys(COUNTIES).map(createCountyOption).sort(sortByStateThenOther)
-  itemOptions.leis = Object.keys(LEIS).map(createLEIOption).sort(sortByLabel)
-  itemOptions.leis.unshift({ value: 'all', label: 'All Financial Institutions'})
+  // itemOptions.leis = Object.keys(LEIS).map(createLEIOption).sort(sortByLabel)
+  // itemOptions.leis.unshift({ value: 'all', label: 'All Financial Institutions'})
 
   return itemOptions
 }
@@ -213,5 +213,6 @@ export {
   pruneItemOptions,
   someChecksExist,
   setVariableSelect,
-  isNationwide
+  isNationwide,
+  sortByLabel
 }
