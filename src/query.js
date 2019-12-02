@@ -1,13 +1,11 @@
 import MSAS from './constants/msaToName.js'
 import STATES from './constants/stateObj.js'
 import COUNTIES from './constants/counties.js'
-import LEIS from './constants/leis.js'
 import VARIABLES from './constants/variables.js'
 
 const msaKeys = Object.keys(MSAS)
 const stateKeys = Object.keys(STATES)
 const countyKeys = Object.keys(COUNTIES)
-const leiKeys = Object.keys(LEIS)
 const varKeys = Object.keys(VARIABLES)
 
 export function makeParam(s, key) {
@@ -49,11 +47,10 @@ export function isInvalidKey(key, s){
 export function sanitizeArray(key, val) {
   const arr = []
   let knownKeys
-
   if(key === 'msamds') knownKeys = msaKeys
   else if(key === 'states') knownKeys = stateKeys
   else if(key === 'counties') knownKeys = countyKeys
-  else if(key === 'leis') knownKeys = leiKeys
+  else if(key === 'leis') return val // filter LEIs in InstitutionSelect
   else knownKeys = Object.keys(VARIABLES[key].mapping)
 
   val.forEach(v => {

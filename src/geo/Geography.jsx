@@ -133,7 +133,6 @@ class Geography extends Component {
     this.setStateAndRoute({
       category: catObj.value,
       items: [],
-      // leis: [],
       details: {},
       isLargeFile: this.checkIfLargeFile(catObj.value, []),
     })

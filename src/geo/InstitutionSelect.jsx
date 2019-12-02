@@ -6,8 +6,8 @@ import {
   itemStyleFn,
   makeItemPlaceholder,
   makeItemSelectValues,
-  pruneItemOptions,
-  isNationwide,
+  // pruneItemOptions,
+  // isNationwide,
   sortByLabel
 } from './selectUtils.js'
 import { runFetch, makeFilersUrl } from '../api.js'
@@ -16,17 +16,19 @@ import { isEqual } from 'lodash'
 const InstitutionSelect = ({
   items,
   onChange,
-  options,
+  // options,
   geoCategory,
   geoItems
 }) => {
   const [leis, setLeis] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    setLoading(true)
     runFetch(makeFilersUrl({ category: geoCategory, items: geoItems }))
       .then(data => {
-        console.log('fetched leis', data.institutions)
         setLeis(data.institutions)
+        setLoading(false)
       })
       .catch(error => console.log(error))
   }, [geoItems])
@@ -34,7 +36,7 @@ const InstitutionSelect = ({
   useEffect(() => {
     if (!leis.length) return
     const validLeis = keepValidLeis(leis, items)
-    if (!isEqual(items, validLeis)) onChange(validLeis)
+    if (!isEqual(items, validLeis)) onChange(validLeis.map(v => ({ value: v})))
   }, [items, leis])
 
   const category = 'leis'
@@ -42,7 +44,7 @@ const InstitutionSelect = ({
 
   return (
     <div className='SelectWrapper'>
-      <h3>Step 2: Select Financial Institution</h3>
+      <h3>Step 2: Select Financial Institution (optional)</h3>
       <p>
         You can select one or more financial institutions by entering the
         financial institutions LEI or name. <br />
@@ -57,16 +59,15 @@ const InstitutionSelect = ({
         controlShouldRenderValue={false}
         styles={styleFn}
         onChange={onChange}
-        placeholder={itemPlaceholder(items.length, category, selectedValues)}
+        placeholder={itemPlaceholder(loading, items.length, category, selectedValues)}
         isMulti={true}
         searchable={true}
         autoFocus
         openOnFocus
         simpleValue
         value={selectedValues}
-        // options={pruneItemOptions(category, options, selectedValues)}
         options={pruneLeiOptions(leis, selectedValues)}
-        // isDisabled={!isNationwide(geoCategory) && !geoItems.length}
+        isDisabled={loading}
       />
       <Pills values={selectedValues} onChange={onChange} />
     </div>
@@ -93,7 +94,8 @@ const styleFn = {
   control: p => ({ ...p, borderRadius: '4px' })
 }
 
-function itemPlaceholder(hasItems, category, selectedValues) {
+function itemPlaceholder(loading, hasItems, category, selectedValues) {
+  if(loading) return 'Loading...'
   if (!hasItems)
     return (
       'All institutions selected. ' +
