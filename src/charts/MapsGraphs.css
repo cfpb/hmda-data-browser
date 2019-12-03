@@ -1,0 +1,32 @@
+.MapsGraphs {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 3rem;
+}
+
+.mapContainer {
+  height: 600px;
+  margin-top: 0.5em;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+th,
+td {
+  background-color: #ffffff;
+  border: 1px solid #5b616b;
+  padding: 1rem 1.5rem;
+}
+
+th {
+  font-family: SourceSansProBold;
+  text-align: left;
+}
+
+thead th,
+thead td {
+  background-color: #f1f1f1;
+}
