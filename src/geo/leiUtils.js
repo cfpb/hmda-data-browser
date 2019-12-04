@@ -39,5 +39,7 @@ export function fetchLeis() {
         }
       })
     })
-    .catch(error => console.log(error))
+    .catch(error => {
+      return this.setStateAndRoute({error})
+    })
 }

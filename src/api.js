@@ -1,7 +1,7 @@
 import { isNationwide } from '../src/geo/selectUtils'
 
-// const API_BASE_URL = '/v2/data-browser-api/view'
-const API_BASE_URL = 'http://localhost:8070/view'
+const API_BASE_URL = '/v2/data-browser-api/view'
+// const API_BASE_URL = 'http://localhost:8070/view'
 
 export function addVariableParams(obj={}) {
   let qs = ''
@@ -28,13 +28,15 @@ export function addYears(url='') {
 }
 
 export function createItemQuerystring(obj = {}) {
-  const nationwide = isNationwide(obj.category)
-  const category = nationwide ? 'leis' : obj.category
-  const items = nationwide ? obj.leis : obj.items
-
-  if (items && items.length) return `?${category}=${items.join(',')}`
-
+  if (isNationwide(obj.category)) return ''
+  if (obj.items && obj.items.length)
+    return createQueryString(obj.category, obj.items, true)
   return ''
+}
+
+export function createQueryString(category, items, first=false){
+  let qs = first ? '?' : '&'
+  return `${qs}${category}=${items.join(',')}`
 }
 
 export function makeUrl(obj, isCSV, includeVariables=true) {
@@ -45,22 +47,16 @@ export function makeUrl(obj, isCSV, includeVariables=true) {
   const hasItems = obj.items && obj.items.length
   const hasLeis = obj.leis && obj.leis.length
 
+  if (!nationwide && !hasItems) return ''
   if (nationwide && !hasLeis) url += '/nationwide'
 
   if(isCSV) url += '/csv'
   else url += '/aggregations'
 
-  if(nationwide){
-    url += createItemQuerystring(obj)
-    if(includeVariables && obj.variables) {
-      url += hasLeis ? '&' : '?'
-      url += addVariableParams(obj).slice(1)
-    }
-  }else {
-    if(!hasItems) return ''
-    url += createItemQuerystring(obj)
-    if(includeVariables) url += addVariableParams(obj)
-  }
+  if(hasItems) url += createQueryString(obj.category, obj.items, hasItems)
+  if(hasLeis) url += createQueryString('leis', obj.leis, !hasItems)
+  if(!hasItems && !hasLeis) url += '?'
+  if(includeVariables) url += addVariableParams(obj)
 
   url += addYears(url)
 

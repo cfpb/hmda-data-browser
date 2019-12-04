@@ -56,16 +56,17 @@ const styleFn = {
   control: p => ({ ...p, borderRadius: '4px' })
 }
 
-function pruneLeiOptions(data, selected) {
+export function pruneLeiOptions(data, selected) {
+  const selectedLeis = selected.map(s => s.value)
   let opts = data
-    .filter(i => !selected.includes(i.lei))
+    .filter(i => !selectedLeis.includes(i.lei))
     .map(i => ({ value: i.lei, label: `${i.name.toUpperCase()} - ${i.lei}` }))
     .sort(sortByLabel)
   opts.unshift({ value: 'all', label: `All Financial Institutions (${data.length})` })
   return opts
 }
 
-function itemPlaceholder(loading, hasItems, category, selectedValues) {
+export function itemPlaceholder(loading, hasItems, category, selectedValues) {
   if(loading) return 'Loading...'
   if (!hasItems)
     return (

@@ -43,9 +43,9 @@ it('creates an empty item qs', () => {
   expect(qs).toBe('')
 })
 
-it('creates a qs with LEIs for nationwide', () => {
-  const qs = createItemQuerystring({ leis: ['a', 'b'], category: 'nationwide' })
-  expect(qs).toBe('?leis=a,b')
+it('creates a qs with for nationwide', () => {
+  const qs = createItemQuerystring({ items: ['a', 'b'], category: 'nationwide' })
+  expect(qs).toBe('')
 })
 
 it('makes a url', () => {

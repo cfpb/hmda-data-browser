@@ -168,7 +168,6 @@ class Geography extends Component {
     const MAX = 1048576
     if(!selected) return countMap > MAX
     const count = selected.reduce((acc, curr) => acc + countMap[curr], 0)
-    console.log('count', count)
     return count > MAX
   }
 
