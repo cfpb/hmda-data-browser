@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Select, { createFilter } from 'react-select'
 import MenuList from './MenuList.jsx'
 import Pills from './Pills.jsx'
@@ -6,41 +6,17 @@ import {
   itemStyleFn,
   makeItemPlaceholder,
   makeItemSelectValues,
-  // pruneItemOptions,
-  // isNationwide,
   sortByLabel
 } from './selectUtils.js'
-import { runFetch, makeFilersUrl } from '../api.js'
-import { isEqual } from 'lodash'
 
 const InstitutionSelect = ({
   items,
   onChange,
-  // options,
-  geoCategory,
-  geoItems
-}) => {
-  const [leis, setLeis] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    setLoading(true)
-    runFetch(makeFilersUrl({ category: geoCategory, items: geoItems }))
-      .then(data => {
-        setLeis(data.institutions)
-        setLoading(false)
-      })
-      .catch(error => console.log(error))
-  }, [geoItems])
-
-  useEffect(() => {
-    if (!leis.length) return
-    const validLeis = keepValidLeis(leis, items)
-    if (!isEqual(items, validLeis)) onChange(validLeis.map(v => ({ value: v})))
-  }, [items, leis])
-
+  leiDetails
+}) => { 
   const category = 'leis'
   const selectedValues = makeItemSelectValues(category, items)
+  const {leis, loading} = leiDetails
 
   return (
     <div className='SelectWrapper'>
@@ -69,14 +45,15 @@ const InstitutionSelect = ({
         options={pruneLeiOptions(leis, selectedValues)}
         isDisabled={loading}
       />
-      <Pills values={selectedValues} onChange={onChange} />
+      <Pills values={selectedValues} onChange={onChange} loading={loading}/>
     </div>
   )
 }
 
-function keepValidLeis(valid, selected) {
-  const leis = valid.map(v => v.lei)
-  return selected.filter(s => leis.includes(s))
+const styleFn = {
+  ...itemStyleFn,
+  container: p => ({ ...p, width: '100%' }),
+  control: p => ({ ...p, borderRadius: '4px' })
 }
 
 function pruneLeiOptions(data, selected) {
@@ -86,12 +63,6 @@ function pruneLeiOptions(data, selected) {
     .sort(sortByLabel)
   opts.unshift({ value: 'all', label: `All Financial Institutions (${data.length})` })
   return opts
-}
-
-const styleFn = {
-  ...itemStyleFn,
-  container: p => ({ ...p, width: '100%' }),
-  control: p => ({ ...p, borderRadius: '4px' })
 }
 
 function itemPlaceholder(loading, hasItems, category, selectedValues) {

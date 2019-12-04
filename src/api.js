@@ -77,7 +77,6 @@ export function makeFilersUrl(obj){
   url += createItemQuerystring(obj)
   url += addYears(url)
   return url 
-
 }
 
 export function runFetch(url) {

@@ -50,7 +50,7 @@ export function sanitizeArray(key, val) {
   if(key === 'msamds') knownKeys = msaKeys
   else if(key === 'states') knownKeys = stateKeys
   else if(key === 'counties') knownKeys = countyKeys
-  else if(key === 'leis') return val // filter LEIs in InstitutionSelect
+  else if(key === 'leis') return val
   else knownKeys = Object.keys(VARIABLES[key].mapping)
 
   val.forEach(v => {
