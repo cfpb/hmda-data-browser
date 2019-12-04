@@ -101,7 +101,7 @@ const MapContainer = () => {
   }
 
   useEffect(() => {
-    runFetch('/chartData.json').then(jsonData => {
+    runFetch('/data-browser/chartData.json').then(jsonData => {
       setData(jsonData)
     })
   }, [])
