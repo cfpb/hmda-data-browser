@@ -328,7 +328,7 @@ class Geography extends Component {
         <ActionsWarningsErrors 
           downloadEnabled={enabled}
           downloadCallback={checksExist ? this.requestSubsetCSV : this.requestItemCSV}
-          showSummaryButton={!details.aggregations || !this.makeTotal(details)}
+          showSummaryButton={!details.aggregations}
           summaryEnabled={enabled && checksExist}
           loadingDetails={loadingDetails}
           requestSubset={this.requestSubset}
