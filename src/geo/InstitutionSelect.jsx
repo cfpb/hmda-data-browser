@@ -60,7 +60,7 @@ const styleFn = {
 export function pruneLeiOptions(data, selected) {
   const selectedLeis = selected.map(s => s.value)
   const institutions = Object.values(data)
-  let opts = institutions
+  const opts = institutions
     .filter(institution => !selectedLeis.includes(institution.lei))
     .map(institution => ({ value: institution.lei, label: `${institution.name.toUpperCase()} - ${institution.lei}` }))
     .sort(sortByLabel)
@@ -70,17 +70,14 @@ export function pruneLeiOptions(data, selected) {
 
 export function itemPlaceholder(loading, hasItems, category, selectedValues) {
   if(loading) return 'Loading...'
-  if (!hasItems)
-    return (
-      'All institutions selected. ' +
-      makeItemPlaceholder(category, selectedValues) +
-      ' to filter'
-    )
-  return makeItemPlaceholder(category, selectedValues)
+  const placeholder = makeItemPlaceholder(category, selectedValues)
+  if (!hasItems) return `All institutions selected. ${placeholder} to filter`
+  return placeholder
 }
 
 InstitutionSelect.defaultProps = {
-  geoItems: []
+  items: [],
+  leiDetails: { leis: {}, loading: true}
 }
 
 export default InstitutionSelect

@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import { isEqual } from 'lodash'
 import { getItemCSV, getSubsetCSV, getSubsetDetails } from '../api.js'
 import Header from '../common/Header.jsx'
-// import LEI_COUNTS from '../constants/leiCounts.js'
 import MSAMD_COUNTS from '../constants/msamdCounts.js'
 import STATE_COUNTS from '../constants/stateCounts.js'
 import { makeSearchFromState, makeStateFromSearch } from '../query.js'
@@ -12,7 +12,6 @@ import './Geography.css'
 import InstitutionSelect from './InstitutionSelect'
 import ItemSelect from './ItemSelect.jsx'
 import { fetchLeis, filterLeis } from './leiUtils'
-import { isEqual } from 'lodash'
 import {
   createItemOptions,
   createVariableOptions,
@@ -63,7 +62,7 @@ class Geography extends Component {
       leiDetails: {
         loading: true,
         counts: {},
-        leis: []
+        leis: {}
       }
     }
 
@@ -76,9 +75,7 @@ class Geography extends Component {
   componentDidMount(){
     this.fetchLeis()
     this.filterLeis()
-    this.setState({
-      isLargeFile: this.checkIfLargeFile(this.state.category, this.state.items)
-    })
+    this.setState({ isLargeFile: this.checkIfLargeFile(this.state.category, this.state.items) })
   }
 
   componentDidUpdate(prevProps, prevState){
@@ -88,9 +85,7 @@ class Geography extends Component {
     if(geographyChanged) this.fetchLeis()
     if(geographyChanged || leisReloaded) this.filterLeis()
     if(leisReloaded)
-      this.setState({
-        isLargeFile: this.checkIfLargeFile(this.state.category, this.state.items)
-      })
+      this.setState({ isLargeFile: this.checkIfLargeFile(this.state.category, this.state.items) })
   }
 
   updateSearch() {
@@ -167,8 +162,7 @@ class Geography extends Component {
   checkIfLargeCount(selected, countMap) {
     const MAX = 1048576
     if(!selected) return countMap > MAX
-    const count = selected.reduce((acc, curr) => acc + countMap[curr], 0)
-    return count > MAX
+    return selected.reduce((acc, curr) => acc + countMap[curr], 0) > MAX
   }
 
   onCategoryChange(catObj) {
@@ -268,7 +262,8 @@ class Geography extends Component {
   }
 
   render() {
-    const { category, items, leis, isLargeFile, variables, orderedVariables, details, loadingDetails, error } = this.state
+    const { category, details, error, isLargeFile, items, leiDetails, leis, 
+      loadingDetails, orderedVariables, variables } = this.state
     
     const nationwide = isNationwide(category)
     const enabled = nationwide || items.length
@@ -309,10 +304,7 @@ class Geography extends Component {
         <InstitutionSelect
           items={leis}
           onChange={this.onInstitutionChange}
-          options={this.itemOptions}
-          geoCategory={category}
-          geoItems={items}
-          leiDetails={this.state.leiDetails}
+          leiDetails={leiDetails}
         />
         <VariableSelect
           options={this.variableOptions}

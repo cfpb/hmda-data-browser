@@ -5,30 +5,21 @@ export function keepValidLeis(valid, selected) {
   return selected.filter(s => valid[s])
 }
 
-export function countRecords(selected, counts) {
-  if (!selected) return 0
-  return selected.reduce((acc, selectOpt) => acc + counts[selectOpt.value], 0)
-}
-
 export function filterLeis() {
   const leis = this.state.leiDetails.leis
   if (Object.keys(leis).length) {
     const validLeis = keepValidLeis(leis, this.state.leis)
-    if (!isEqual(this.state.leis, validLeis)) {
+    if (!isEqual(this.state.leis, validLeis))
       this.onInstitutionChange(validLeis.map(v => ({ value: v })))
-    }
   }
 }
 
 export function fetchLeis() {
   const { category, items } = this.state
-  this.setState(state => ({
-    leiDetails: { ...state.leiDetails, loading: true }
-  }))
+  this.setState(state => ({ leiDetails: { ...state.leiDetails, loading: true }}))
   runFetch(makeFilersUrl({ category, items }))
     .then(data => {
-      const counts = {}
-      const leis = {}
+      const counts = {}, leis = {}
       data.institutions.forEach(institution => {
         counts[institution.lei] = institution.count
         leis[institution.lei] = {...institution}

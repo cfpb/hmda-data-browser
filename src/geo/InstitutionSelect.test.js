@@ -1,4 +1,15 @@
-import {pruneLeiOptions, itemPlaceholder} from './InstitutionSelect'
+import React from 'react'
+import { shallow } from 'enzyme'
+import InstitutionSelect, { itemPlaceholder, pruneLeiOptions } from './InstitutionSelect'
+
+describe('InstitutionSelect', () => {
+  it('renders loading states', () => {
+    const wrapper = shallow(<InstitutionSelect />)
+    expect(wrapper.find('Pills').length).toBe(0)
+    expect(wrapper.find('LoadingIcon').length).toBe(1)
+    expect(wrapper.find('StateManager').prop('placeholder')).toContain('Loading')
+  })
+})
 
 describe('pruneLeiOptions', () => {
   it('includes an all option', () => {
