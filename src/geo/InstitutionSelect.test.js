@@ -5,7 +5,7 @@ describe('pruneLeiOptions', () => {
     expect(pruneLeiOptions([], [])[0].value).toBe('all')
   })
   it('prunes already selected options', () => {
-    const leis = [{lei: 1, name: '1'}, {lei: 2, name: '2'}]
+    const leis = {1: {lei: 1, name: '1'}, 2: {lei: 2, name: '2'}}
     const selected = [{value: 1, label: '1'}]
     const expected = [{"label": "All Financial Institutions (2)", "value": "all"}, {"label": "2 - 2", "value": 2}]
     expect(pruneLeiOptions(leis, selected)).toEqual(expected)

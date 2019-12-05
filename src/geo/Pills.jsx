@@ -1,6 +1,5 @@
 import React from 'react'
 import Pill from './Pill.jsx'
-import LoadingIcon from '../common/LoadingIcon.jsx'
 
 function makeCloser(values, index, onChange) {
   return function () {
@@ -12,13 +11,12 @@ function makeCloser(values, index, onChange) {
   }
 }
 
-const Pills = ({values, onChange, loading}) => {
+const Pills = ({values, onChange}) => {
   return (
     <div className="Pills">
       {values.map((v, i) => {
         return  <Pill key={i} value={v.label} close={makeCloser(values, i, onChange)}/>
       })}
-      {loading && <LoadingIcon className="LoadingInline" />}
     </div>
   )
 }

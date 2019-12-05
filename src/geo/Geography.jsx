@@ -259,7 +259,7 @@ class Geography extends Component {
     const total = formatWithCommas(this.makeTotal(details))
     return (
       <>
-        <Aggregations ref={this.tableRef} details={details} orderedVariables={orderedVariables} year={this.props.match.params.year}/>
+        <Aggregations ref={this.tableRef} details={details} orderedVariables={orderedVariables} year={this.props.match.params.year} leis={this.state.leiDetails} />
         <div className="CSVButtonContainer">
           {this.renderTotal(total)}
         </div>

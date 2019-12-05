@@ -1,12 +1,13 @@
 import React from 'react'
 import Select, { createFilter } from 'react-select'
+import LoadingIcon from '../common/LoadingIcon'
 import MenuList from './MenuList.jsx'
 import Pills from './Pills.jsx'
 import {
   itemStyleFn,
   makeItemPlaceholder,
-  makeItemSelectValues,
-  sortByLabel
+  sortByLabel,
+  createLEIOption
 } from './selectUtils.js'
 
 const InstitutionSelect = ({
@@ -15,8 +16,8 @@ const InstitutionSelect = ({
   leiDetails
 }) => { 
   const category = 'leis'
-  const selectedValues = makeItemSelectValues(category, items)
   const {leis, loading} = leiDetails
+  const selectedValues = items.map(lei => createLEIOption(lei, leis))
 
   return (
     <div className='SelectWrapper'>
@@ -45,7 +46,7 @@ const InstitutionSelect = ({
         options={pruneLeiOptions(leis, selectedValues)}
         isDisabled={loading}
       />
-      <Pills values={selectedValues} onChange={onChange} loading={loading}/>
+      {loading ? <LoadingIcon className="LoadingInline" /> : <Pills values={selectedValues} onChange={onChange} />}
     </div>
   )
 }
@@ -58,11 +59,12 @@ const styleFn = {
 
 export function pruneLeiOptions(data, selected) {
   const selectedLeis = selected.map(s => s.value)
-  let opts = data
-    .filter(i => !selectedLeis.includes(i.lei))
-    .map(i => ({ value: i.lei, label: `${i.name.toUpperCase()} - ${i.lei}` }))
+  const institutions = Object.values(data)
+  let opts = institutions
+    .filter(institution => !selectedLeis.includes(institution.lei))
+    .map(institution => ({ value: institution.lei, label: `${institution.name.toUpperCase()} - ${institution.lei}` }))
     .sort(sortByLabel)
-  opts.unshift({ value: 'all', label: `All Financial Institutions (${data.length})` })
+  opts.unshift({ value: 'all', label: `All Financial Institutions (${institutions.length})` })
   return opts
 }
 

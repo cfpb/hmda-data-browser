@@ -2,8 +2,7 @@ import { runFetch, makeFilersUrl } from '../api.js'
 import { isEqual } from 'lodash'
 
 export function keepValidLeis(valid, selected) {
-  const leis = valid.map(v => v.lei)
-  return selected.filter(s => leis.includes(s))
+  return selected.filter(s => valid[s])
 }
 
 export function countRecords(selected, counts) {
@@ -12,12 +11,11 @@ export function countRecords(selected, counts) {
 }
 
 export function filterLeis() {
-  if (this.state.leiDetails.leis.length) {
-    const validLeis = keepValidLeis(this.state.leiDetails.leis, this.state.leis)
+  const leis = this.state.leiDetails.leis
+  if (Object.keys(leis).length) {
+    const validLeis = keepValidLeis(leis, this.state.leis)
     if (!isEqual(this.state.leis, validLeis)) {
-      const selected = validLeis.map(v => ({ value: v }))
-      const count = countRecords(selected, this.state.leiDetails.counts)
-      this.onInstitutionChange(selected, count)
+      this.onInstitutionChange(validLeis.map(v => ({ value: v })))
     }
   }
 }
@@ -29,13 +27,17 @@ export function fetchLeis() {
   }))
   runFetch(makeFilersUrl({ category, items }))
     .then(data => {
-      const newCounts = {}
-      data.institutions.forEach(i => (newCounts[i.lei] = i.count))
+      const counts = {}
+      const leis = {}
+      data.institutions.forEach(institution => {
+        counts[institution.lei] = institution.count
+        leis[institution.lei] = {...institution}
+      })
       this.setState({
         leiDetails: {
           loading: false,
-          leis: data.institutions,
-          counts: newCounts
+          leis,
+          counts
         }
       })
     })

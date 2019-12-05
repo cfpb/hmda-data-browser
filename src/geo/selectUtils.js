@@ -3,7 +3,6 @@ import STATEOBJ from '../constants/stateObj.js'
 import MSATOSTATE from '../constants/msaToState.js'
 import VARIABLES from '../constants/variables.js'
 import COUNTIES from '../constants/counties.js'
-import LEIS from '../constants/leis.js'
 import fipsToState from '../constants/fipsToState.js'
 import msaToName from '../constants/msaToName.js'
 
@@ -11,7 +10,6 @@ const itemFnMap = {
   states: createStateOption,
   msamds: createMSAOption,
   counties: createCountyOption,
-  leis: createLEIOption
 }
 
 function makeItemSelectValues(category, items){
@@ -112,8 +110,9 @@ function createCountyOption(id){
   }
 }
 
-function createLEIOption(id){
-  return {value: id, label: `${LEIS[id]} - ${id}`}
+export function createLEIOption(id, map){
+  const name = map[id] && map[id].name
+  return {value: id, label: `${name} - ${id}`}
 }
 
 function createItemOptions(props) {
@@ -124,8 +123,7 @@ function createItemOptions(props) {
     nationwide: [{value: 'nationwide', label: 'NATIONWIDE'}],
     states: [],
     msamds: [],
-    counties: [],
-    leis: []
+    counties: []
   }
 
   const msaSet = new Set()
@@ -141,8 +139,6 @@ function createItemOptions(props) {
 
   itemOptions.msamds = itemOptions.msamds.sort(sortByStateThenOther)
   itemOptions.counties = Object.keys(COUNTIES).map(createCountyOption).sort(sortByStateThenOther)
-  // itemOptions.leis = Object.keys(LEIS).map(createLEIOption).sort(sortByLabel)
-  // itemOptions.leis.unshift({ value: 'all', label: 'All Financial Institutions'})
 
   return itemOptions
 }

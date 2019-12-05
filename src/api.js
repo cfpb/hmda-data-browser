@@ -1,7 +1,6 @@
 import { isNationwide } from '../src/geo/selectUtils'
 
 const API_BASE_URL = '/v2/data-browser-api/view'
-// const API_BASE_URL = 'http://localhost:8070/view'
 
 export function addVariableParams(obj={}) {
   let qs = ''
