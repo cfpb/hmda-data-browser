@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import { isEqual } from 'lodash'
 import { getItemCSV, getSubsetCSV, getSubsetDetails } from '../api.js'
 import Header from '../common/Header.jsx'
-import LEI_COUNTS from '../constants/leiCounts.js'
 import MSAMD_COUNTS from '../constants/msamdCounts.js'
 import STATE_COUNTS from '../constants/stateCounts.js'
 import { makeSearchFromState, makeStateFromSearch } from '../query.js'
@@ -11,6 +11,7 @@ import Aggregations from './Aggregations.jsx'
 import './Geography.css'
 import InstitutionSelect from './InstitutionSelect'
 import ItemSelect from './ItemSelect.jsx'
+import { fetchLeis, filterLeis } from './leiUtils'
 import {
   createItemOptions,
   createVariableOptions,
@@ -36,6 +37,8 @@ class Geography extends Component {
     this.setStateAndRoute = this.setStateAndRoute.bind(this)
     this.updateSearch = this.updateSearch.bind(this)
     this.scrollToTable = this.scrollToTable.bind(this)
+    this.fetchLeis = fetchLeis.bind(this)
+    this.filterLeis = filterLeis.bind(this)
 
     this.itemOptions = createItemOptions(props)
     this.variableOptions = createVariableOptions()
@@ -55,13 +58,34 @@ class Geography extends Component {
       orderedVariables: [],
       details: {},
       loadingDetails: false,
-      error: null
+      error: null,
+      leiDetails: {
+        loading: true,
+        counts: {},
+        leis: {}
+      }
     }
 
     const newState = makeStateFromSearch(this.props.location.search, defaultState, this.requestSubset, this.updateSearch)
     newState.isLargeFile = this.checkIfLargeFile(newState.category, isNationwide(newState.category) ? newState.leis : newState.items)
     setTimeout(this.updateSearch, 0)
     return newState
+  }
+
+  componentDidMount(){
+    this.fetchLeis()
+    this.filterLeis()
+    this.setState({ isLargeFile: this.checkIfLargeFile(this.state.category, this.state.items) })
+  }
+
+  componentDidUpdate(prevProps, prevState){
+    const geographyChanged = !isEqual(prevState.items, this.state.items)
+    const leisReloaded = prevState.leiDetails.loading && !this.state.leiDetails.loading
+
+    if(geographyChanged) this.fetchLeis()
+    if(geographyChanged || leisReloaded) this.filterLeis()
+    if(leisReloaded)
+      this.setState({ isLargeFile: this.checkIfLargeFile(this.state.category, this.state.items) })
   }
 
   updateSearch() {
@@ -115,9 +139,21 @@ class Geography extends Component {
   }
 
   checkIfLargeFile(category, items) {
-    if(isNationwide(category) && !items.length) return true
-    if(isNationwide(category) || category === 'leis') 
-      return this.checkIfLargeCount(items, LEI_COUNTS)
+    const leisSelected = this.state && this.state.leis.length 
+    const leisFetched = this.state && !this.state.leiDetails.loading
+
+    if(category === 'leis'){
+      if(items.length && leisFetched) 
+        return this.checkIfLargeCount(items, this.state.leiDetails.counts)
+    
+      if(!items.length) 
+        return this.checkIfLargeFile(this.state.category, this.state.items)
+    }
+    
+    if(leisSelected && leisFetched) 
+      return this.checkIfLargeCount(this.state.leis, this.state.leiDetails.counts)
+
+    if(isNationwide(category)) return true
     if(category === 'states') return this.checkIfLargeCount(items, STATE_COUNTS)
     if(category === 'msamds') return this.checkIfLargeCount(items, MSAMD_COUNTS)
     return false
@@ -133,7 +169,6 @@ class Geography extends Component {
     this.setStateAndRoute({
       category: catObj.value,
       items: [],
-      leis: [],
       details: {},
       isLargeFile: this.checkIfLargeFile(catObj.value, []),
     })
@@ -147,7 +182,6 @@ class Geography extends Component {
     return this.setStateAndRoute({
       items,
       details: {},
-      isLargeFile: this.checkIfLargeFile(this.state.category, items)
     })
   }
 
@@ -155,10 +189,10 @@ class Geography extends Component {
     let leis = selectedLEIs.map(l => l.value)
     if(leis.includes('all')) leis = []
 
-    return this.setStateAndRoute({
-      leis,
-      details: {},
-      isLargeFile: this.checkIfLargeFile(this.state.category, leis)
+    return this.setState({leis, details: {}}, () => {
+      return this.setStateAndRoute({ 
+        isLargeFile: this.checkIfLargeFile('leis', this.state.leis) 
+      })
     })
   }
 
@@ -219,7 +253,7 @@ class Geography extends Component {
     const total = formatWithCommas(this.makeTotal(details))
     return (
       <>
-        <Aggregations ref={this.tableRef} details={details} orderedVariables={orderedVariables} year={this.props.match.params.year}/>
+        <Aggregations ref={this.tableRef} details={details} orderedVariables={orderedVariables} year={this.props.match.params.year} leis={this.state.leiDetails} />
         <div className="CSVButtonContainer">
           {this.renderTotal(total)}
         </div>
@@ -228,7 +262,8 @@ class Geography extends Component {
   }
 
   render() {
-    const { category, items, leis, isLargeFile, variables, orderedVariables, details, loadingDetails, error } = this.state
+    const { category, details, error, isLargeFile, items, leiDetails, leis, 
+      loadingDetails, orderedVariables, variables } = this.state
     
     const nationwide = isNationwide(category)
     const enabled = nationwide || items.length
@@ -269,8 +304,7 @@ class Geography extends Component {
         <InstitutionSelect
           items={leis}
           onChange={this.onInstitutionChange}
-          options={this.itemOptions}
-          nationwide={nationwide}
+          leiDetails={leiDetails}
         />
         <VariableSelect
           options={this.variableOptions}
@@ -286,7 +320,7 @@ class Geography extends Component {
         <ActionsWarningsErrors 
           downloadEnabled={enabled}
           downloadCallback={checksExist ? this.requestSubsetCSV : this.requestItemCSV}
-          showSummaryButton={!details.aggregations || !this.makeTotal(details)}
+          showSummaryButton={!details.aggregations}
           summaryEnabled={enabled && checksExist}
           loadingDetails={loadingDetails}
           requestSubset={this.requestSubset}
