@@ -61,30 +61,9 @@ function makeStops(data, variable, value){
   return stops
 }
 
-function buildTags(tag, arr){
-  let str = ''
-  for(let i=0; i<arr.length; i++){
-    str += `<${tag}>${arr[i]}</${tag}>`
-  }
-  return str
-}
-
-function buildPopupHTML(data, features, variable){
+function buildPopupHTML(data, features){
   const fips = features[0].properties['GEOID']
-  const header = '<h4>' + fips + ' - ' + COUNTIES[fips] + '</h4>'
-  const currData = data[fips]
-
-  if(!variable || !currData) return header
-
-  const info = currData[variable.value]
-
-  const ths = Object.keys(info)
-  const tds = ths.map(v => info[v])
-
-  const table = '<table><thead><tr>' + buildTags('th', [variable.label, ...ths]) + '</tr></thead>' +
-    '<tbody><tr><th>Count</th>' + buildTags('td', tds) + '</tr></tbody></table>'
-
-  return header + table
+  return '<h4>' + fips + ' - ' + COUNTIES[fips] + '</h4>'
 }
 
 const MapContainer = () => {
@@ -94,14 +73,59 @@ const MapContainer = () => {
   const [data, setData] = useState(null)
   const [selectedVariable, setVariable] = useState(null)
   const [selectedValue, setValue] = useState(null)
+  const [fips, setFips] = useState(null)
 
   const onVariableChange = selected => {
     setValue(null)
     setVariable(selected)
   }
 
+  const buildTable = () => {
+    const currData = data[fips]
+    if(!currData) return null
+    const currVarData = currData[selectedVariable.value]
+
+    const ths = Object.keys(currVarData)
+    const tds = ths.map(v => currVarData[v])
+
+    return (
+      <div className="TableWrapper">
+        <h3>{COUNTIES[fips]}</h3>
+        <table>
+          <thead>
+            <tr>
+              {[selectedVariable.label, ...ths].map((v,i) => {
+                return <th key={i}>{v}</th>
+              })}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Count</th>
+              {tds.map((v, i) => <td key={i}>{v}</td>)}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+
+  function setOutline(current) {
+    const fipsStop = fips || ''
+    const stops = [[current, 2]]
+    if(fipsStop !== current) stops.push([fipsStop, 2])
+    map.setPaintProperty('county-lines', 'line-width', {
+       property: 'GEOID',
+       type: 'categorical',
+       default: 0,
+       stops
+     })
+  }
+
   useEffect(() => {
-    runFetch('/data-browser/chartData.json').then(jsonData => {
+    let chartData = '/chartData.json'
+    if('localhost' !== window.location.hostname) chartData = '/data-browser' + chartData
+    runFetch(chartData).then(jsonData => {
       setData(jsonData)
     })
   }, [])
@@ -137,10 +161,21 @@ const MapContainer = () => {
           }
         }
       }, 'waterway-label');
-    })
 
+      map.addLayer({
+        'id': 'county-lines',
+        'type': 'line',
+        'source': 'counties',
+        'source-layer': 'Census_US_Counties-453u4s',
+        'paint': {
+          'line-width': 0
+        }
+      }, 'waterway-label')
+
+    })
     return () => map.remove()
   }, [])
+
   useEffect(() => {
     if(!data) return
 
@@ -150,24 +185,47 @@ const MapContainer = () => {
       maxWidth: '750px'
     })
 
-    function showPopup(e) {
+    function highlight(e){
       if(!map.loaded()) return
-        const features = map.queryRenderedFeatures(e.point, {layers: ['counties']})
 
-        map.getCanvas().style.cursor = features.length ? 'pointer' : ''
+      const features = map.queryRenderedFeatures(e.point, {layers: ['counties']})
+      if(!features.length) return popup.remove()
+      map.getCanvas().style.cursor = 'pointer'
 
-        if(!features.length) return popup.remove()
+      popup.setLngLat(map.unproject(e.point))
+        .setHTML(buildPopupHTML(data, features, selectedVariable))
+        .addTo(map)
 
-        popup.setLngLat(map.unproject(e.point))
-          .setHTML(buildPopupHTML(data, features, selectedVariable))
-          .addTo(map)
+      setOutline(features[0].properties.GEOID)
+
+
     }
 
-    map.on('mousemove', showPopup)
+    map.on('mousemove', highlight)
     return () => {
       popup.remove()
-      map.off('mousemove', showPopup)
+      map.off('mousemove', highlight)
     }
+  }, [data, selectedVariable, fips])
+
+  useEffect(() => {
+    if(!data) return
+
+    function getTableData(e){
+      if(!map.loaded() || !selectedVariable) return
+      const features = map.queryRenderedFeatures(e.point, {layers: ['counties']})
+      if(!features.length) return
+
+      const fips = features[0].properties['GEOID']
+      setFips(fips)
+      setOutline(fips)
+    }
+
+    map.on('click', getTableData)
+    return () => {
+      map.off('click', getTableData)
+    }
+
   }, [data, selectedVariable])
 
   useEffect(() => {
@@ -219,6 +277,7 @@ const MapContainer = () => {
       />
       <h3>{selectedVariable && selectedValue ? `${selectedVariable.label}: "${selectedValue.label}" for US Counties`: 'US Counties'}</h3>
       <div className="mapContainer" ref={mapContainer}/>
+      {data && selectedVariable && fips ? buildTable() : null}
     </div>
   )
 }
