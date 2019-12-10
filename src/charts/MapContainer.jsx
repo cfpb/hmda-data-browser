@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef }  from 'react'
 import Select from 'react-select'
+import LoadingButton from '../geo/LoadingButton.jsx'
 import COUNTS from '../constants/countyCounts.js'
 import COUNTIES from '../constants/counties.js'
 import VARIABLES from '../constants/variables.js'
 
-import { runFetch } from '../api.js'
+import { runFetch, getCSV } from '../api.js'
 import mapbox from 'mapbox-gl'
 
 import './mapbox.css'
@@ -42,6 +43,19 @@ function getValuesForVariable(variable) {
   return valsForVar[variable.value] || []
 }
 
+function getVariable(val){
+  for(let i=0; i<variables.length; i++){
+    if(val === variables[i].value) return variables[i]
+  }
+}
+
+function getValue(variable, val){
+  const vals = getValuesForVariable(variable)
+  for(let i=0; i<vals.length; i++){
+    if(val === vals[i].value) return vals[i]
+  }
+}
+
 function generateColor(data, variable, value, total) {
   const count = data[variable][value]
   const len = colors.length
@@ -66,8 +80,32 @@ function buildPopupHTML(data, features){
   return '<h4>' + fips + ' - ' + COUNTIES[fips] + '</h4>'
 }
 
-const MapContainer = () => {
+function getDefaultsFromSearch(props) {
+  const { search } = props.location
+  const qsParts = search.slice(1).split('&')
+  const defaults = {
+    variable: null,
+    value: null,
+    fips: null
+  }
+
+  qsParts.forEach(part => {
+    if(!part) return
+    let [key, val] = part.split('=')
+    if(key === 'variable') val = getVariable(val)
+    else if(key === 'value') val = getValue(defaults.variable, val)
+    defaults[key] = val || null
+  })
+
+  return defaults
+}
+
+
+const MapContainer = props => {
+  console.log('\nCONTAINER INIT\n\n')
   const mapContainer = useRef(null)
+
+  const defaults = getDefaultsFromSearch(props)
 
   const [map, setMap] = useState(null)
   const [data, setData] = useState(null)
@@ -75,10 +113,28 @@ const MapContainer = () => {
   const [selectedValue, setValue] = useState(null)
   const [fips, setFips] = useState(null)
 
+  console.log('map', map)
+
+  const fetchCSV = () => {
+    const csv = `/v2/data-browser-api/view/csv?years=2018&counties=${fips}&${selectedVariable.value}=${selectedValue.value}`
+    getCSV(csv, fips + '.csv')
+  }
+
   const onVariableChange = selected => {
     setValue(null)
     setVariable(selected)
   }
+
+  const makeSearch = () => {
+    const searchArr = []
+    if(selectedVariable) searchArr.push(`variable=${selectedVariable.value}`)
+    if(selectedValue) searchArr.push(`value=${selectedValue.value}`)
+    if(fips) searchArr.push(`fips=${fips}`)
+
+    if(searchArr.length) return `?${searchArr.join('&')}`
+    return ''
+  }
+
 
   const buildTable = () => {
     const currData = data[fips]
@@ -106,6 +162,7 @@ const MapContainer = () => {
             </tr>
           </tbody>
         </table>
+        <LoadingButton onClick={fetchCSV}>Download Dataset</LoadingButton>
       </div>
     )
   }
@@ -122,7 +179,26 @@ const MapContainer = () => {
      })
   }
 
+  function styleFill() {
+    console.log('SETTING FILL COLOR')
+   if(map && map.loaded() && data && selectedVariable){
+     if(selectedValue) {
+       const stops = makeStops(data, selectedVariable.value, selectedValue.value)
+       map.setPaintProperty('counties', 'fill-color', {
+         property: 'GEOID',
+         type: 'categorical',
+         default: 'rgba(0,0,0,0.05)',
+         stops
+       })
+     } else {
+       map.setPaintProperty('counties', 'fill-color', 'rgba(0,0,0,0.05)'
+       )
+     }
+   }
+  }
+
   useEffect(() => {
+    console.log('FETCHING DATA')
     let chartData = '/chartData.json'
     if('localhost' !== window.location.hostname) chartData = '/data-browser' + chartData
     runFetch(chartData).then(jsonData => {
@@ -131,6 +207,16 @@ const MapContainer = () => {
   }, [])
 
   useEffect(() => {
+    console.log('MAKING SEARCH')
+    const search = makeSearch()
+    if(props.location.search !== search){
+      console.log('replacing history', props.location.search, search)
+      props.history.replace({search})
+    }
+  })
+
+  useEffect(() => {
+    console.log('ADDING MAP')
     const map = new mapbox.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/kronick/cixtov6xg00252qqpoue7ol4c?fresh=true',
@@ -160,7 +246,7 @@ const MapContainer = () => {
             stops: [['0', 'rgba(0,0,0,0.05)']]
           }
         }
-      }, 'waterway-label');
+      }, 'waterway-label')
 
       map.addLayer({
         'id': 'county-lines',
@@ -177,6 +263,7 @@ const MapContainer = () => {
   }, [])
 
   useEffect(() => {
+    console.log('SETTING MOUSEMOVE')
     if(!data) return
 
     const popup = new mapbox.Popup({
@@ -193,12 +280,10 @@ const MapContainer = () => {
       map.getCanvas().style.cursor = 'pointer'
 
       popup.setLngLat(map.unproject(e.point))
-        .setHTML(buildPopupHTML(data, features, selectedVariable))
+        .setHTML(buildPopupHTML(data, features))
         .addTo(map)
 
       setOutline(features[0].properties.GEOID)
-
-
     }
 
     map.on('mousemove', highlight)
@@ -209,6 +294,8 @@ const MapContainer = () => {
   }, [data, selectedVariable, fips])
 
   useEffect(() => {
+    console.log('SETTING MOUSECLICK')
+
     if(!data) return
 
     function getTableData(e){
@@ -228,22 +315,7 @@ const MapContainer = () => {
 
   }, [data, selectedVariable])
 
-  useEffect(() => {
-   if(data && selectedVariable){
-     if(selectedValue) {
-       const stops = makeStops(data, selectedVariable.value, selectedValue.value)
-       map.setPaintProperty('counties', 'fill-color', {
-         property: 'GEOID',
-         type: 'categorical',
-         default: 'rgba(0,0,0,0.05)',
-         stops
-       })
-     } else {
-       map.setPaintProperty('counties', 'fill-color', 'rgba(0,0,0,0.05)'
-       )
-     }
-   }
-  })
+  useEffect(styleFill)
 
   return (
     <div className="SelectWrapper">
