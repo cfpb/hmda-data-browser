@@ -8,21 +8,21 @@ import Footer from './Footer'
 import Geography from './geo/Geography.jsx'
 import Beta from './Beta.jsx'
 import { betaLinks, defaultLinks } from './links'
-import { fetchEnvConfig, findObjIndex } from './configUtils'
+import { fetchEnvConfig, findObjIndex, isBeta, getEnvConfig } from './configUtils'
 
 import './app.css'
 
 class App extends React.Component {
   constructor(props) {
     super(props)
-    this.isBeta = !!window.location.host.match('beta')
+    this.isBeta = isBeta(window.location.host)
     this.state = { links: this.isBeta ? betaLinks : defaultLinks }
   }
 
   componentDidMount() {
-    if(this.isBeta) return
+    if(this.isBeta) return // No filing link to update
     fetchEnvConfig()
-      .then(config => this.updateFilingLink(config))
+      .then(config => this.updateFilingLink(getEnvConfig(config, window.location.host)))
       .catch(() => null)
   }
 
