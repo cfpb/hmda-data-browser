@@ -100,6 +100,12 @@ function getDefaultsFromSearch(props) {
   return defaults
 }
 
+const popup = new mapbox.Popup({
+  closeButton: false,
+  closeOnClick: false,
+  maxWidth: '750px'
+})
+
 
 const MapContainer = props => {
   console.log('\nCONTAINER INIT\n\n')
@@ -135,7 +141,6 @@ const MapContainer = props => {
     return ''
   }
 
-
   const buildTable = () => {
     const currData = data[fips]
     if(!currData) return null
@@ -167,18 +172,6 @@ const MapContainer = props => {
     )
   }
 
-  function setOutline(current) {
-    const fipsStop = fips || ''
-    const stops = [[current, 2]]
-    if(fipsStop !== current) stops.push([fipsStop, 2])
-    map.setPaintProperty('county-lines', 'line-width', {
-       property: 'GEOID',
-       type: 'categorical',
-       default: 0,
-       stops
-     })
-  }
-
   function styleFill() {
     console.log('SETTING FILL COLOR')
    if(map && map.loaded() && data && selectedVariable){
@@ -197,6 +190,7 @@ const MapContainer = props => {
    }
   }
 
+
   useEffect(() => {
     console.log('FETCHING DATA')
     let chartData = '/chartData.json'
@@ -206,6 +200,7 @@ const MapContainer = props => {
     })
   }, [])
 
+
   useEffect(() => {
     console.log('MAKING SEARCH')
     const search = makeSearch()
@@ -214,6 +209,7 @@ const MapContainer = props => {
       props.history.replace({search})
     }
   })
+
 
   useEffect(() => {
     console.log('ADDING MAP')
@@ -262,15 +258,23 @@ const MapContainer = props => {
     return () => map.remove()
   }, [])
 
+
   useEffect(() => {
     console.log('SETTING MOUSEMOVE')
     if(!data) return
 
-    const popup = new mapbox.Popup({
-      closeButton: false,
-      closeOnClick: false,
-      maxWidth: '750px'
-    })
+
+
+    function setOutline(current, isClick=0) {
+      const stops = [[current, 2]]
+      if(!isClick && fips && fips !== current) stops.push([fips, 2])
+      map.setPaintProperty('county-lines', 'line-width', {
+         property: 'GEOID',
+         type: 'categorical',
+         default: 0,
+         stops
+       })
+    }
 
     function highlight(e){
       if(!map.loaded()) return
@@ -286,18 +290,6 @@ const MapContainer = props => {
       setOutline(features[0].properties.GEOID)
     }
 
-    map.on('mousemove', highlight)
-    return () => {
-      popup.remove()
-      map.off('mousemove', highlight)
-    }
-  }, [data, selectedVariable, fips])
-
-  useEffect(() => {
-    console.log('SETTING MOUSECLICK')
-
-    if(!data) return
-
     function getTableData(e){
       if(!map.loaded() || !selectedVariable) return
       const features = map.queryRenderedFeatures(e.point, {layers: ['counties']})
@@ -305,17 +297,21 @@ const MapContainer = props => {
 
       const fips = features[0].properties['GEOID']
       setFips(fips)
-      setOutline(fips)
+      setOutline(fips, 1)
     }
 
+    map.on('mousemove', highlight)
     map.on('click', getTableData)
+
     return () => {
+      map.off('mousemove', highlight)
       map.off('click', getTableData)
     }
+  }, [data, map, fips, selectedVariable])
 
-  }, [data, selectedVariable])
 
   useEffect(styleFill)
+
 
   return (
     <div className="SelectWrapper">
