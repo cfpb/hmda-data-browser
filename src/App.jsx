@@ -7,35 +7,47 @@ import NotFound from './common/NotFound'
 import Footer from './Footer'
 import Geography from './geo/Geography.jsx'
 import Beta from './Beta.jsx'
+import { betaLinks, defaultLinks } from './links'
+import { fetchEnvConfig, findObjIndex, isBeta, getEnvConfig } from './configUtils'
 
 import './app.css'
 
-const betaLinks = [
-  { name: 'Home', href: '/' },
-  { name: 'Data Browser', href: '/data-browser/' }
-]
+class App extends React.Component {
+  constructor(props) {
+    super(props)
+    this.isBeta = isBeta(window.location.host)
+    this.state = { links: this.isBeta ? betaLinks : defaultLinks }
+  }
 
-const App = () => {
-  const isBeta = window.location.host.match('beta')
-  const headerLinks =  isBeta ? betaLinks : undefined
-  return (
-    <>
-      <Header pathname={window.location.pathname} links={headerLinks}/>
-      {isBeta ? <Beta/> : null}
-      <Switch>
-        <Route exact path="/" component={Home} />
-        <Route path="/data/:year?" component={Geography} />
-    {/*
-        <Route
-          path="/maps-graphs/:year?"
-          component={MapsGraphs}
-        />
-      */}
-        <Route component={NotFound} />
-      </Switch>
-      <Footer />
-    </>
-  )
+  componentDidMount() {
+    if(this.isBeta) return // No filing link to update
+    fetchEnvConfig()
+      .then(config => this.updateFilingLink(getEnvConfig(config, window.location.host)))
+      .catch(() => null)
+  }
+
+  updateFilingLink(config) {
+    const idx = findObjIndex(this.state.links, 'name', 'Filing')
+    if (idx > -1) {
+      const links = [...this.state.links]
+      links[idx].href = `/filing/${config.defaultPeriod}/`
+      this.setState({ links })
+    }
+  }
+
+  render() {
+    return (
+      <>
+        <Header pathname={window.location.pathname} links={this.state.links} />
+        {this.isBeta ? <Beta /> : null}
+        <Switch>
+          <Route exact path='/' component={Home} />
+          <Route path='/data/:year?' component={Geography} />
+          <Route component={NotFound} />
+        </Switch>
+        <Footer />
+      </>
+    )
+  }
 }
-
 export default App
