@@ -139,18 +139,18 @@ class Geography extends Component {
   }
 
   checkIfLargeFile(category, items) {
-    const leisSelected = this.state && this.state.leis.length 
+    const leisSelected = this.state && this.state.leis.length
     const leisFetched = this.state && !this.state.leiDetails.loading
 
     if(category === 'leis'){
-      if(items.length && leisFetched) 
+      if(items.length && leisFetched)
         return this.checkIfLargeCount(items, this.state.leiDetails.counts)
-    
-      if(!items.length) 
+
+      if(!items.length)
         return this.checkIfLargeFile(this.state.category, this.state.items)
     }
-    
-    if(leisSelected && leisFetched) 
+
+    if(leisSelected && leisFetched)
       return this.checkIfLargeCount(this.state.leis, this.state.leiDetails.counts)
 
     if(isNationwide(category)) return true
@@ -187,11 +187,11 @@ class Geography extends Component {
 
   onInstitutionChange(selectedLEIs = []){
     let leis = selectedLEIs.map(l => l.value)
-    if(leis.includes('all')) leis = []
+    if(leis.indexOf('all') !== -1) leis = []
 
     return this.setState({leis, details: {}}, () => {
-      return this.setStateAndRoute({ 
-        isLargeFile: this.checkIfLargeFile('leis', this.state.leis) 
+      return this.setStateAndRoute({
+        isLargeFile: this.checkIfLargeFile('leis', this.state.leis)
       })
     })
   }
@@ -229,7 +229,7 @@ class Geography extends Component {
       }
 
       if(!newState.variables[variable][subvar.id]) delete newState.variables[variable][subvar.id]
-      
+
       const largeFile = this.checkIfLargeFile(this.state.category, this.state.items)
 
       this.setStateAndRoute({
@@ -262,9 +262,9 @@ class Geography extends Component {
   }
 
   render() {
-    const { category, details, error, isLargeFile, items, leiDetails, leis, 
+    const { category, details, error, isLargeFile, items, leiDetails, leis,
       loadingDetails, orderedVariables, variables } = this.state
-    
+
     const nationwide = isNationwide(category)
     const enabled = nationwide || items.length
     const checksExist = someChecksExist(variables)
@@ -317,7 +317,7 @@ class Geography extends Component {
         {details.aggregations && !error
           ? this.showAggregations(details, orderedVariables)
           : null}
-        <ActionsWarningsErrors 
+        <ActionsWarningsErrors
           downloadEnabled={enabled}
           downloadCallback={checksExist ? this.requestSubsetCSV : this.requestItemCSV}
           showSummaryButton={!details.aggregations}
