@@ -67,10 +67,11 @@ function generateColor(data, variable, value, total) {
 
 function makeStops(data, variable, value){
   const stops = [['0', 'rgba(0,0,0,0.05)']]
+  if(!data || !variable || !value) return stops
   Object.keys(data).forEach(county => {
     const currData = data[county]
     const total = COUNTS[county] || 20000
-    stops.push([county, generateColor(currData, variable, value, total)])
+    stops.push([county, generateColor(currData, variable.value, value.value, total)])
   })
   return stops
 }
@@ -108,18 +109,15 @@ const popup = new mapbox.Popup({
 
 
 const MapContainer = props => {
-  console.log('\nCONTAINER INIT\n\n')
   const mapContainer = useRef(null)
 
   const defaults = getDefaultsFromSearch(props)
 
   const [map, setMap] = useState(null)
   const [data, setData] = useState(null)
-  const [selectedVariable, setVariable] = useState(null)
-  const [selectedValue, setValue] = useState(null)
-  const [fips, setFips] = useState(null)
-
-  console.log('map', map)
+  const [selectedVariable, setVariable] = useState(defaults.variable)
+  const [selectedValue, setValue] = useState(defaults.value)
+  const [fips, setFips] = useState(defaults.fips)
 
   const fetchCSV = () => {
     const csv = `/v2/data-browser-api/view/csv?years=2018&counties=${fips}&${selectedVariable.value}=${selectedValue.value}`
@@ -173,10 +171,9 @@ const MapContainer = props => {
   }
 
   function styleFill() {
-    console.log('SETTING FILL COLOR')
    if(map && map.loaded() && data && selectedVariable){
      if(selectedValue) {
-       const stops = makeStops(data, selectedVariable.value, selectedValue.value)
+       const stops = makeStops(data, selectedVariable, selectedValue)
        map.setPaintProperty('counties', 'fill-color', {
          property: 'GEOID',
          type: 'categorical',
@@ -192,7 +189,6 @@ const MapContainer = props => {
 
 
   useEffect(() => {
-    console.log('FETCHING DATA')
     let chartData = '/chartData.json'
     if('localhost' !== window.location.hostname) chartData = '/data-browser' + chartData
     runFetch(chartData).then(jsonData => {
@@ -202,23 +198,22 @@ const MapContainer = props => {
 
 
   useEffect(() => {
-    console.log('MAKING SEARCH')
     const search = makeSearch()
-    if(props.location.search !== search){
-      console.log('replacing history', props.location.search, search)
+    if(search && props.location.search !== search){
       props.history.replace({search})
     }
   })
 
 
   useEffect(() => {
-    console.log('ADDING MAP')
+    if(!data) return
     const map = new mapbox.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/kronick/cixtov6xg00252qqpoue7ol4c?fresh=true',
       zoom: 3.5,
       center: [-96, 38]
     })
+    const stops = makeStops(data, selectedVariable, selectedValue)
 
     setMap(map)
 
@@ -239,7 +234,7 @@ const MapContainer = props => {
             property: 'GEOID',
             type: 'categorical',
             default: 'rgba(0,0,0,0.05)',
-            stops: [['0', 'rgba(0,0,0,0.05)']]
+            stops
           }
         }
       }, 'waterway-label')
@@ -256,14 +251,12 @@ const MapContainer = props => {
 
     })
     return () => map.remove()
-  }, [])
+  /*eslint-disable-next-line*/
+  }, [data])
 
 
   useEffect(() => {
-    console.log('SETTING MOUSEMOVE')
-    if(!data) return
-
-
+    if(!data || !map) return
 
     function setOutline(current, isClick=0) {
       const stops = [[current, 2]]
