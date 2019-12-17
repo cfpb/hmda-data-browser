@@ -101,6 +101,11 @@ function getDefaultsFromSearch(props) {
   return defaults
 }
 
+function scrollToTable(node){
+  if(!node) return
+  node.scrollIntoView({behavior: 'smooth', block: 'end'})
+}
+
 const popup = new mapbox.Popup({
   closeButton: false,
   closeOnClick: false,
@@ -110,6 +115,7 @@ const popup = new mapbox.Popup({
 
 const MapContainer = props => {
   const mapContainer = useRef(null)
+  const tableRef = useRef(null)
 
   const defaults = getDefaultsFromSearch(props)
 
@@ -148,7 +154,7 @@ const MapContainer = props => {
     const tds = ths.map(v => currVarData[v])
 
     return (
-      <div className="TableWrapper">
+      <div className="TableWrapper" ref={tableRef}>
         <h3>{COUNTIES[fips]}</h3>
         <table>
           <thead>
@@ -296,6 +302,7 @@ const MapContainer = props => {
       const fips = features[0].properties['GEOID']
       setFips(fips)
       setOutline(fips, 1)
+      scrollToTable(tableRef.current)
     }
 
     map.on('mousemove', highlight)
