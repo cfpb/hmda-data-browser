@@ -245,7 +245,12 @@ const MapContainer = props => {
         'source': 'counties',
         'source-layer': 'Census_US_Counties-453u4s',
         'paint': {
-          'line-width': 0
+          'line-width': {
+            property: 'GEOID',
+            type: 'categorical',
+            default: 0,
+            stops: fips ? [[fips, 2]] : [[0, 0]]
+          }
         }
       }, 'waterway-label')
 
