@@ -149,9 +149,10 @@ const MapContainer = props => {
     const currData = data[fips]
     if(!currData) return null
     const currVarData = currData[selectedVariable.value]
-
-    const ths = Object.keys(currVarData)
-    const tds = ths.map(v => currVarData[v])
+    const ths = valsForVar[selectedVariable.value]
+    const tds = ths.map(v => {
+      return currVarData[v.value] || 0
+    })
 
     return (
       <div className="TableWrapper" ref={tableRef}>
@@ -159,8 +160,8 @@ const MapContainer = props => {
         <table>
           <thead>
             <tr>
-              {[selectedVariable.label, ...ths].map((v,i) => {
-                return <th key={i}>{v}</th>
+              {[selectedVariable, ...ths].map((v,i) => {
+                return <th key={i}>{v.label}</th>
               })}
             </tr>
           </thead>
